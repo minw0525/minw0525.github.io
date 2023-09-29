@@ -1,0 +1,508 @@
+@font-face {
+    font-family: 'Hesiod';
+    font-weight: normal;
+    font-style: normal;
+    src: url('https://parkminwoo.com/font/Hesiod-Regular.woff2') format('woff2');
+}
+:root {
+    font-size: calc(1vh + 7px);
+    /*size*/
+    --min_gap: 15px;
+    /*font*/
+    --Sans: Sf Pro, Helvetica, sans-serif;
+    --font_big: 3rem;
+    --font_mid: 2rem;
+    --font_small: 1.5rem;
+    --font_micro: 1rem;
+}
+* {
+    margin: 0;
+    padding: 0;
+    font-family: var(--Sans);
+    font-weight: 300;
+    letter-spacing: 0.05rem;
+    transition: all 0.3s ease-in-out;
+}
+html {
+    scroll-behavior: smooth;
+}
+div,
+span,
+a,
+h1,
+h2,
+h3,
+button,
+input,
+textarea {
+    all: unset;
+}
+a {
+    cursor: pointer;
+}
+a:visited {
+    color: inherit;
+}
+body {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    /*overflow: hidden;*/
+    overscroll-behavior-x: none;
+    background-color: rgba(var(--bgColor), 1);
+    color: rgba(var(--color), 1);
+    word-break: keep-all;
+}
+.content {
+    width: 90%;
+    align-self: center;
+    /*filter: blur(10px);*/
+}
+nav {
+    align-self: center;
+    height: 60px;
+    width: 90%;
+    color: var(--color);
+    background-color: rgba(var(--bgColor), 1);
+    z-index: 5;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    font-size: 1.5rem;
+    position: fixed;
+}
+nav * {
+    padding-top: 15px;
+    display: flex;
+    align-items: center;
+}
+nav #toMain {
+    flex: 1 1 70%;
+    cursor: pointer;
+}
+nav span:last-of-type {
+    flex: 1 1 30%;
+}
+hr {
+    align-self: center;
+    background-color: rgba(var(--color), 1);
+    height: 1px;
+    border: none;
+}
+hr:first-of-type {
+    position: fixed;
+    width: 90%;
+    top: 60px;
+    z-index: 6;
+    margin: 0 auto;
+}
+#title {
+    position: relative;
+    top: -1px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    letter-spacing: 0.2em;
+    text-align: center;
+    font-family: 'Hesiod';
+}
+h1 {
+    font-size: 15rem;
+}
+h3 {
+    margin-top: 10px;
+    font-size: var(--font_mid);
+    letter-spacing: 0.03em;
+}
+.info {
+    padding: 20px 0 60px 0;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+.info > span {
+    flex: 1 1 50%;
+    font-size: 1.2rem;
+    font-weight: 500;
+    padding-bottom: 30px;
+}
+.info > div {
+    flex: 1 1 50%;
+}
+.hvr {
+    display: inline-flex;
+    align-items: center;
+    text-align: center;
+    vertical-align: bottom;
+    border-radius: 15px;
+    border: 1px solid rgba(var(--color), 1);
+    height: 25px;
+    padding: 0 10px;
+    margin-bottom: 20px;
+    margin-right: 10px;
+    position: relative;
+    left: -3px;
+    color: rgba(var(--bgColor), 1);
+    background-color: rgba(var(--color), 1);
+    font-weight: 500;
+}
+#specimen {
+    font-weight: 500;
+    cursor: pointer;
+}
+#specimen:hover {
+    color: blue;
+}
+.info p {
+    display: inline-block;
+    width: 49%;
+    line-height: 1.5;
+}
+.info p:last-of-type {
+    display: inline-block;
+    width: 50%;
+    line-height: 1.33;
+    vertical-align: top;
+}
+.images img {
+    width: 50%;
+}
+.latin {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+.latin div {
+    font-family: Hesiod;
+}
+.numeric,
+.punc {
+    width: 49%;
+    display: inline-flex;
+    font-size: 5rem;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: center;
+}
+.numeric > div,
+.punc > div {
+    text-align: center;
+    margin: 0 40px;
+}
+.allChar {
+    width: 100%;
+    margin: 0 20%;
+    text-align: center;
+    font-size: 7.5rem;
+}
+.infoContent {
+    font-family: Hesiod;
+}
+.liga {
+    flex-direction: column;
+    font-size: 5rem;
+}
+.liga > div {
+    font-feature-settings: 'liga', 'dlig';
+    text-align: center;
+}
+.epics {
+    width: 50%;
+    font-size: 5rem;
+    text-align: center;
+}
+.divWrap {
+    padding: 20px 0;
+    display: flex;
+    justify-content: start;
+}
+.controlPannel {
+    display: flex;
+    justify-content: space-between;
+}
+.control {
+    display: inline;
+    flex: 1 1 40%;
+}
+.saltCtrl,
+.dligCtrl {
+    flex: 1 1 30%;
+}
+.control * {
+    display: inline-block !important;
+    vertical-align: middle !important;
+}
+input[type='range'] {
+    display: block;
+    width: 100%;
+    appearance: none;
+    background-color: rgba(var(--color), 1);
+    height: 1px;
+}
+input[type='range']::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    background-color: rgba(var(--color), 1);
+}
+input[type='checkbox'] {
+    display: block;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 10px;
+    background-color: rgba(var(--color), 0.5);
+    box-shadow: 0 0 0 2px rgba(var(--color), 0.5);
+}
+input[type='checkbox']:checked {
+    border-radius: 10px;
+    background-color: rgba(var(--color), 1);
+    box-shadow: 0 0 0 2px rgba(var(--color), 0.5);
+}
+input[data-control='size'] {
+    width: 200px;
+    position: relative;
+}
+.control input {
+    margin: 0 10px;
+}
+textarea {
+    position: relative;
+    display: inline-table;
+    font-family: 'Hesiod';
+    border: none;
+    outline: none;
+    resize: none;
+    width: 100%;
+    overflow: auto;
+    word-wrap: break-word;
+    line-height: 1.2;
+    font-size: 120px;
+    letter-spacing: 0px;
+    background-color: inherit;
+    margin: 20px 0 60px 0;
+}
+textarea:nth-of-type(2) {
+    font-size: 70px;
+}
+textarea:nth-of-type(3) {
+    font-size: 40px;
+}
+div {
+    display: inline-block;
+}
+hr {
+    padding: 0;
+}
+.all > span {
+    flex: 1 1 20%;
+}
+#glyphs {
+    flex: 1 1 80%;
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 50px;
+    font-feature-settings: 'liga', 'dlig'; /* low-level (all new browsers) */
+}
+#glyphs > div {
+    font-family: Hesiod;
+    width: 4vw;
+    height: 4vw;
+    font-size: 2.7vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    outline: 0.1px solid rgba(var(--color), 0.12);
+    cursor: pointer;
+}
+#glyphs > div:hover::after {
+    content: '';
+    display: block;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    background-color: rgba(var(--color), 1);
+    opacity: 0.5;
+    color: white;
+}
+.charname {
+    display: none;
+}
+.modal {
+    width: 30vh;
+    height: 33vh;
+    position: fixed;
+    margin: auto;
+    top: 70px;
+    left: 5vw;
+    z-index: 10;
+    color: black;
+    background-color: white;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(var(--color), 0.5);
+    font-variant-ligatures: common-ligatures, discretionary-ligatures; /* high-level property          */
+    -moz-font-feature-settings: 'liga', 'dlig'; /* low-level (old Firefox)      */
+    -webkit-font-feature-settings: 'liga', 'dlig'; /* low-level (old Webkit)       */
+    font-feature-settings: 'liga' on, 'dlig' on; /* low-level (all new browsers) */
+}
+.modal .char {
+    flex: 1 1 90%;
+    display: inline;
+    vertical-align: text-top;
+    font-family: Hesiod;
+    font-size: 20vh;
+}
+.modal .name {
+    font-family: var(--Sans);
+    font-size: var(--font_micro);
+    font-weight: 500;
+    flex: 1 1 15%;
+}
+.contact {
+    line-height: 1.33;
+}
+.contact p {
+    flex: 1 1 50%;
+}
+footer {
+    height: 200px;
+}
+.clickable {
+    text-decoration: underline;
+    text-underline-offset: 0.2rem;
+}
+.notOpen {
+    height: 100vh;
+    width: 100vw;
+    background: rgba(0, 0, 255, 0.8);
+    position: fixed;
+    z-index: 100;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 3rem;
+    font-weight: 500;
+    transition: 0.2s ease-in-out;
+}
+.notOpen button {
+    border: 1px solid white;
+    height: 50px;
+    width: 100px;
+    border-radius: 25px;
+    font-size: var(--font_mid);
+    text-align: center;
+}
+.notOpen button:hover {
+    background-color: white;
+    color: blue;
+    cursor: pointer;
+}
+#colorShift {
+    width: 50px;
+    height: 50px;
+    border-radius: 25px;
+    position: fixed;
+    bottom: 60px;
+    right: 45px;
+    z-index: 100;
+    background: url('colorshift.svg');
+    cursor: pointer;
+    box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.3);
+}
+#colorShift:hover {
+    filter: brightness(120%);
+    box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.4);
+}
+
+@media screen and (max-width: 576px) {
+    h1 {
+        font-size: 25vw;
+    }
+    h3 {
+        font-size: 5vw;
+    }
+    .hvr {
+        margin-bottom: 12px;
+    }
+    .info {
+        flex-direction: column;
+    }
+    .info p {
+        width: 100% !important;
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+    }
+    .latin {
+        align-items: flex-start;
+    }
+    .allChar {
+        font-size: 3rem;
+        margin: 0 3vw;
+        width: auto;
+    }
+    .numeric,
+    .punc,
+    .liga {
+        width: 100%;
+        font-size: 2.5rem;
+    }
+    .numeric > div,
+    .punc > div {
+        margin: auto;
+    }
+    .controlPannel {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+    .szCtrl {
+        display: inline-flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 3px 0;
+    }
+    .curSz {
+        flex: 0 0 0;
+    }
+    .controlPannel > * {
+        margin: 5px 10px;
+    }
+    input[data-control='size'] {
+        position: relative;
+        width: 90%;
+    }
+    .divWrap > span:first-child {
+        display: none;
+    }
+    #glyphs > div {
+        width: 15vw;
+        height: 15vw;
+        font-size: 9vw;
+    }
+    .modal {
+        top: 30vh;
+        left: 50vw;
+        transform: translate(-50%, -50%);
+        z-index: 1;
+    }
+    .modal .name {
+        font-size: var(--font_small);
+    }
+    #colorShift {
+        bottom: 40px;
+        right: 30px;
+    }
+}
