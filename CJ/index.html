@@ -108,11 +108,10 @@
             display: flex;
             align-items: center;
             gap: 30px;
-            margin-bottom: 30px;
             overflow:hidden;
-            height: 35px;
             transition: all .3s ease-in-out;
-
+            height: 0;
+            margin: 0;
         }
         .itemheader select{
             flex: 1 1 0;
@@ -121,12 +120,11 @@
             left:0;
             margin: auto;
         }
-        .itemheader .recommendation{
+        .itemheader .previous{
             display: flex;
             gap: 5px;
-            justify-content: space-between;
         }
-        .recommendation button{
+        .previous button{
             min-width: fit-content;
             width: -webkit-fill-available;
             max-width: 100px;
@@ -196,8 +194,9 @@
             text-wrap: balance;
         }
         .textClicked{
-            height: 0;
-            margin: 0;
+
+            margin-bottom: 30px;
+            height: 35px;
         }
         #scrollbtn{
             position: fixed;
@@ -234,7 +233,7 @@
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 10px;
-                height: 100px;
+                height: 0;
             }
             .itemheader select{
                 width: 50%;
@@ -264,8 +263,7 @@
                 right:0.5em;
             }
             .textClicked{
-                height: 0;
-                margin: 0;
+                height: 100px;
             }
         }
 /*----------------------------------*/
@@ -391,7 +389,7 @@
                 <div class="selectwrapper">
                     <select class="font_select">
                     </select>
-                    <div class="recommendation">
+                    <div class="previous">
                     </div>
                 </div>
                 <div class="fontweight compfontweight inputWrapper">
@@ -510,7 +508,7 @@
                 family:{제목용:"CJO_R_T", 본문용:"CJO_R_B"}, 
                 wghts: {제목용: [500, 1000], 본문용 :[200, 1000]}, 
                 initsize: {제목용: 30, 본문용 : 20},
-                recommendation: {제목용: [890], 본문용 : [200, 300, 400, 800]}
+                previous: {제목용: [500, 700], 본문용 : [300, 400]}
             }
             var compdata = [
                 {font: fonts[0], wght: 500},
@@ -545,11 +543,11 @@
                     clone.find(".compwghtSlider").attr({'min': info.wghts[val][0], 'max': info.wghts[val][1]})
                     clone.find(".compwghtNumber").val(info.wghts[val][0]);
                     clone.find(".compwghtSlider").val(info.wghts[val][0]);
-                    createRecBtn(val)
+                    createPrevBtn(val)
                 }).val(data.font)
                 changeCSS('font-family', info.family[data.font])
 
-                createRecBtn(data.font)
+                createPrevBtn(data.font)
 
                 clone.find(".compwghtSlider").attr({'min': info.wghts[data.font][0], 'max': info.wghts[data.font][1]})                
                 clone.find(".compwghtSlider").on("input", function(){
@@ -636,21 +634,38 @@
     
                 }
 
-                function createRecBtn(font){
-                    var recwrapper = clone.find(".recommendation");
-                    recwrapper.empty();
+                function createPrevBtn(font){
+                    var prevwrapper = clone.find(".previous");
+                    prevwrapper.empty();
 
-                    $.each(info.recommendation[font], function(index, rec) {
-                        text = info.recommendation[font].length > 1 ? `추천 ${index+1}` : '추천 굵기'
-                        var button = $('<button></button>').attr('value', rec).text(text);
+                    $.each(info.previous[font], function(index, prev) {
+                        console.log(info.previous[font], index)
+                        var text = ''
+                        switch (info.previous[font][index]) {
+                            case 300:
+                                text = '기존 L'
+                                break;
+                            case 400:
+                                text = '기존 R'
+                                break;
+                            case 500:
+                                text = '기존 M'
+                                break;
+                            case 700:
+                                text = '기존 B'
+                                break;
+                            default:
+                                break;
+                        }
+                        var button = $('<button></button>').attr('value', prev).text(text);
                         button.click(function(){
-                            clone.find(".compwghtNumber").val(rec);
-                            clone.find(".compwghtSlider").val(rec);
-                            changeCSS('font-variation-settings', rec)
+                            clone.find(".compwghtNumber").val(prev);
+                            clone.find(".compwghtSlider").val(prev);
+                            changeCSS('font-variation-settings', prev)
                             $(this).siblings().removeClass('btnClicked')
                             $(this).toggleClass('btnClicked')
                         })
-                        recwrapper.append(button);
+                        prevwrapper.append(button);
                     });
                 }
             }
