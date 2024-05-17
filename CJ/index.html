@@ -122,7 +122,6 @@
             margin: auto;
         }
         .itemheader .recommendation{
-            flex: 1 1 0;
             display: flex;
             gap: 5px;
             justify-content: space-between;
@@ -146,7 +145,7 @@
         }
 
         .itemheader .selectwrapper div{
-            width:50%;
+            min-width:50%;
         }
         .itemheader .inputWrapper{
             flex: 1 1 0;
@@ -257,6 +256,10 @@
             }
             input[type="number"]{
                 width: 100%;
+            }
+            .compfontsize div:has(>input[type="number"]):hover::after,
+            .compfontsize div:has(>input[type="number"]):focus-within::after {
+                right:0.5em;
             }
             .textClicked{
                 height: 0;
@@ -499,31 +502,30 @@
 
             var compcontainer = $("#cjcompare"); 
             var template = $("#cjcomparetemplate").html();
-            var initsize = 50;
             var initstring = "사랑받는 Global Lifestyle 기업 CJ 당신의 2024 더 나은 일상을, New Future, Talent, Value"
             var fonts = ['제목용', '본문용']
             var info = {
                 family:{제목용:"CJO_R_T", 본문용:"CJO_R_B"}, 
                 wghts: {제목용: [500, 1000], 본문용 :[200, 1000]}, 
-                initsize: {제목용: 50, 본문용 : 20},
+                initsize: {제목용: 30, 본문용 : 20},
                 recommendation: {제목용: [890], 본문용 : [200, 300, 400, 800]}
             }
             var compdata = [
-                {font: fonts[0], wght: 500, size: initsize, text: initstring},
-                {font: fonts[0], wght: 600, size: initsize, text: initstring},
-                {font: fonts[0], wght: 700, size: initsize, text: initstring},
-                {font: fonts[0], wght: 800, size: initsize, text: initstring},
-                {font: fonts[0], wght: 900, size: initsize, text: initstring},
-                {font: fonts[0], wght: 1000, size: initsize, text: initstring},
-                {font: fonts[1], wght: 200, size: initsize, text: initstring},
-                {font: fonts[1], wght: 300, size: initsize, text: initstring},
-                {font: fonts[1], wght: 400, size: initsize, text: initstring},
-                {font: fonts[1], wght: 500, size: initsize, text: initstring},
-                {font: fonts[1], wght: 600, size: initsize, text: initstring},
-                {font: fonts[1], wght: 700, size: initsize, text: initstring},
-                {font: fonts[1], wght: 800, size: initsize, text: initstring},
-                {font: fonts[1], wght: 900, size: initsize, text: initstring},
-                {font: fonts[1], wght: 1000, size: initsize, text: initstring}
+                {font: fonts[0], wght: 500},
+                {font: fonts[0], wght: 600},
+                {font: fonts[0], wght: 700},
+                {font: fonts[0], wght: 800},
+                {font: fonts[0], wght: 900},
+                {font: fonts[0], wght: 1000},
+                {font: fonts[1], wght: 200},
+                {font: fonts[1], wght: 300},
+                {font: fonts[1], wght: 400},
+                {font: fonts[1], wght: 500},
+                {font: fonts[1], wght: 600},
+                {font: fonts[1], wght: 700},
+                {font: fonts[1], wght: 800},
+                {font: fonts[1], wght: 900},
+                {font: fonts[1], wght: 1000}
             ]
             function createItem(index, data){
                 var index = index
@@ -599,14 +601,15 @@
                         val = 200
                     }
                     var newSize = `${parseInt(val)}px`
-                    clone.find(".compsizeNumber").val(val);
                     clone.find(".compsizeSlider").val(val);
+                    clone.find(".compsizeNumber").val(val);
 
                     changeCSS('font-size', val)
                 }).val(data.size)
 
+                clone.find(".compsizeSlider").val(info.initsize[data.font])
                 clone.find(".compsizeNumber").val(info.initsize[data.font])
-                clone.find(".comptext>p").text(data.text)
+                clone.find(".comptext>p").text(initstring)
                 changeCSS('font-size', info.initsize[data.font])
 
                 clone.find(".comptext").click(function(){
