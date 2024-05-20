@@ -3,89 +3,283 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Spreadsheet Data Fetcher</title>
+    <title>2024BDAY</title>
     <style>
-        table {
+        *{
+            font-size:20px;
+            margin:0;
+        }
+        html{
+            height: 100%;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background:black;
+            color: white;
+            height: 100%;
+        }
+        h1{
+            font-size: 3rem;
+        }
+        h3{
+            font-size: 1.8rem;
+        }
+        .slideshow-container {
+            max-width: 90vw;
+            position: relative;
+            overflow: hidden;
+            margin: auto;
+            text-align: center;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .slides {
+            flex: 9 1 0;
+            display: flex;
             width: 100%;
-            border-collapse: collapse;
+            transition: transform 0.5s ease;
+            margin: 30px;
         }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
+        .slide {
+            flex: 0 0 auto;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: stretch;
+            align-items: center;
         }
-        th {
-            background-color: #f2f2f2;
+        .slidecontent{
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            text-align: left;
         }
-        img {
-            max-width: 100px;
+        .slidecontent>:nth-child(1){
+            grid-column-start: 1;
+	        grid-column-end: 2;
+            grid-row: 1;
+        }
+        .slidecontent>:nth-child(2){
+            grid-column: 1;
+            grid-row: 2;
+        }
+        .slidecontent>:nth-child(3){
+            grid-column: 1;
+            grid-row: 2;
+        }
+        .slidecontent>:nth-child(4){
+            grid-column: 1;
+            grid-row: 2;
+        }
+        .slidecontent>:nth-child(5){
+            grid-column: 1;
+            grid-row: 2;
+        }
+        .slidecontent>:nth-child(6){
+            grid-column: 2;
+            grid-row: 2;
+        }
+        .slidecontent img {
+            max-width: 100%;
             height: auto;
+        }
+        .prev, .next {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            width: auto;
+            padding: 30px;
+            margin-top: -25px;
+            color: white;
+            font-weight: bold;
+            font-size: 25px;
+            transition: 0.6s ease;
+            border-radius: 0 3px 3px 0;
+            user-select: none;
+        }
+        .next {
+            right: 0;
+            border-radius: 3px 0 0 3px;
+        }
+        .prev:hover, .next:hover {
+            background-color: rgba(0,0,0,0.8);
+        }
+        .soldout{
+            filter: blur(2px) grayscale(70%);
+            pointer-events: none;
+        }
+        .soldout-label{
+            font-size: 150px;
+            font-weight: 900;
+            position:absolute;
+            transform: rotateZ(-25deg);
+            opacity: 1;
+            width: 100%;
+            color:red;
+        }
+        .carousel-indicators {
+            flex: 1 1 0;
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .carousel-indicator {
+            cursor: pointer;
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: #ddd;
+            border-radius: 50%;
+            margin: 0 7px;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-indicator.active {
+            transform: scale(1.3);
+            background-color: #555;
         }
     </style>
 </head>
 <body>
-    <h1>Data from Google Spreadsheet</h1>
-    <table id="data-table">
-        <thead>
-            <tr>
-                <th>Text</th>
-                <th>Image</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+<div class="slideshow-container" id="slideshow-container">
+    <div class="slides">
+        <div class="slide" id="backcover">뒷표지</div>
+        <div class="slide">표지</div>
+    </div>
+    <div class="carousel-indicators" id="carousel-indicators"></div>
+</div>
+<a class="prev" onclick="changeSlide(-1)">&#10094;</a>
+<a class="next" onclick="changeSlide(1)">&#10095;</a>
 
-    <script>
-        // URL of the published Google spreadsheet in CSV format
-        const spreadsheetUrl = 'https://docs.google.com/spreadsheets/d/1BOkXQG2GuNjcWtjPYjGs2u6WRIEKAgYuZcIOaCr8TWs/pub?output=csv';
+<script>
+    // Replace with your Google Spreadsheet ID
+    const sheetID = '1BOkXQG2GuNjcWtjPYjGs2u6WRIEKAgYuZcIOaCr8TWs';
+    const queryUrl = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?`;
 
-        // Function to fetch data from the spreadsheet
-        async function fetchData() {
-            try {
-                const response = await fetch(spreadsheetUrl);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch data');
-                }
-                const data = await response.text();
-                console.log(data)
-                return data;
-            } catch (error) {
-                console.error(error);
+    // Function to fetch data from the spreadsheet
+    async function fetchData() {
+        try {
+            const response = await fetch(queryUrl);
+            const text = await response.text();
+            const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\((.*)\)/)[1]);
+            console.log(json.table);
+            return json.table;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
+    // Function to create slides and initialize the slideshow
+    async function initializeSlideshow() {
+        const container = document.getElementById('slideshow-container');
+        const data = await fetchData();
+
+        createIndicators(data.rows.length);
+
+        const slidesWrapper = document.getElementsByClassName('slides')[0];
+        const backcover = document.getElementById('backcover');
+
+        
+        data.rows.forEach((row, index) => {
+            const slideWrapper = document.createElement('div');
+            slideWrapper.classList.add('slide');
+            // slidesWrapper.appendChild(slideWrapper);
+            slidesWrapper.insertBefore(slideWrapper, backcover);
+
+            const slide = document.createElement('div');
+            slide.classList.add('slidecontent');
+
+            const title = document.createElement('h1');
+            title.textContent = row.c[1].v;
+            slide.appendChild(title);
+
+            const price = document.createElement('h3');
+            price.textContent = row.c[2].v;
+            slide.appendChild(price);
+
+            const comment = document.createElement('p');
+            comment.textContent = row.c[3].v;
+            slide.appendChild(comment);
+
+            const detail = document.createElement('pre');
+            detail.textContent = row.c[4]?.v;
+            slide.appendChild(detail);
+
+            links = row.c[5].v.split('\n')
+            links.forEach((url, idx)=>{
+                const link = document.createElement('a');
+                link.textContent = links.length>1?`구매링크 ${idx + 1}`:`구매링크`
+                link.setAttribute('href', url);
+                link.setAttribute('target', '_blank');
+                slide.appendChild(link);
+            })
+
+            const imgContainer = document.createElement('a');
+            const img = document.createElement('img');
+            imgContainer.setAttribute('href', links[0]);
+            imgContainer.setAttribute('target', '_blank');
+            img.src = row.c[6].v;
+            imgContainer.appendChild(img);
+            slide.appendChild(imgContainer);
+            
+            slideWrapper.appendChild(slide);
+
+            if (row.c[0].v) {
+                slide.classList.add('soldout')
+                const label = document.createElement('span')
+                label.classList.add('soldout-label')
+                label.textContent = "선물받음!!!!";
+                slideWrapper.appendChild(label)
             }
+        });
+
+        let currentSlide = 0;
+
+        updateSlidePosition(currentSlide);
+        updateIndicators(currentSlide);
+
+        window.changeSlide = function(n, goto=false) {
+            const slides = document.querySelectorAll('.slide');
+            currentSlide = goto?(n + slides.length) % slides.length:(currentSlide + n + slides.length) % slides.length;
+            updateSlidePosition(currentSlide);
+            updateIndicators(currentSlide);
+        };
+    }
+
+    // Function to create carousel indicators
+    function createIndicators(numSlides) {
+        const indicatorsContainer = document.getElementById('carousel-indicators');
+        for (let i = 0; i < numSlides+2; i++) {
+            const indicator = document.createElement('span');
+            indicator.classList.add('carousel-indicator');
+            indicator.setAttribute('data-slide', i);
+            indicator.onclick = function() {
+                changeSlide(i, true);
+            };
+            indicatorsContainer.appendChild(indicator);
         }
+    }
+    // Function to update the position of slides
+    function updateSlidePosition(currentSlide) {
+        const slides = document.querySelector('.slides');
+        slides.style.transform = `translateX(-${currentSlide * 100}%)`;
+    }
+    // Function to update active carousel indicator
+    function updateIndicators(currentSlide) {
+        const indicators = document.querySelectorAll('.carousel-indicator');
+        indicators.forEach((indicator, index) => {
+            if (index === currentSlide) {
+                indicator.classList.add('active');
+            } else {
+                indicator.classList.remove('active');
+            }
+        });
+    }
+    // Call the initializeSlideshow function when the page loads
+    window.onload = initializeSlideshow;
+</script>
 
-        // Function to display data in a table
-        async function displayData() {
-            const dataTable = document.getElementById('data-table').getElementsByTagName('tbody')[0];
-            const data = await fetchData();
-            // Assuming the data is in CSV format
-            const rows = data.split('\n');
-            rows.forEach(row => {
-                const columns = row.split(',');
-                // Assuming the first column contains text data and the second column contains image URLs
-                if (columns.length >= 2) {
-                    const text = columns[0];
-                    const imageUrl = columns[1];
-
-                    const rowElement = document.createElement('tr');
-                    const textCell = document.createElement('td');
-                    const imageCell = document.createElement('td');
-
-                    textCell.textContent = text;
-                    if (imageUrl) {
-                        const image = document.createElement('img');
-                        image.src = imageUrl.trim();
-                        imageCell.appendChild(image);
-                    }
-
-                    rowElement.appendChild(textCell);
-                    rowElement.appendChild(imageCell);
-                    dataTable.appendChild(rowElement);
-                }
-            });
-        }
-
-        // Call the displayData function when the page loads
-        window.onload = displayData;
-    </script>
 </body>
 </html>
