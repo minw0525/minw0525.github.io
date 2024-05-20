@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Spreadsheet Data Fetcher</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        img {
+            max-width: 100px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Data from Google Spreadsheet</h1>
+    <table id="data-table">
+        <thead>
+            <tr>
+                <th>Text</th>
+                <th>Image</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        // URL of the published Google spreadsheet in CSV format
+        const spreadsheetUrl = 'https://docs.google.com/spreadsheets/d/1BOkXQG2GuNjcWtjPYjGs2u6WRIEKAgYuZcIOaCr8TWs/pub?output=csv';
+
+        // Function to fetch data from the spreadsheet
+        async function fetchData() {
+            try {
+                const response = await fetch(spreadsheetUrl);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+                const data = await response.text();
+                return data;
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        // Function to display data in a table
+        async function displayData() {
+            const dataTable = document.getElementById('data-table').getElementsByTagName('tbody')[0];
+            const data = await fetchData();
+            // Assuming the data is in CSV format
+            const rows = data.split('\n');
+            rows.forEach(row => {
+                const columns = row.split(',');
+                // Assuming the first column contains text data and the second column contains image URLs
+                if (columns.length >= 2) {
+                    const text = columns[0];
+                    const imageUrl = columns[1];
+
+                    const rowElement = document.createElement('tr');
+                    const textCell = document.createElement('td');
+                    const imageCell = document.createElement('td');
+
+                    textCell.textContent = text;
+                    if (imageUrl) {
+                        const image = document.createElement('img');
+                        image.src = imageUrl.trim();
+                        imageCell.appendChild(image);
+                    }
+
+                    rowElement.appendChild(textCell);
+                    rowElement.appendChild(imageCell);
+                    dataTable.appendChild(rowElement);
+                }
+            });
+        }
+
+        // Call the displayData function when the page loads
+        window.onload = displayData;
+    </script>
+</body>
+</html>
