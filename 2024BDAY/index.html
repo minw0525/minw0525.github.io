@@ -5,124 +5,241 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2024BDAY</title>
     <style>
+        @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css");
+        :root {
+            --soldout-bg-position: 0px 0px;
+            --soldout-bg-transform: 0px 0px;
+        }
         *{
+            font-family: Pretendard Variable, sans-serif;
             font-size:20px;
             margin:0;
+            word-break: keep-all;
+            text-wrap: wrap;
+            text-wrap: balance;
         }
         html{
             height: 100%;
         }
         body {
-            font-family: Arial, sans-serif;
             background:black;
             color: white;
             height: 100%;
         }
         h1{
             font-size: 3rem;
+            font-weight: 800;
         }
         h3{
-            font-size: 1.8rem;
+            font-size: 2rem;
+        }
+        del{
+            font-size: inherit;
+            color: #888;
+        }
+        a{
+            color: pink;
+        }
+        a:visited{
+            color: #c35e6f;
+        }
+        #frontcover, #backcover{
+            position: relative;
+        }
+        #frontcover::after, #backcover::after {
+            content: '';
+            position: absolute;
+            height: 100vh;
+            background: linear-gradient(180deg, black, transparent);
+            z-index: 2;
+            inset: 0;
+            opacity: 0.8;
+        }
+        #frontcover .slidecontent, #backcover .slidecontent{
+            justify-content: flex-start;
+            align-items: center;
+        }
+        #frontcover h1, #backcover h1{
+            z-index: 3;
+            width: fit-content;
+            padding: 0 50px;
+            display:block;
+            margin: 15vw auto;
+            font-size: 8rem;
+            text-align: center;
+            background-image: url(https://img.freepik.com/free-photo/_40163-61.jpg?size=626&ext=jpg);  
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 300%;
+            color: black;   
+        }
+        @keyframes fluid {
+            from {
+                background-position: top;
+            }
+
+            to {
+                background-position: bottom;
+            }
+        }
+        #frontcover img,  #backcover img{
+            position: absolute;
+            width:100%;
+            max-height: unset;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        #frontcover .slidecontent>*, #backcover .slidecontent>*{
+            flex: unset;
+            top: 0;
+            transform: none;
         }
         .slideshow-container {
-            max-width: 90vw;
+            max-width: 100%;
             position: relative;
             overflow: hidden;
-            margin: auto;
+            margin: auto 0;
             text-align: center;
             height: 100%;
             display: flex;
             flex-direction: column;
         }
         .slides {
-            flex: 9 1 0;
+            flex: 9 1 93%;
             display: flex;
             width: 100%;
+            height: 90%;
             transition: transform 0.5s ease;
-            margin: 30px;
         }
         .slide {
+            box-sizing: border-box;
             flex: 0 0 auto;
             width: 100%;
             display: flex;
             flex-direction: column;
             justify-content: stretch;
             align-items: center;
+            padding: 0 70px;
         }
         .slidecontent{
             width: 100%;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            height: 100%;
+            margin: 50px 30px;
+            padding: 0 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            justify-content: space-between;
             text-align: left;
         }
         .slidecontent>:nth-child(1){
-            grid-column-start: 1;
-	        grid-column-end: 2;
-            grid-row: 1;
+            flex: 1 1 0;
         }
         .slidecontent>:nth-child(2){
-            grid-column: 1;
-            grid-row: 2;
+            flex: 2 1 0;
         }
-        .slidecontent>:nth-child(3){
-            grid-column: 1;
-            grid-row: 2;
+        .contents{
+            display: flex;
+            justify-content: space-between;
+            flex: 10 1 0;
         }
-        .slidecontent>:nth-child(4){
-            grid-column: 1;
-            grid-row: 2;
+        .infos{
+            display:flex;
+            flex-direction: column;
+            flex: 4 1 0;
+            gap: 10px;
         }
-        .slidecontent>:nth-child(5){
-            grid-column: 1;
-            grid-row: 2;
+        .infos div{
+            display: flex;
+            flex-direction: column;
         }
-        .slidecontent>:nth-child(6){
-            grid-column: 2;
-            grid-row: 2;
+        .infos *{
+            font-size: 1.5rem;
+            line-height: 2.1rem;
         }
-        .slidecontent img {
+        .imgcontainer{
+            display: flex;
+            justify-content: center;
+            margin: 0 50px;
+        }
+        a img {
             max-width: 100%;
+            width: auto;
+            min-width: 100px;
+            max-height: 100%;
             height: auto;
+            min-height: 100px;
+            position: relative;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+
         }
         .prev, .next {
             cursor: pointer;
             position: absolute;
             top: 50%;
-            width: auto;
+            width: 20px;
+            height:20px;
+            text-align: center;
             padding: 30px;
-            margin-top: -25px;
+            margin: -25px 10px 0 10px;
             color: white;
             font-weight: bold;
             font-size: 25px;
             transition: 0.6s ease;
-            border-radius: 0 3px 3px 0;
+            border-radius: 40px;
             user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .next {
             right: 0;
-            border-radius: 3px 0 0 3px;
         }
-        .prev:hover, .next:hover {
-            background-color: rgba(0,0,0,0.8);
+        @media (hover: hover) { /* when supported */
+            .prev:hover, .next:hover {
+                background-color: rgba(0,0,0,0.8);
+            }
         }
         .soldout{
             filter: blur(2px) grayscale(70%);
+            z-index: 0;
             pointer-events: none;
         }
         .soldout-label{
             font-size: 150px;
             font-weight: 900;
             position:absolute;
-            transform: rotateZ(-25deg);
-            opacity: 1;
-            width: 100%;
+            top: 50%;
+            transform: translateY(-50%) rotateZ(-25deg);
+            width: 80%;
             color:red;
+            background:lightgray;
+            outline:10px solid red;
+            box-sizing: border-box;
+            transform: var(--soldout-bg-transform);
+        }
+        .soldout-label::before{
+            content: '';
+            position: absolute;
+            z-index: 3;
+            display: block;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            background-image: url(https://img.freepik.com/free-photo/_40163-61.jpg?size=626&ext=jpg);
+            background-size: 200%;
+            background-position: var(--soldout-bg-position);
+            filter: brightness(1.2) hue-rotate(45deg) blur(1px);
+            mix-blend-mode: multiply;
+
         }
         .carousel-indicators {
-            flex: 1 1 0;
+            flex: 1 1 7%;
             display: flex;
             justify-content: center;
-            margin-top: 10px;
+            margin-top: 20px;
         }
 
         .carousel-indicator {
@@ -140,32 +257,132 @@
             transform: scale(1.3);
             background-color: #555;
         }
+        @media (orientation: portrait) {
+            #frontcover, #backcover{
+                overflow: unset;
+            }
+            #frontcover img,  #backcover img{
+                height: 100vh;
+                object-fit: cover;
+            }
+            #backcover img{
+                object-position: calc(32% + 10vw);
+            }
+            #frontcover h1, #backcover h1{
+                position: absolute;
+                padding: 0 50px;
+                font-size: 20vw;
+                text-align: center;
+                color: black;     
+                animation: fluid 10s linear 0s infinite normal;      
+            }
+            .slides{
+                flex: 15 1 93%;
+            }
+            .slide{
+                padding: 0 30px;
+                justify-content: flex-start;
+                overflow-x: hidden;
+                overflow-y: auto; /* Add this line */
+
+            }
+            .slidecontent{
+                margin: 50px 30px 30px 30px;
+                gap: 20px;
+                height: auto;
+                min-height: calc(100% - 80px);
+            }
+            .slidecontent>:nth-child(1) {
+                /* flex: 1 1 0; */
+                flex: unset;
+            }
+
+            h1{
+                font-size: 7.5vw;
+            }
+            h3{
+                font-size: 6vw;
+            }
+            a{
+                text-align: center;
+            }
+            .infos{
+                flex: 2 1 0;
+                justify-content: space-between;
+                width: 100%;
+            }
+            .infos *{
+                font-size: 5vw;
+                line-height: 7vw;
+            }
+            .imgcontainer{
+                flex: 1 1 0;
+            }
+            .infos img{
+                width: 100%;
+            }
+            .contents{
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+                flex: unset;
+                height: auto;
+                min-height: 70%;
+            }
+            .soldout-label::before{
+                background-size: 800%;
+            }
+            .soldout-label{
+                top:0;
+                font-size: 4.5rem;
+                letter-spacing: -0.7rem;
+                width:auto;
+                transform: translateY(-5%) rotateZ(15deg);
+                text-orientation: upright;
+                writing-mode: vertical-rl;
+                background: lightblue;
+                padding: 30px 0px;
+            }
+        }
     </style>
 </head>
 <body>
 <div class="slideshow-container" id="slideshow-container">
     <div class="slides">
-        <div class="slide" id="backcover">뒷표지</div>
-        <div class="slide">표지</div>
+        <div class="slide" id="frontcover">
+            <div class="slidecontent">
+                <h1 id="frontTitle">2024​0525 생일선물을 줘</h1>
+            </div>
+        </div>
+        <div class="slide" id="backcover">
+            <div class="slidecontent">
+                <h1 id="backTitle">E.O.D<br>감사합니다.</h1>
+            </div>
+        </div>
     </div>
     <div class="carousel-indicators" id="carousel-indicators"></div>
 </div>
-<a class="prev" onclick="changeSlide(-1)">&#10094;</a>
-<a class="next" onclick="changeSlide(1)">&#10095;</a>
+<a class="prev" onclick="changeSlide(-1)">&#10094;&nbsp;</a>
+<a class="next" onclick="changeSlide(1)">&nbsp;&#10095;</a>
 
 <script>
     // Replace with your Google Spreadsheet ID
     const sheetID = '1BOkXQG2GuNjcWtjPYjGs2u6WRIEKAgYuZcIOaCr8TWs';
-    const queryUrl = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?`;
-
+    const queryUrl_1 = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=1`;
+    const queryUrl_2 = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?gid=1036649811`;
     // Function to fetch data from the spreadsheet
     async function fetchData() {
         try {
-            const response = await fetch(queryUrl);
+            const response = await fetch(queryUrl_1);
             const text = await response.text();
             const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\((.*)\)/)[1]);
             console.log(json.table);
-            return json.table;
+
+            const response2 = await fetch(queryUrl_2);
+            const text2 = await response2.text();
+            const json2 = JSON.parse(text2.match(/google\.visualization\.Query\.setResponse\((.*)\)/)[1]);
+            console.log(json2.table);
+            return [json.table, json2.table];
         } catch (error) {
             console.error('Error fetching data:', error);
         }
@@ -176,13 +393,25 @@
         const container = document.getElementById('slideshow-container');
         const data = await fetchData();
 
-        createIndicators(data.rows.length);
+        const contentData = data[0]
+        const coverData = data[1]
+
+        createIndicators(contentData.rows.length);
 
         const slidesWrapper = document.getElementsByClassName('slides')[0];
+        const frontcover = document.getElementById('frontcover');
         const backcover = document.getElementById('backcover');
 
+        frontcoverImg = document.createElement('img');
+        frontcoverImg.src = coverData.rows[0].c[1]?.v;
+        frontcover.children[0].appendChild(frontcoverImg);
         
-        data.rows.forEach((row, index) => {
+        backcoverImg = document.createElement('img');
+        backcoverImg.src = coverData.rows[1].c[1]?.v;
+        backcover.children[0].appendChild(backcoverImg);
+
+        contentData.rows.forEach((row, index) => {
+            console.log(row)
             const slideWrapper = document.createElement('div');
             slideWrapper.classList.add('slide');
             // slidesWrapper.appendChild(slideWrapper);
@@ -192,41 +421,54 @@
             slide.classList.add('slidecontent');
 
             const title = document.createElement('h1');
-            title.textContent = row.c[1].v;
+            title.textContent = row.c[1]?.v;
             slide.appendChild(title);
 
-            const price = document.createElement('h3');
-            price.textContent = row.c[2].v;
-            slide.appendChild(price);
+            const name = document.createElement('h3');
+            name.innerHTML = `${row.c[2]?.v} : ${row.c[3]?.v}`;
+            slide.appendChild(name);
 
-            const comment = document.createElement('p');
-            comment.textContent = row.c[3].v;
-            slide.appendChild(comment);
+            const contents = document.createElement('div');
+            contents.classList.add('contents');
+            slide.appendChild(contents);
+
+            const infos = document.createElement('div');
+            infos.classList.add('infos');
+            contents.appendChild(infos);
 
             const detail = document.createElement('pre');
-            detail.textContent = row.c[4]?.v;
-            slide.appendChild(detail);
+            if (row.c[4]?.v.match('http')) {
+                const img = document.createElement('img');
+                img.src = row.c[4]?.v;
+                detail.appendChild(img)
+            }else{
+                detail.textContent = row.c[4]?.v;
+            }
+            infos.appendChild(detail);
 
-            links = row.c[5].v.split('\n')
+            links = row.c[5]?.v.split('\n')
+            const linkwrapper = document.createElement('div');
             links.forEach((url, idx)=>{
                 const link = document.createElement('a');
                 link.textContent = links.length>1?`구매링크 ${idx + 1}`:`구매링크`
                 link.setAttribute('href', url);
                 link.setAttribute('target', '_blank');
-                slide.appendChild(link);
+                linkwrapper.appendChild(link);
             })
+            infos.appendChild(linkwrapper);
 
             const imgContainer = document.createElement('a');
             const img = document.createElement('img');
             imgContainer.setAttribute('href', links[0]);
             imgContainer.setAttribute('target', '_blank');
-            img.src = row.c[6].v;
+            imgContainer.classList.add('imgcontainer');
+            img.src = row.c[6]?.v;
             imgContainer.appendChild(img);
-            slide.appendChild(imgContainer);
+            contents.appendChild(imgContainer);
             
             slideWrapper.appendChild(slide);
 
-            if (row.c[0].v) {
+            if (row.c[0]?.v) {
                 slide.classList.add('soldout')
                 const label = document.createElement('span')
                 label.classList.add('soldout-label')
@@ -277,8 +519,78 @@
             }
         });
     }
+    // Variables to store touch start coordinates
+    let touchStartX = 0;
+    let touchEndX = 0;
+    let touchStartY = 0;
+    let touchCurrentY = 0;
+
+    // Function to handle touch start event
+    function handleTouchStart(e) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+    }
+    // Function to handle touch move event
+    function handleTouchMove(event) {
+        const container = event.currentTarget;
+        const isAtTop = container.scrollTop === 0;
+        const isAtBottom = container.scrollHeight - container.clientHeight <= container.scrollTop;
+
+        touchCurrentY = event.changedTouches[0].clientY;
+
+        const deltaY = touchStartY - touchCurrentY;
+
+        if  (isAtBottom && deltaY > 0) {
+            alert(isAtBottom , deltaY )
+        }
+        // If trying to scroll up when already at the top or trying to scroll down when already at the bottom
+        if ((isAtTop && deltaY < 0) || (isAtBottom && deltaY > 0)) {
+            event.preventDefault(); // Prevent default touch behavior (scrolling)
+        }
+    }
+    // Function to handle touch end event
+    function handleTouchEnd(e) {
+        touchEndX = e.changedTouches[0].clientX;
+        handleSwipe();
+    }
+
+    // Function to handle swipe gesture
+    function handleSwipe() {
+        const deltaX = touchEndX - touchStartX;
+        if (deltaX > 150) {
+            // Swipe right, move to previous slide
+            changeSlide(-1);
+        } else if (deltaX < -150) {
+            // Swipe left, move to next slide
+            changeSlide(1);
+        }
+    }
+
+    // Add touch event listeners to the slides container
+    const slidesContainer = document.getElementById('slideshow-container');
+    slidesContainer.addEventListener('touchstart', handleTouchStart, false);
+    slidesContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
+    slidesContainer.addEventListener('touchend', handleTouchEnd, false);
+
     // Call the initializeSlideshow function when the page loads
     window.onload = initializeSlideshow;
+
+    document.addEventListener('mousemove', (e)=>{
+        x = e.clientX
+        y = e.clientY
+        const frontTitle = document.getElementById('frontTitle')
+        const backTitle = document.getElementById('backTitle')
+
+        rotateX = 3 / 70 * y - 30
+        rotateY = 1 / -70 * x + 15
+        frontTitle.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg`
+        frontTitle.style.backgroundPosition = `calc(50% - ${x/5}px) calc(50% - ${y/3+360}px`
+        backTitle.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg`
+        backTitle.style.backgroundPosition = `calc(50% - ${x/5}px) calc(50% - ${y/3+360}px`
+        document.documentElement.style.setProperty('--soldout-bg-transform', `translateY(-50%) perspective(1000px) rotateZ(-25deg) rotateX(${rotateX/2}deg) rotateY(${rotateY/2}deg`);
+        document.documentElement.style.setProperty('--soldout-bg-position', `calc(50% - ${x/5}px) calc(50% - ${y/3+360}px`);
+
+    })
 </script>
 
 </body>
