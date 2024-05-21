@@ -70,7 +70,7 @@
             background-image: url(https://img.freepik.com/free-photo/_40163-61.jpg?size=626&ext=jpg);  
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-size: 300%;
+            background-size: 200%;
             color: black;   
         }
         @keyframes fluid {
@@ -532,7 +532,7 @@
     }
     // Function to handle touch move event
     function handleTouchMove(event) {
-        const container = event.currentTarget;
+        const container = event.target.closest('div.slide')
         const isAtTop = container.scrollTop === 0;
         const isAtBottom = container.scrollHeight - container.clientHeight <= container.scrollTop;
 
@@ -540,9 +540,7 @@
 
         const deltaY = touchStartY - touchCurrentY;
 
-        if  (isAtBottom && deltaY > 0) {
-            alert(isAtBottom , deltaY )
-        }
+
         // If trying to scroll up when already at the top or trying to scroll down when already at the bottom
         if ((isAtTop && deltaY < 0) || (isAtBottom && deltaY > 0)) {
             event.preventDefault(); // Prevent default touch behavior (scrolling)
@@ -575,22 +573,25 @@
     // Call the initializeSlideshow function when the page loads
     window.onload = initializeSlideshow;
 
-    document.addEventListener('mousemove', (e)=>{
-        x = e.clientX
-        y = e.clientY
-        const frontTitle = document.getElementById('frontTitle')
-        const backTitle = document.getElementById('backTitle')
+    if (window.matchMedia('(hover: hover), (any-hover: hover), (-moz-touch-enabled: 0)').matches) {
+        document.addEventListener('mousemove', (e)=>{
+            x = e.clientX
+            y = e.clientY
+            const frontTitle = document.getElementById('frontTitle')
+            const backTitle = document.getElementById('backTitle')
 
-        rotateX = 3 / 70 * y - 30
-        rotateY = 1 / -70 * x + 15
-        frontTitle.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg`
-        frontTitle.style.backgroundPosition = `calc(50% - ${x/5}px) calc(50% - ${y/3+360}px`
-        backTitle.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg`
-        backTitle.style.backgroundPosition = `calc(50% - ${x/5}px) calc(50% - ${y/3+360}px`
-        document.documentElement.style.setProperty('--soldout-bg-transform', `translateY(-50%) perspective(1000px) rotateZ(-25deg) rotateX(${rotateX/2}deg) rotateY(${rotateY/2}deg`);
-        document.documentElement.style.setProperty('--soldout-bg-position', `calc(50% - ${x/5}px) calc(50% - ${y/3+360}px`);
+            rotateX = 3 / 70 * y - 30
+            rotateY = 1 / -70 * x + 15
+            frontTitle.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg`
+            frontTitle.style.backgroundPosition = `calc(50% - ${x/5}px) calc(50% - ${y/3+360}px`
+            backTitle.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg`
+            backTitle.style.backgroundPosition = `calc(50% - ${x/5}px) calc(50% - ${y/3+360}px`
+            document.documentElement.style.setProperty('--soldout-bg-transform', `translateY(-50%) perspective(1000px) rotateZ(-25deg) rotateX(${rotateX/2}deg) rotateY(${rotateY/2}deg`);
+            document.documentElement.style.setProperty('--soldout-bg-position', `calc(50% - ${x/5}px) calc(50% - ${y/3+360}px`);
 
-    })
+        });
+    }
+
 </script>
 
 </body>
