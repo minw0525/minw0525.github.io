@@ -215,10 +215,16 @@
             filter: blur(2px) grayscale(100%);
             z-index: 0;
             pointer-events: none;
+            transition: all 0.3s ease;
         }
-        .soldout:has(~.soldout-label:hover){
-            filter: grayscale(0%);
+        @media (hover: hover) { /* when supported */
+            .soldout:has(~.soldout-label:hover){
+                filter: grayscale(0%);
+            }
         }
+        .soldout:has(~.soldout-label:active){
+                filter: grayscale(0%);
+            }
         .soldout-label{
             font-size: 150px;
             font-weight: 900;
