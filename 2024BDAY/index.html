@@ -87,10 +87,11 @@
         }
         #frontcover img,  #backcover img{
             position: absolute;
-            width:100%;
+            width: auto;
             max-height: unset;
             top: 50%;
             transform: translateY(-50%);
+            height: 100vh;
         }
         #frontcover .slidecontent>*, #backcover .slidecontent>*{
             flex: unset;
@@ -171,7 +172,7 @@
             flex: 2 1 0;
         }
         a img {
-            max-width: 100%;
+            /* max-width: 100%; */
             width: auto;
             min-width: 100px;
             max-height: 100%;
@@ -215,7 +216,11 @@
             z-index: 0;
             pointer-events: none;
         }
+        .soldout:has(~.soldout-label:hover){
+            filter: grayscale(100%);
+        }
         .soldout-label{
+            cursor: pointer;
             font-size: 150px;
             font-weight: 900;
             position:absolute;
@@ -227,6 +232,7 @@
             outline: 10px solid red;
             box-sizing: border-box;
             transform: var(--soldout-bg-transform);
+            transition: all 0.3s ease;
         }
         .soldout-label::before{
             content: '';
@@ -241,7 +247,6 @@
             background-position: var(--soldout-bg-position);
             filter: brightness(1.2) hue-rotate(45deg) blur(1px);
             mix-blend-mode: multiply;
-
         }
         .carousel-indicators {
             flex: 1 1 7%;
@@ -437,11 +442,11 @@
             slide.classList.add('slidecontent');
 
             const title = document.createElement('h1');
-            title.textContent = row.c[1]?.v;
+            title.textContent = row.c[2]?.v;
             slide.appendChild(title);
 
             const name = document.createElement('h3');
-            name.innerHTML = `${row.c[2]?.v} : ${row.c[3]?.v}`;
+            name.innerHTML = `${row.c[3]?.v} : ${row.c[4]?.v}`;
             slide.appendChild(name);
 
             const contents = document.createElement('div');
@@ -453,16 +458,16 @@
             contents.appendChild(infos);
 
             const detail = document.createElement('pre');
-            if (row.c[4]?.v.match('http')) {
+            if (row.c[5]?.v.match('http')) {
                 const img = document.createElement('img');
-                img.src = row.c[4]?.v;
+                img.src = row.c[5]?.v;
                 detail.appendChild(img)
             }else{
-                detail.textContent = row.c[4]?.v;
+                detail.textContent = row.c[5]?.v;
             }
             infos.appendChild(detail);
 
-            links = row.c[5]?.v.split('\n')
+            links = row.c[6]?.v.split('\n')
             const linkwrapper = document.createElement('div');
             links.forEach((url, idx)=>{
                 const link = document.createElement('a');
@@ -478,18 +483,37 @@
             imgContainer.setAttribute('href', links[0]);
             imgContainer.setAttribute('target', '_blank');
             imgContainer.classList.add('imgcontainer');
-            img.src = row.c[6]?.v;
+            img.src = row.c[7]?.v;
             imgContainer.appendChild(img);
             contents.appendChild(imgContainer);
             
             slideWrapper.appendChild(slide);
 
             if (row.c[0]?.v) {
+                slide.classList.add('reserved')
+                const label = document.createElement('span')
+                label.classList.add('reserved-label')
+                label.textContent = "예약";
+                slideWrapper.appendChild(label)
+            }
+            if (row.c[1]?.v) {
                 slide.classList.add('soldout')
                 const label = document.createElement('span')
                 label.classList.add('soldout-label')
                 label.textContent = "선물받음!!!!";
                 slideWrapper.appendChild(label)
+                label.addEventListener('mouseenter', () => {
+                    label.style.opacity = 0;
+                });
+                label.addEventListener('mouseleave', () => {
+                    label.style.opacity = 1;
+                });
+                label.addEventListener('touchstart', () => {
+                    label.style.opacity = 0;
+                });
+                label.addEventListener('touchend', () => {
+                    label.style.opacity = 1;
+                });
             }
         });
 
@@ -607,7 +631,6 @@
 
         });
     }
-
 </script>
 
 </body>
