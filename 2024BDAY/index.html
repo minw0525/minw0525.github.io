@@ -212,12 +212,12 @@
             }
         }
         .soldout{
-            filter: blur(2px) grayscale(70%);
+            filter: blur(2px) grayscale(100%);
             z-index: 0;
             pointer-events: none;
         }
         .soldout:has(~.soldout-label:hover){
-            filter: grayscale(100%);
+            filter: grayscale(0%);
         }
         .soldout-label{
             cursor: pointer;
