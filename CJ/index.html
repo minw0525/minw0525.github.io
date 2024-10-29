@@ -4,845 +4,303 @@
     
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>CJ ONLYONE</title>
-    <link rel="stylesheet" type="text/css" href="./CJ ONLYONE_files/cj-font.css">
+    <link rel="stylesheet" type="text/css" href="./style.css">
+    <link href="./CJ ONLYONE_files/multilingual.css" rel="stylesheet" />
     <script src="./CJ ONLYONE_files/jquery-1.12.4.min.js"></script>
+    <script src="./CJ ONLYONE_files/jquery.multilingual.min.js"></script>
     <style>
-        * {
-            touch-action: manipulation;
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');
+        @font-face {
+            font-family: 'CJ';
+            src: url("./CJ ONLYONE_files/CJ_ONLYONE_3-VF.woff2") format('woff2-variations');
+            font-style: normal;
         }
-
-        .searchbar{
-            border-bottom:2px black solid;
-            padding:15px 0;
+        #preview *{
+            font-family: CJ;
         }
-        .searchbar span{
-            font-size:30px;
-            font-weight:bold;
-        }
-
-        select {
-            max-width: 297px;
-            width: calc(100% - 100px);
-            height:27px;
-            position:relative;
-            top:-5px;
-            left:5px;
-        }
-
-        button{
-            width:60px;
-            height:33px;
-            border:1px #b6b6b6 solid;
-            background-color:white;
-            border-radius:16px;
-            font-size:15px;
-            cursor:pointer;
-        }
-
-        button[disabled]:hover {
-            border: 1px #b6b6b6 solid;
-            cursor:unset;
-        }
-
-        button:hover{
-            border:1px black solid;
-        }
-
-        .fontweight span, .fontsize span{
-            font-size:15px;
-            width:70px;
-            display:inline-block;
-            font-weight:bold;
-        }
-
-        p {
-            margin: 0;
-        }
-
-        .vfcontrol{
-            margin-top:10px;
-        }
-
-        .fontweight, .fontsize{
-            margin-bottom:5px;
-        }
-
-        .titletext{
-            min-height: 280px;
-            font-family: CJO_R_T;
-            font-size:26px;
-            margin:20px 0;
-            font-variation-settings: 'wght' 700;
-        }
-
-        .titletext p{
-            overflow-wrap:break-word;
-        }
-
-        .bodytext{
-            font-family: CJO_R_B;
-            font-size:12px;
-            margin:20px 0;
-            font-variation-settings: 'wght' 400;
-        }
-
-
-
-/*----------------------------------*/
-/*------이하 임의로 추가한 코드입니다------*/
-/*----------------------------------*/
-
-        #cjtitle{
-            min-height:50vh;
-        }
-        #cjbody{
-            min-height:50vh;
-        }
-        .cjcompare{
-            padding-top: 30px;
-        }
-        .cjcompareItem{
-            padding: 0 0 15px 0;
-        }
-        .itemheader{            
-            display: flex;
-            align-items: center;
-            gap: 30px;
-            overflow:hidden;
-            transition: all .3s ease-in-out;
-            height: 0;
-            margin: 0;
-        }
-        .itemheader select{
-            flex: 1 1 0;
-            max-width: unset;
-            top:0;
-            left:0;
-            margin: auto;
-        }
-        .itemheader .previous{
-            display: flex;
-            gap: 5px;
-        }
-        .previous button{
-            min-width: fit-content;
-            width: -webkit-fill-available;
-            max-width: 100px;
-            padding: 0 10px;
-        }
-        .btnClicked{
-            background-color: black;
-            color:white;
-        }
-        .itemheader .selectwrapper{
-            flex: 2 1 0;
-            gap: 15px;
-            width: 100%;
-            display: flex;
-            flex-direction: row;
-        }
-
-        .itemheader .selectwrapper div{
-            min-width:50%;
-        }
-        .itemheader .inputWrapper{
-            flex: 1 1 0;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 5px;
-            width: 100%;
-            margin: 0;
-        }
-        .itemheader .inputWrapper>:nth-child(1){
-            flex: 1 1 0;
-            min-width:80px;
-        }
-        .itemheader .inputWrapper>:nth-child(2){
-            flex: 1 1 0;
-        }
-        .itemheader .inputWrapper>:nth-child(3){
-            flex: 3 1 0;
-            min-width: 150px;
-        }
-        .inputWrapper div:has(>input[type="number"]){
-            position: relative;
-        }
-        .compfontsize div:has(>input[type="number"])::after{
-            content:'px';
-            position: absolute;
-            right:0.5em;
-            top:0;
-            transition: all .05s ease-in-out;
-        }
-        .compfontsize div:has(>input[type="number"]):hover::after,
-        .compfontsize div:has(>input[type="number"]):focus-within::after {
-            right:1em;
-        }
-        input[type="number"]{
-            min-width: 50px;
-            width: 100%;
-            border: none;
-            border-radius: 0;
-            border-bottom: 1px solid black;
-        }
-        .comptext{
-            white-space: normal;
-            padding: 0 0 20px 0;
-            border-bottom: 1px solid black;
-            overflow-wrap: break-word;
-            text-wrap: balance;
-        }
-        .textClicked{
-
-            margin-bottom: 30px;
-            height: 35px;
-        }
-        #scrollbtn{
-            position: fixed;
-            width: 60px;
-            height: 60px;
-            bottom: 20px;
-            right: 20px;
-            padding:0 20px;
-            border-radius: 30px;
-            border: 2px solid black;
-        }
-
-        #scrollbtn hr{
-            position: absolute;
-            height: 2px;
-            background-color: black;
-            margin: auto;
-            width: 16px;
-            text-align: center;
-            border: none;
-        }
-        #scrollbtn hr:nth-child(1){
-            transform: translateX(-5px) translateY(0px) rotateZ(45deg);
-        }
-        #scrollbtn hr:nth-child(2){
-            transform: translateX(5px) translateY(0px) rotateZ(-45deg);
-        }
-        .rotated{
-            transform: translateY(-2px) rotateZ(180deg);
-        }
-
-        @media (max-width: 800px) {
-            .itemheader{
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-                height: 0;
-            }
-            .itemheader select{
-                width: 50%;
-            }
-            .itemheader .selectwrapper{
-                width: 100%;
-            }
-            .itemheader .inputWrapper{
-                width: 100%;
-                justify-content: flex-start;
-                gap: 10px;
-            }
-            .itemheader .inputWrapper>:nth-child(1){
-                flex: 1 1 0;
-            }
-            .itemheader .inputWrapper>:nth-child(2){
-                flex: 1 1 0;
-            }
-            .itemheader .inputWrapper>:nth-child(3){
-                flex: 2 1 0;
-            }
-            input[type="number"]{
-                width: 100%;
-            }
-            .compfontsize div:has(>input[type="number"]):hover::after,
-            .compfontsize div:has(>input[type="number"]):focus-within::after {
-                right:0.5em;
-            }
-            .textClicked{
-                height: 100px;
-            }
-        }
-/*----------------------------------*/
-/*------이상 임의로 추가한 코드입니다------*/
-/*----------------------------------*/
-
-
     </style>
+
 </head>
-<body data-new-gr-c-s-check-loaded="14.1172.0" data-gr-ext-installed="">
-    <div id="cjtitle">
-        <div class="searchbar">
-            <span>제목용</span>
-            <select id="title_select">
-                <option value="500">Medium</option>
-                <option value="700" selected="">Bold</option>
-                <option value="800">ExtraBold</option>
-                <option value="900">Heavy</option>
-                <option value="1000">Black</option>
-                <option value="1" hidden="">Medium~Bold</option>
-                <option value="2" hidden="">Bold~ExtraBold</option>
-                <option value="3" hidden="">ExtraBold~Heavy</option>
-                <option value="4" hidden="">Heavy~Black</option>
-            </select>
-        </div>
-        <div class="vfcontrol">
-            <div class="fontweight">
-                <span>Weight</span>
-                <span id="titleweight">700</span>
-                <button type="button" onclick="ChangeTW(-100)">-100</button>
-                <button type="button" onclick="ChangeTW(-10)">-10</button>
-                <button type="button" onclick="ChangeTW(10)">+10</button>
-                <button type="button" onclick="ChangeTW(100)">+100</button>
+<body>
+    <div class="main flex">
+        <div id="controls">
+            <div class="toolBox">
+                <h1 class="toolBoxName">CJ ONLYONE 추가 개발 제안 시안</h1>
+                <select name="weightSelect" id="weightSelect">
+                    <option value="300">Light</option>
+                    <option value="400">Regular</option>
+                    <option value="500">Medium</option>
+                    <option value="600">SemiBold</option>
+                    <option value="700">Bold</option>
+                    <option value="800">ExtraBold</option>
+                </select>
             </div>
-            <div class="fontsize">
-                <span>글자 크기</span>
-                <span id="titlesize">26 px</span>
-                <button type="button" onclick="ChangeTS(-10)">-10</button>
-                <button type="button" onclick="ChangeTS(-1)">-1</button>
-                <button type="button" onclick="ChangeTS(1)">+1</button>
-                <button type="button" onclick="ChangeTS(10)">+10</button>
-            </div>
-        </div>
-        <div class="titletext">
-            <p>
-                사랑받는 Global Lifestyle 기업 CJ <br>
-                당신의 2024&nbsp;더 나은 일상을, <br>
-                New&nbsp;Future,&nbsp;Talent, Value
-            </p>
-        </div>
-    </div>
-    <div id="cjbody">
-        <div class="searchbar">
-            <span>본문용</span>
-            <select id="body_select">
-                <option value="select" hidden="">선택</option>
-                <option value="200">ExtraLight</option>
-                <option value="300">Light</option>
-                <option value="400" selected="">Regular</option>
-                <option value="500">Medium</option>
-                <option value="600">SemiBold</option>
-                <option value="700">Bold</option>
-                <option value="800">ExtraBold</option>
-                <option value="900">Heavy</option>
-                <option value="1000">Black</option>
-            </select>
-        </div>
-        <div class="vfcontrol">
-            <div class="fontweight">
-                <span>Weight</span>
-                <span id="bodyweight">400</span>
-                <button type="button" onclick="ChangeBW(-100)">-100</button>
-                <button type="button" onclick="ChangeBW(-10)">-10</button>
-                <button type="button" onclick="ChangeBW(10)">+10</button>
-                <button type="button" onclick="ChangeBW(100)">+100</button>
-            </div>
-            <div class="fontsize">
-                <span>글자 크기</span>
-                <span id="bodysize">12 px</span>
-                <button type="button" onclick="ChangeBS(-10)">-10</button>
-                <button type="button" onclick="ChangeBS(-1)">-1</button>
-                <button type="button" onclick="ChangeBS(1)">+1</button>
-                <button type="button" onclick="ChangeBS(10)">+10</button>
-            </div>
-        </div>
-        <div class="bodytext">
-            <p>
-                사랑받는 Global Lifestyle 기업 CJ <br>
-                당신의 2024&nbsp;더 나은 일상을, <br>
-                New&nbsp;Future,&nbsp;Talent, Value <br><br>
-                사랑받는 Global Lifestyle 기업 CJ 당신의 2024&nbsp;더 나은 일상을, New&nbsp;Future,&nbsp;Talent, Value 사랑받는 Global Lifestyle 기업 CJ 당신의 2024&nbsp;더 나은 일상을, 
-                New&nbsp;Future,&nbsp;Talent, Value 사랑받는 Global Lifestyle 기업 CJ 당신의 2024&nbsp;더 나은 일상을, New&nbsp;Future,&nbsp;Talent, Value 사랑받는 Global Lifestyle 기업 CJ 
-                당신의 2024&nbsp;더 나은 일상을, New&nbsp;Future,&nbsp;Talent, Value 사랑받는 Global Lifestyle 기업 CJ 당신의 2024&nbsp;더 나은 일상을, New&nbsp;Future,&nbsp;Talent, Value 사랑받는 
-                Global Lifestyle 기업 CJ 당신의 2024&nbsp;더 나은 일상을, New&nbsp;Future,&nbsp;Talent, Value 사랑받는 Global Lifestyle 기업 CJ 당신의 2024&nbsp;더 나은 일상을, New&nbsp;Future,&nbsp;
-                Talent, Value 사랑받는 Global Lifestyle 기업 CJ 당신의 2024&nbsp;더 나은 일상을, New&nbsp;Future,&nbsp;Talent, Value 사랑받는 Global Lifestyle 기업 CJ 당신의 2024&nbsp;더 
-                나은 일상을, New&nbsp;Future,&nbsp;Talent, Value 사랑받는 Global Lifestyle 기업 CJ 당신의 2024&nbsp;더 나은 일상을, New&nbsp;Future,&nbsp;Talent, Value 사랑받는 Global Lifestyle 
-                기업 CJ 당신의 2024&nbsp;더 나은 일상을, New&nbsp;Future,&nbsp;Talent, Value 사랑받는 Global Lifestyle 기업 CJ 당신의 2024&nbsp;더 나은 일상을, New&nbsp;Future,&nbsp;Talent, Value 
-                사랑받는 Global Lifestyle 기업 CJ 당신의 2024&nbsp;더 나은 일상을, New&nbsp;Future,&nbsp;Talent, Value 사랑받는 Global Lifestyle 기업 CJ 당신의 2024&nbsp;더 나은 일상을, 
-                New&nbsp;Future,&nbsp;Talent, Value 사랑받는 Global Lifestyle 기업 CJ 당신의 2024&nbsp;더 나은 일상을, New&nbsp;Future,&nbsp;Talent, Value 사랑받는 Global Lifestyle 기업 CJ 
-                당신의 2024&nbsp;더 나은 일상을, New&nbsp;Future,&nbsp;Talent, Value 사랑받는 Global Lifestyle 기업 CJ 당신의 2024&nbsp;더 나은 일상을, New&nbsp;Future,&nbsp;Talent, Value 사랑받는 
-                Global Lifestyle 기업 CJ 당신의 2024&nbsp;더 나은 일상을, New&nbsp;Future,&nbsp;Talent, Value 사랑받는 Global Lifestyle 기업 CJ 당신의 2024&nbsp;더 나은 일상을, New&nbsp;Future,&nbsp;
-                Talent, Value 사랑받는 Global Lifestyle 기업 CJ 당신의 2024&nbsp;더 나은 일상을, New&nbsp;Future,&nbsp;Talent, Value 사랑받는 Global Lifestyle 기업 CJ 당신의 2024&nbsp;더 
-                나은 일상을, New&nbsp;Future,&nbsp;Talent, Value 사랑받는 Global Lifestyle 기업 CJ 당신의 2024&nbsp;더 나은 일상을, New&nbsp;Future,&nbsp;Talent, Value 사랑받는 Global Lifestyle 
-                기업 CJ 당신의 2024&nbsp;더 나은 일상을, New&nbsp;Future,&nbsp;Talent, Value 사랑받는 Global Lifestyle 기업 CJ 당신의 2024&nbsp;더 나은 일상을, New&nbsp;Future,&nbsp;Talent, Value 
-                사랑받는 Global Lifestyle 기업 CJ 당신의 2024&nbsp;더 나은 일상을, New&nbsp;Future,&nbsp;Talent, Value 사랑받는 Global Lifestyle 기업 CJ 당신의 2024&nbsp;더 나은 일상을, 
-                New&nbsp;Future,&nbsp;Talent, Value 사랑받는 Global Lifestyle 기업 CJ 당신의 2024&nbsp;더 나은 일상을, New&nbsp;Future,&nbsp;Talent, Value 사랑받는 Global Lifestyle 기업 CJ 당신의 
-                2024&nbsp;더 나은 일상을, New&nbsp;Future,&nbsp;Talent, Value 사랑받는 Global Lifestyle 기업 CJ 당신의 2024&nbsp;더 나은 일상을, New&nbsp;Future,&nbsp;Talent, Value 사랑받는 Global 
-                Lifestyle 기업 CJ 당신의 2024&nbsp;더 나은 일상을, New&nbsp;Future,&nbsp;Talent, Value 사랑받는 Global Lifestyle 기업 CJ 당신의 2024&nbsp;더 나은 일상을, New&nbsp;Future,&nbsp;Talent, 
-                Value 사랑받는 Global Lifestyle 기업 CJ 당신의 2024&nbsp;더 나은 일상을, New&nbsp;Future,&nbsp;Talent, Value 사랑받는 Global Lifestyle 기업 CJ 당신의 2024&nbsp;더 나은 일상을, 
-                New&nbsp;Future,&nbsp;Talent, Value 사랑받는 Global Lifestyle 기업 CJ 당신의 2024&nbsp;더 나은 일상을, New&nbsp;Future,&nbsp;Talent, Value
-            </p>
-        </div>
-    </div>
-
-
-    <!---------------------------->
-    <!-- 이하 임의로 추가한 코드입니다 -->
-    <!---------------------------->
-    <hr>
-    <template id="cjcomparetemplate">
-        <div class="cjcompareItem">
-            <div class="itemheader">
-                <div class="selectwrapper">
-                    <select class="font_select">
-                    </select>
-                    <div class="previous">
+            <div class="toolBox">
+                <div class="input-range">
+                    <div class="rangeHeader flex">
+                        <label>제목 크기</label>
+                        <input class="sliderLabel" type="text" inputmode="decimal" number="true" autocomplete="off" min="20" max="100" step="1" id="displaySizeText">
                     </div>
+                    <input class="sliderRange" type="range" list="displaySizeSnaps" min="20" max="100" step="1" id="displaySizeRange">
+                    <datalist id="displaySizeSnaps">
+                        <option>20</option>
+                        <option>60</option>
+                        <option>100</option>
+                    </datalist>
                 </div>
-                <div class="fontweight compfontweight inputWrapper">
-                    <span>Weight</span>
-                    <input type="number" class="compwghtNumber"></input>
-                    <input type="range" class="compwghtSlider"></input>
+                <div class="input-range">
+                    <div class="rangeHeader flex">
+                        <label>본문 크기</label>
+                        <input class="sliderLabel" type="text" inputmode="decimal" number="true" autocomplete="off" min="10" max="40" step="1" id="bodySizeText">
+                    </div>
+                    <input class="sliderRange" type="range" list="bodySizeSnaps" min="10" max="40" step="1" id="bodySizeRange">
+                    <datalist id="bodySizeSnaps">
+                        <option>10</option>
+                        <option>20</option>
+                        <option>40</option>
+                    </datalist>
                 </div>
-                <div class="fontsize compfontsize inputWrapper">
-                    <span>글자 크기</span>
-                    <div><input type="number" min="10" max="200" class="compsizeNumber"></input></div>
-                    <input type="range" min="10" max="200" class="compsizeSlider"></input>
+                <div class="input-range">
+                    <div class="rangeHeader flex">
+                        <label>행간</label>
+                        <input class="sliderLabel" type="text" inputmode="decimal" number="true" autocomplete="off" min="10" max="300" step="1" id="lineHeightText">
+                    </div>
+                    <input class="sliderRange" type="range" list="lineHeightSnaps" min="0" max="2" step="0.01" id="lineHeightRange">
+                    <datalist id="lineHeightSnaps"><option>0</option><option>1.2</option><option>2</option></datalist>
+                </div>
+                <div class="input-range">
+                    <div class="rangeHeader flex">
+                        <label>자간</label>
+                        <input class="sliderLabel" type="text" inputmode="decimal" number="true" autocomplete="off" min="10" max="300" step="1" id="letterSpacingText">
+                    </div>
+                    <input class="sliderRange" type="range" list="letterSpacingSnaps" min="-1" max="1" step="0.01" id="letterSpacingRange">
+                    <datalist id="letterSpacingSnaps"><option>-1</option><option>0</option><option>1</option></datalist>
                 </div>
             </div>
-            <div class="comptext">
-                <p>
-                </p>
+            <div class="toolBox">
+                <span class="toolBoxName">한글 스킨 효과</span>
+                <div class="feature-block">
+                    <input type="radio" name="hang" id="ss01-0" checked value="0">
+                    <label for="ss01-0">모서리 굴림</label>
+                </div>
+                <div class="feature-block">
+                    <input type="radio" name="hang" id="ss01-1" value="1">
+                    <label for="ss01-1">종횡 폭 대비</label>
+                </div>
+            </div>
+            <div class="toolBox">
+                <span class="toolBoxName">영문 스킨 효과</span>
+                <div class="feature-block">
+                    <input type="radio" name="latn" id="ss02-0" checked value="0">
+                    <label for="ss02-0">기존 영문 디자인</label>
+                </div>
+                <div class="feature-block">
+                    <input type="radio" name="latn" id="ss02-1" value="1">
+                    <label for="ss02-1">영문 회색도 조정</label>
+                </div>
+                <div class="feature-block">
+                    <input type="radio" name="latn" id="ss02-2" value="2">
+                    <label for="ss02-2">일반 소문자 디자인</label>
+                </div>
+            </div>
+            <div class="toolBox">
+                <span class="toolBoxName">다국어 미리보기</span>
+                <div class="feature-block">
+                    <input type="checkbox" id="chk-ml">
+                    <label for="chk-ml">미리보기 텍스트 변경</label>
+                </div>
             </div>
         </div>
-    </template>
-    <div id="cjcompare">
+        <div id="preview" class="flex">
+            <pre class="textArea displayText">
+            </pre>
+            <pre class="textArea bodyText">
+            </pre>
+        </div>
     </div>
-    <a id="scroll" href="">
-        <button id="scrollbtn">
-            <div><hr><hr></div>
-        </button>
-    </a>    
-    <!---------------------------->
-    <!-- 이상 임의로 추가한 코드입니다 -->
-    <!---------------------------->
-    
 
     <script type="text/javascript">
+        var normalText = `사랑받는 Global Lifestyle 기업 CJ
+당신의 2024 더 나은 일상을, 
+New Future, Talent, Value`
+        var multilingualText = `사랑받는 愛される 
+Global Lifestyle 기업 CJ 
+당신의 あなたの 2024 
+더 나은 일상을 良い日常を`
+
+        var isMultilingual = false;
+        var OTList = {}
+
+        fontToolBox = $('.toolBox').eq(0)
+        controlToolBox = $('.toolBox').eq(1)
+        hangToolBox = $('.toolBox').eq(2)
+        latnToolBox = $('.toolBox').eq(3)
+        langToolBox = $('.toolBox').eq(4)
+
+        previewWrapper = $('#preview')
+
+        displayRange = $("#displaySizeRange")
+        displayText = $("#displaySizeText")
+        bodyRange = $("#bodySizeRange")
+        bodyText = $("#bodySizeText")
+        lineHeightRange = $("#lineHeightRange")
+        lineHeightText = $("#lineHeightText")
+        letterSpacingRange = $("#letterSpacingRange")
+        letterSpacingText = $("#letterSpacingText")
+
+
         $(document).ready(function () { 
             SetFrameRatio();
+            $("#preview").multilingual([
+                "jp", "cn"
+            ]);
 
-            $("#title_select").on("change", function(){
-                var selectedVal = $(this).val();
-                var newWeight = parseInt(selectedVal)
 
-                if (newWeight < 10) {
-                    return false;
-                }
+            init()
 
-                var newWeightStr = "'wght' " + selectedVal;
+            fontSelect = fontToolBox.find("select")
+            fontSelect.on("change", function(){
+                newVal = $(this).val()
+                changeCSS('font-weight', newVal)
 
-                $("#titleweight").html(selectedVal);
-                $(".titletext").css("font-variation-settings", newWeightStr);
+            })
+            displayRange.on("input", function(){
+                $(".displayText").css("font-size", `${$(this).val()}px`)
+                displayText.val($(this).val())
+            })
+            displayText.on("change", function(){
+                $(".displayText").css("font-size", `${$(this).val()}px`)
+                displayRange.val($(this).val())
+            })
+            bodyRange.on("input", function(){
+                $(".bodyText").css("font-size", `${$(this).val()}px`)
+                bodyText.val($(this).val())
+            })
+            bodyText.on("change", function(){
+                $(".bodyText").css("font-size", `${$(this).val()}px`)
+                bodyRange.val($(this).val())
+            })
+            lineHeightRange.on("input", function(){
+                changeCSS("line-height", $(this).val())
+                lineHeightText.val($(this).val())
+            })
+            lineHeightText.on("change", function(){
+                changeCSS("line-height", $(this).val())
+                lineHeightRange.val($(this).val())
+            })
+            letterSpacingRange.on("input", function(){
+                changeCSS("letter-spacing", `${$(this).val()}rem`)
+                letterSpacingText.val($(this).val())
+            })
+            letterSpacingText.on("change", function(){
+                changeCSS("letter-spacing", `${$(this).val()}rem`)
+                letterSpacingRange.val($(this).val())
+            })
 
-                if (newWeight <= 500) {
-                    newWeight = 500;
-                    $("#titleweight").siblings('button:eq(0)').attr("disabled", true);
-                    $("#titleweight").siblings('button:eq(1)').attr("disabled", true);
-                }
-                else {
-                    $("#titleweight").siblings('button:eq(0)').attr("disabled", false);
-                    $("#titleweight").siblings('button:eq(1)').attr("disabled", false);
-                }
+            controlToolBox.find("input").on("change", function(){
 
-                if (newWeight >= 1000) {
-                    newWeight = 1000;
-                    $("#titleweight").siblings('button:eq(2)').attr("disabled", true);
-                    $("#titleweight").siblings('button:eq(3)').attr("disabled", true);
-                }
-                else {
-                    $("#titleweight").siblings('button:eq(2)').attr("disabled", false);
-                    $("#titleweight").siblings('button:eq(3)').attr("disabled", false);
+            })
+            hangToolBox.find("input").on("change", function(){
+                changeCSS('font-feature-settings', ['ss01', $(this).val()])
+            })
+            latnToolBox.find("input").on("change", function(){
+                switch ($(this).val()) {
+                    case "0":
+                        changeCSS('font-feature-settings', ['ss03', 1])
+                        break;
+                
+                    case "1":
+                        changeCSS('font-feature-settings', ['ss03', 0])
+                        break;
+                
+                    case "2":
+                        changeCSS('font-feature-settings', ['ss02', 1])
+                        break;
+                
+                    default:
+                        break;
                 }
             })
 
-            $("#body_select").on("change", function () {
-                var selectedVal = $(this).val();
-                if (selectedVal == "select") {
-                    return false;
-                }
-                var newWeight = parseInt(selectedVal)
+            console.log(hangToolBox.find("input:checked").val())
+            langChkBox = $('#chk-ml')
+            langChkBox.on("change", function(){
+                isMultilingual = langChkBox.is(":checked")
+                setPreviewText()
+                previewWrapper.multilingual([
+                    "jp", "cn"
+                ]);
 
-                //if (newWeight < 10) {
-                //    return false;
-                //}
-
-                var newWeightStr = "'wght' " + selectedVal;
-
-                $("#bodyweight").html(selectedVal);
-                $(".bodytext").css("font-variation-settings", newWeightStr);
-
-                if (newWeight <= 500) {
-                    newWeight = 500;
-                    $("#bodyweight").siblings('button:eq(0)').attr("disabled", true);
-                    $("#bodyweight").siblings('button:eq(1)').attr("disabled", true);
-                }
-                else {
-                    $("#bodyweight").siblings('button:eq(0)').attr("disabled", false);
-                    $("#bodyweight").siblings('button:eq(1)').attr("disabled", false);
-                }
-
-                if (newWeight >= 1000) {
-                    newWeight = 1000;
-                    $("#bodyweight").siblings('button:eq(2)').attr("disabled", true);
-                    $("#bodyweight").siblings('button:eq(3)').attr("disabled", true);
-                }
-                else {
-                    $("#bodyweight").siblings('button:eq(2)').attr("disabled", false);
-                    $("#bodyweight").siblings('button:eq(3)').attr("disabled", false);
-                }
             })
-            
-///////////////////////////////////////////////////////////////////////////////////
-//////////////////////// 이하 임의로 추가한 코드입니다////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////
-
-            var compcontainer = $("#cjcompare"); 
-            var template = $("#cjcomparetemplate").html();
-            var initstring = "사랑받는 Global Lifestyle 기업 CJ 당신의 2024 더 나은 일상을, New Future, Talent, Value"
-            var fonts = ['제목용', '본문용']
-            var info = {
-                family:{제목용:"CJO_R_T", 본문용:"CJO_R_B"}, 
-                wghts: {제목용: [500, 1000], 본문용 :[200, 1000]}, 
-                initsize: {제목용: 30, 본문용 : 20},
-                previous: {제목용: [500, 700], 본문용 : [300, 400]}
-            }
-            var compdata = [
-                {font: fonts[0], wght: 500},
-                {font: fonts[0], wght: 600},
-                {font: fonts[0], wght: 700},
-                {font: fonts[0], wght: 800},
-                {font: fonts[0], wght: 900},
-                {font: fonts[0], wght: 1000},
-                {font: fonts[1], wght: 200},
-                {font: fonts[1], wght: 300},
-                {font: fonts[1], wght: 400},
-                {font: fonts[1], wght: 500},
-                {font: fonts[1], wght: 600},
-                {font: fonts[1], wght: 700},
-                {font: fonts[1], wght: 800},
-                {font: fonts[1], wght: 900},
-                {font: fonts[1], wght: 1000}
-            ]
-            function createItem(index, data){
-                var index = index
-                var clone = $(template).clone();
-                // var clone = template.clone();
-                var fontselect = clone.find('.font_select')
-                $.each(fonts, function(index, font) {
-                    var option = $('<option></option>').attr('value', font).text(font);
-                    fontselect.append(option);
-                });
-                fontselect.on("change", function(){
-                    var val = $(this).val();
-                    changeCSS('font-family', info.family[val])
-                    changeCSS('font-variation-settings', info.wghts[val][0])
-                    clone.find(".compwghtSlider").attr({'min': info.wghts[val][0], 'max': info.wghts[val][1]})
-                    clone.find(".compwghtNumber").val(info.wghts[val][0]);
-                    clone.find(".compwghtSlider").val(info.wghts[val][0]);
-                    createPrevBtn(val)
-                }).val(data.font)
-                changeCSS('font-family', info.family[data.font])
-
-                createPrevBtn(data.font)
-
-                clone.find(".compwghtSlider").attr({'min': info.wghts[data.font][0], 'max': info.wghts[data.font][1]})                
-                clone.find(".compwghtSlider").on("input", function(){
-                    var val = $(this).val();
-                    var newSize = `${parseInt(val)}px`
-                    clone.find(".compwghtNumber").val(val);
-                    clone.find(".compwghtSlider").val(val);
-                    changeCSS('font-variation-settings', val)
-
-                    if (clone.find('button.btnClicked') && val != clone.find('button.btnClicked').val()){
-                        console.log('yes')
-                        clone.find('button.btnClicked').removeClass('btnClicked')
-                    }
-                }).val(data.wght)
-                
-                clone.find(".compwghtNumber").on("change", function(){
-                    var val = $(this).val();
-                    var val = $(this).val();
-                    if (val <= info.wghts[data.font][0]) {
-                        val = info.wghts[data.font][0]
-                    } else if(val>=info.wghts[data.font][1]){
-                        val = info.wghts[data.font][1]
-                    }
-                    var newSize = `${parseInt(val)}px`
-                    clone.find(".compwghtNumber").val(val);
-                    clone.find(".compwghtSlider").val(val);
-
-                    changeCSS('font-variation-settings', val)
-
-                    if (clone.find('button.btnClicked') && val != clone.find('button.btnClicked').val()){
-                        console.log('yes')
-                        clone.find('button.btnClicked').removeClass('btnClicked')
-                    }
-                }).val(data.wght)
-
-                changeCSS('font-variation-settings', data.wght)
-
-                clone.find(".compsizeSlider").on("input", function(){
-                    var val = $(this).val();
-                    var newSize = `${parseInt(val)}px`
-                    clone.find(".compsizeNumber").val(val);
-                    clone.find(".compsizeSlider").val(val);
-                    changeCSS('font-size', val)
-                }).val(data.size)
-                
-                clone.find(".compsizeNumber").on("change", function(){
-                    var val = $(this).val();
-                    if (val <= 10) {
-                        val = 10
-                    } else if(val>=200){
-                        val = 200
-                    }
-                    var newSize = `${parseInt(val)}px`
-                    clone.find(".compsizeSlider").val(val);
-                    clone.find(".compsizeNumber").val(val);
-
-                    changeCSS('font-size', val)
-                }).val(data.size)
-
-                clone.find(".compsizeSlider").val(info.initsize[data.font])
-                clone.find(".compsizeNumber").val(info.initsize[data.font])
-                clone.find(".comptext>p").text(initstring)
-                changeCSS('font-size', info.initsize[data.font])
-
-                clone.find(".comptext").click(function(){
-                    clone.find(".itemheader").toggleClass('textClicked')
-                })
-
-                compcontainer.append(clone)
-
-                function changeCSS(attr, value){
-                    if(attr == "font-size"){
-                        var newValue = `${parseInt(value)}px`;
-                        // var columncount = value>20?1:2;
-                        // var columngap = value;
-                        clone.find(".comptext").css("font-size", newValue);
-                    }else if(attr == "font-variation-settings"){
-                        var newValue = `'wght' ${parseInt(value)}`;
-                        clone.find(".comptext").css("font-variation-settings", newValue);
-                    }else if(attr == "font-family"){
-                        var newValue = value;
-                        clone.find(".comptext").css("font-family", newValue);
-                    }
-    
-                }
-
-                function createPrevBtn(font){
-                    var prevwrapper = clone.find(".previous");
-                    prevwrapper.empty();
-
-                    $.each(info.previous[font], function(index, prev) {
-                        console.log(info.previous[font], index)
-                        var text = ''
-                        switch (info.previous[font][index]) {
-                            case 300:
-                                text = '기존 L'
-                                break;
-                            case 400:
-                                text = '기존 R'
-                                break;
-                            case 500:
-                                text = '기존 M'
-                                break;
-                            case 700:
-                                text = '기존 B'
-                                break;
-                            default:
-                                break;
-                        }
-                        var button = $('<button></button>').attr('value', prev).text(text);
-                        button.click(function(){
-                            clone.find(".compwghtNumber").val(prev);
-                            clone.find(".compwghtSlider").val(prev);
-                            changeCSS('font-variation-settings', prev)
-                            $(this).siblings().removeClass('btnClicked')
-                            $(this).toggleClass('btnClicked')
-                        })
-                        prevwrapper.append(button);
-                    });
-                }
-            }
-            $.each(compdata, function(index, data) {
-                createItem(index, data);
-            });
-
-            $("#scroll").click(function(){
-                event.preventDefault();
-
-                var href = $(this).attr("href");
-
-                $(this).attr("href",)
-                $('html, body').animate({
-                    scrollTop: $($.attr(this, 'href')).offset().top-30
-                }, 300);
-                if(href === "#cjcompare"){
-                    $(this).attr("href", "#cjtitle");
-                    $("#scrollbtn div").toggleClass("rotated") 
-                }else{
-                    $(this).attr("href", "#cjcompare");
-                    $("#scrollbtn div").toggleClass("rotated")
-                }
-            }).attr("href", "#cjcompare")
-///////////////////////////////////////////////////////////////////////////////////
-//////////////////////// 이상 임의로 추가한 코드입니다////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////
+            console.log(previewWrapper)
 
         })
+        function init(){
+            var isMultilingual = false;
+            var initialLineHeight = 1.2;
+            var initialLetterSpacing = 0
+            var initialDisplaySize = parseInt($(".displayText").css('font-size').slice(0, -2)) //calc(0.8vh + 10px) * 4
+            var initialBodySize = parseInt($(".bodyText").css('font-size').slice(0, -2))//$(".bodyText").css('font-size') //calc(0.8vh + 10px) * 1.5
 
-        function ChangeTW(n){
-            var presentWeightStr = $(".titletext").css("font-variation-settings");
-            var newWeight = parseInt(parseInt(presentWeightStr.split(" ")[1])) + n;
 
-            if(newWeight <= 500){
-                newWeight = 500;
-                $("#titleweight").siblings('button:eq(0)').attr("disabled", true);
-                $("#titleweight").siblings('button:eq(1)').attr("disabled", true);
-            }
-            else{
-                $("#titleweight").siblings('button:eq(0)').attr("disabled", false);
-                $("#titleweight").siblings('button:eq(1)').attr("disabled", false);
-            }
+            displayRange.val(initialDisplaySize)
+            displayText.val(initialDisplaySize)
+            bodyRange.val(initialBodySize)
+            bodyText.val(initialBodySize)
+            lineHeightRange.val(initialLineHeight)
+            lineHeightText.val(initialLineHeight)
+            letterSpacingRange.val(initialLetterSpacing)
+            letterSpacingText.val(initialLetterSpacing)
+            setPreviewText()
 
-            if (newWeight >= 1000) {
-                newWeight = 1000;
-                $("#titleweight").siblings('button:eq(2)').attr("disabled", true);
-                $("#titleweight").siblings('button:eq(3)').attr("disabled", true);
-            }
-            else{
-                $("#titleweight").siblings('button:eq(2)').attr("disabled", false);
-                $("#titleweight").siblings('button:eq(3)').attr("disabled", false);
-            }
-
-            var newWeightStr = "'wght' " + newWeight.toString();
-
-            $("#titleweight").html(newWeight.toString());
-            $(".titletext").css("font-variation-settings", newWeightStr);
-
-            CheckTitleSelectVal(newWeight);
         }
-
-        function CheckTitleSelectVal(n) {
-            var options = $.map($("#title_select option"), function (e) { return e.value; })
-            if(options.includes(n.toString())){
-                $("#title_select").val(n.toString()).prop("selected", true);
+        function changeCSS(attr, val){
+            switch (attr) {
+                case 'font-weight':
+                    console.log(val)
+                    previewWrapper.css('font-weight', val)
+                    break;
+                case 'font-feature-settings':
+                    feature = val[0]
+                    value = val[1]
+                    featureCSS = computeFeatureText(feature, value)
+                    previewWrapper.css('font-feature-settings', featureCSS)
+                    break;
+            
+                default:
+                    console.log(attr, val)
+                    previewWrapper.css(attr, val)
+                    break;
+            }
+        }
+        function computeFeatureText(feature, value){
+            if(feature==='ss01'){
+                OTList[feature] = value
+                console.log(OTList)
+            }else if(feature==='ss02'){
+                OTList['ss03'] = 0
+                OTList['ss02'] = 1
+                console.log(OTList)
+            }else if(feature==='ss03' && value){
+                OTList['ss02'] = 0
+                OTList['ss03'] = 1
+                console.log(OTList)
             }else{
-                var x=0;
-                for(var i=0;i < Math.floor(options.length/2); i++){
-                    if(n > parseInt(options[i])){
-                        x=x+1;
-                    }
-                }
-                $("#title_select").val(x.toString()).prop("selected", true);
+                OTList['ss02'] = 0
+                OTList['ss03'] = 0
+                console.log(OTList) 
             }
+            str = Object.keys(OTList).map(key => `"${key}" ${OTList[key]}`).join(",")
+            console.log(str)
+            return str
         }
-
-        function ChangeTS(n) {
-            var presentSizeStr = $(".titletext").css("font-size");
-            var newSize = parseInt(presentSizeStr.replace("px", "")) + n
-
-            if(newSize <= 10){
-                newSize = 10;
-                $("#titlesize").siblings('button:eq(0)').attr("disabled", true);
-                $("#titlesize").siblings('button:eq(1)').attr("disabled", true);
+        function setPreviewText(){
+            if (isMultilingual) {
+                previewWrapper.children().text(multilingualText)
             }else{
-                $("#titlesize").siblings('button:eq(0)').attr("disabled", false);
-                $("#titlesize").siblings('button:eq(1)').attr("disabled", false);
-            }
-
-            if (newSize >= 200) {
-                newSize = 200;
-                $("#titlesize").siblings('button:eq(2)').attr("disabled", true);
-                $("#titlesize").siblings('button:eq(3)').attr("disabled", true);
-            } else {
-                $("#titlesize").siblings('button:eq(2)').attr("disabled", false);
-                $("#titlesize").siblings('button:eq(3)').attr("disabled", false);
-            }
-
-            $("#titlesize").html(newSize.toString() + " px");
-            $(".titletext").css("font-size", newSize.toString()+"px");
-        }
-
-        function ChangeBW(n) {
-            var presentWeightStr = $(".bodytext").css("font-variation-settings");
-            var newWeight = parseInt(parseInt(presentWeightStr.split(" ")[1])) + n;
-
-            if (newWeight <= 200) {
-                newWeight = 200;
-                $("#bodyweight").siblings('button:eq(0)').attr("disabled", true);
-                $("#bodyweight").siblings('button:eq(1)').attr("disabled", true);
-            }
-            else {
-                $("#bodyweight").siblings('button:eq(0)').attr("disabled", false);
-                $("#bodyweight").siblings('button:eq(1)').attr("disabled", false);
-            }
-
-            if (newWeight >= 1000) {
-                newWeight = 1000;
-                $("#bodyweight").siblings('button:eq(2)').attr("disabled", true);
-                $("#bodyweight").siblings('button:eq(3)').attr("disabled", true);
-            }
-            else {
-                $("#bodyweight").siblings('button:eq(2)').attr("disabled", false);
-                $("#bodyweight").siblings('button:eq(3)').attr("disabled", false);
-            }
-
-            var newWeightStr = "'wght' " + newWeight.toString();
-
-            $("#bodyweight").html(newWeight.toString());
-            $(".bodytext").css("font-variation-settings", newWeightStr);
-
-            CheckBodySelectVal(newWeight);
-        }
-
-        function CheckBodySelectVal(n) {
-            var options = $.map($("#body_select option"), function (e) { return e.value; })
-            if (options.includes(n.toString())) {
-                $("#body_select").val(n.toString()).prop("selected", true);
-            } else {
-                //var x = 0;
-                //for (var i = 0; i < Math.floor(options.length / 2); i++) {
-                //    if (n > parseInt(options[i])) {
-                //        x = x + 1;
-                //    }
-                //}
-                //$("#body_select").val(x.toString()).prop("selected", true);
-                $("#body_select").val("select").prop("selected", true);
+                previewWrapper.children().text(normalText)
             }
         }
-
-        function ChangeBS(n) {
-            var presentSizeStr = $(".bodytext").css("font-size");
-            var newSize = parseInt(presentSizeStr.replace("px", "")) + n
-
-            if (newSize <= 10) {
-                newSize = 10;
-                $("#bodysize").siblings('button:eq(0)').attr("disabled", true);
-                $("#bodysize").siblings('button:eq(1)').attr("disabled", true);
-            } else {
-                $("#bodysize").siblings('button:eq(0)').attr("disabled", false);
-                $("#bodysize").siblings('button:eq(1)').attr("disabled", false);
-            }
-
-            if (newSize >= 200) {
-                newSize = 200;
-                $("#bodysize").siblings('button:eq(2)').attr("disabled", true);
-                $("#bodysize").siblings('button:eq(3)').attr("disabled", true);
-            } else {
-                $("#bodysize").siblings('button:eq(2)').attr("disabled", false);
-                $("#bodysize").siblings('button:eq(3)').attr("disabled", false);
-            }
-
-            $("#bodysize").html(newSize.toString() + " px");
-            $(".bodytext").css("font-size", newSize.toString() + "px");
-        }
-
         function SetFrameRatio(){
             var viewWidth = window.innerWidth;
             if(viewWidth < 430){
