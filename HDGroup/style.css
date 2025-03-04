@@ -278,6 +278,7 @@ button:disabled, button:disabled:hover{
     background-color: var(--color-w);
     border: var(--border-2px) solid var(--shade-3);
     color: var(--shade-3);
+    cursor: default;
 }
 .weightSelect{
     justify-content: stretch;

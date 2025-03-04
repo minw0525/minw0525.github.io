@@ -50,7 +50,6 @@
                     </div>
                     <input class="sliderRange" type="range" list="displaySizeSnaps" min="20" max="200" step="1" id="displaySizeRange">
                     <datalist id="displaySizeSnaps">
-                        <option>20</option>
                         <option>60</option>
                         <option>100</option>
                     </datalist>
@@ -61,15 +60,21 @@
                         <input class="sliderLabel" type="text" inputmode="decimal" number="true" autocomplete="off" min="10" max="300" step="1" id="displayLineHeightText">
                     </div>
                     <input class="sliderRange" type="range" list="displayLineHeightSnaps" min="0" max="2" step="0.01" id="displayLineHeightRange">
-                    <datalist id="displayLineHeightSnaps"><option>0</option><option>1.2</option><option>2</option></datalist>
+                    <datalist id="displayLineHeightSnaps">
+                        <option>0</option>
+                        <option>1.2</option>
+                        <option>2</option>
+                    </datalist>
                 </div>
                 <div class="input-range">
                     <div class="rangeHeader flex">
                         <label>자간</label>
                         <input class="sliderLabel" type="text" inputmode="decimal" number="true" autocomplete="off" min="10" max="300" step="1" id="displayLetterSpacingText">
                     </div>
-                    <input class="sliderRange" type="range" list="displayLineHeightSnapsetterSpacingSnaps" min="-1" max="1" step="0.01" id="displayLetterSpacingRange">
-                    <datalist id="displayLineHeightSnapsetterSpacingSnaps"><option>-1</option><option>0</option><option>1</option></datalist>
+                    <input class="sliderRange" type="range" list="displayLetterSpacingSnaps" min="-1" max="1" step="0.01" id="displayLetterSpacingRange">
+                    <datalist id="displayLetterSpacingSnaps">
+                        <option>0</option>
+                    </datalist>
                 </div>
             </div>
             <div class="toolBox">
@@ -89,7 +94,7 @@
                     <datalist id="bodySizeSnaps">
                         <option>10</option>
                         <option>15</option>
-                        <option>72</option>
+                        <option>24</option>
                     </datalist>
                 </div>
                 <div class="input-range">
@@ -98,15 +103,21 @@
                         <input class="sliderLabel" type="text" inputmode="decimal" number="true" autocomplete="off" min="10" max="300" step="1" id="bodyLineHeightText">
                     </div>
                     <input class="sliderRange" type="range" list="bodyLineHeightSnaps" min="0" max="2" step="0.01" id="bodyLineHeightRange">
-                    <datalist id="bodyLineHeightSnaps"><option>0</option><option>1.2</option><option>2</option></datalist>
+                    <datalist id="bodyLineHeightSnaps">
+                        <option>1</option>
+                        <option>1.2</option>
+                        <option>2</option>
+                    </datalist>
                 </div>
                 <div class="input-range">
                     <div class="rangeHeader flex">
                         <label>자간</label>
                         <input class="sliderLabel" type="text" inputmode="decimal" number="true" autocomplete="off" min="10" max="300" step="1" id="bodyLetterSpacingText">
                     </div>
-                    <input class="sliderRange" type="range" list="letterSpacingSnaps" min="-1" max="1" step="0.01" id="bodyLetterSpacingRange">
-                    <datalist id="letterSpacingSnaps"><option>-1</option><option>0</option><option>1</option></datalist>
+                    <input class="sliderRange" type="range" list="bodyLetterSpacingSnaps" min="-1" max="1" step="0.01" id="bodyLetterSpacingRange">
+                    <datalist id="bodyLetterSpacingSnaps">
+                        <option>0</option>
+                    </datalist>
                 </div>
             </div>
         </div>
@@ -120,29 +131,39 @@
 
     <script type="text/javascript">
         let sampleText = `꿈과 희망 세상을 움직이는 현대 그룹`
+        let currentDisplayWeight = 100
+        let currentBodyWeight = 100
 
 
-        titleToolBox = $('.toolBox').eq(1)
-        bodyToolBox = $('.toolBox').eq(2)
+        const titleToolBox = $('.toolBox').eq(1)
+        const bodyToolBox = $('.toolBox').eq(2)
 
 
-        previewWrapper = $('#preview')
-        displayArea = $(".displayText")
-        bodyArea = $(".bodyText")
+        const previewWrapper = $('#preview')
+        const displayArea = $(".displayText")
+        const bodyArea = $(".bodyText")
 
 
-        displayRange = $("#displaySizeRange")
-        displayText = $("#displaySizeText")
-        displayLineHeightRange = $("#displayLineHeightRange")
-        displayLineHeightText = $("#displayLineHeightText")
-        displayLetterSpacingRange = $("#displayLetterSpacingRange")
-        displayLetterSpacingText = $("#displayLetterSpacingText")
-        bodyRange = $("#bodySizeRange")
-        bodyText = $("#bodySizeText")
-        bodyLineHeightRange = $("#bodyLineHeightRange")
-        bodyLineHeightText = $("#bodyLineHeightText")
-        bodyLetterSpacingRange = $("#bodyLetterSpacingRange")
-        bodyLetterSpacingText = $("#bodyLetterSpacingText")
+        const displayRange = $("#displaySizeRange")
+        const displayText = $("#displaySizeText")
+        const displayLineHeightRange = $("#displayLineHeightRange")
+        const displayLineHeightText = $("#displayLineHeightText")
+        const displayLetterSpacingRange = $("#displayLetterSpacingRange")
+        const displayLetterSpacingText = $("#displayLetterSpacingText")
+        const bodyRange = $("#bodySizeRange")
+        const bodyText = $("#bodySizeText")
+        const bodyLineHeightRange = $("#bodyLineHeightRange")
+        const bodyLineHeightText = $("#bodyLineHeightText")
+        const bodyLetterSpacingRange = $("#bodyLetterSpacingRange")
+        const bodyLetterSpacingText = $("#bodyLetterSpacingText")
+
+        const displayWeightSelect = titleToolBox.find("select")
+        const displayLighterBtn = titleToolBox.find(".lighter")
+        const displayHeavierBtn = titleToolBox.find(".heavier")
+
+        const bodyWeightSelect = bodyToolBox.find("select")
+        const bodyLighterBtn = bodyToolBox.find(".lighter")
+        const bodyHeavierBtn = bodyToolBox.find(".heavier")
 
 
         $(document).ready(function () { 
@@ -151,26 +172,40 @@
                 "jp", "cn"
             ]);
 
-
             init()
 
-            displayWeightSelect = titleToolBox.find("select")
+            // console.log(previewWrapper)
+
+        })
+        function init(){
+            let isMultilingual = false;
+            let initialLineHeight = 1.2;
+            let initialLetterSpacing = 0
+            let initialDisplaySize = parseInt($(".displayText").css('font-size').slice(0, -2)) //calc(0.8vh + 10px) * 4
+            let initialBodySize = parseInt($(".bodyText").css('font-size').slice(0, -2))//$(".bodyText").css('font-size') //calc(0.8vh + 10px) * 1.5
+            displayLighterBtn.prop("disabled", true)
+            bodyLighterBtn.prop("disabled", true)
+
             for (let i = 0; i < 19; i++) {
                 displayWeightSelect.append(`<option value="${Math.round(100+900/18*i)}">제목용 굵기 ${i+1}</option>`)
             }
             displayWeightSelect.on("change", function(){
-                newVal = $(this).val()
-                changeCSS('font-weight', newVal, "display")
-
+                currentDisplayWeight = $(this).val()
+                changeCSS('font-weight', currentDisplayWeight, "display")
+                if(parseInt(currentDisplayWeight) == 100){
+                    displayLighterBtn.prop("disabled", true)
+                    displayHeavierBtn.prop("disabled", false)
+                }
+                else if(parseInt(currentDisplayWeight) == 1000){
+                    displayLighterBtn.prop("disabled", false)
+                    displayHeavierBtn.prop("disabled", true)
+                }
+                else{
+                    displayLighterBtn.prop("disabled", false)
+                    displayHeavierBtn.prop("disabled", false)
+                }
             })
-            displayLighterBtn = titleToolBox.find(".lighter")
-            if(parseInt(displayWeightSelect.val()) == 100){
-                displayLighterBtn.prop("disabled", true)
-            }
-            displayHeavierBtn = titleToolBox.find(".heavier")
-            if(parseInt(displayWeightSelect.val()) == 1000){
-                displayHeavierBtn.prop("disabled", true)
-            }
+
             displayLighterBtn.on("click", function(){
                 displayHeavierBtn.prop("disabled", false)
                 if(parseInt(displayWeightSelect.val()) == 150){
@@ -222,25 +257,26 @@
                 displayLetterSpacingRange.val($(this).val())
             })
 
-
-            bodyWeightSelect = bodyToolBox.find("select")
             for (let i = 0; i < 19; i++) {
                 bodyWeightSelect.append(`<option value="${Math.round(100+900/18*i)}">본문용 굵기 ${i+1}</option>`)
             }
-            console.log(bodyWeightSelect)
             bodyWeightSelect.on("change", function(){
-                newVal = $(this).val()
-                changeCSS('font-weight', newVal, "body")
-
+                currentBodyWeight = $(this).val()
+                changeCSS('font-weight', currentBodyWeight, "body")
+                if(parseInt(currentBodyWeight) == 100){
+                    bodyLighterBtn.prop("disabled", true)
+                    bodyHeavierBtn.prop("disabled", false)
+                }
+                else if(parseInt(currentBodyWeight) == 1000){
+                    bodyLighterBtn.prop("disabled", false)
+                    bodyHeavierBtn.prop("disabled", true)
+                }
+                else{
+                    bodyLighterBtn.prop("disabled", false)
+                    bodyHeavierBtn.prop("disabled", false)
+                }
             })
-            bodyLighterBtn = bodyToolBox.find(".lighter")
-            if(parseInt(bodyWeightSelect.val()) == 100){
-                bodyLighterBtn.prop("disabled", true)
-            }
-            bodyHeavierBtn = bodyToolBox.find(".heavier")
-            if(parseInt(bodyWeightSelect.val()) == 1000){
-                bodyHeavierBtn.prop("disabled", true)
-            }
+
             bodyLighterBtn.on("click", function(){
                 bodyHeavierBtn.prop("disabled", false)
                 if(parseInt(bodyWeightSelect.val()) == 150){
@@ -292,17 +328,8 @@
                 bodyLetterSpacingRange.val($(this).val())
             })
 
-            console.log(previewWrapper)
-
-        })
-        function init(){
-            let isMultilingual = false;
-            let initialLineHeight = 1.2;
-            let initialLetterSpacing = 0
-            let initialDisplaySize = parseInt($(".displayText").css('font-size').slice(0, -2)) //calc(0.8vh + 10px) * 4
-            let initialBodySize = parseInt($(".bodyText").css('font-size').slice(0, -2))//$(".bodyText").css('font-size') //calc(0.8vh + 10px) * 1.5
-
-
+            displayWeightSelect.val(currentDisplayWeight)
+            bodyWeightSelect.val(currentBodyWeight)
             displayRange.val(initialDisplaySize)
             displayText.val(initialDisplaySize)
             displayLineHeightRange.val(initialLineHeight)
@@ -320,10 +347,10 @@
         }
         function changeCSS(attr, val, target){
             target == "display" ? target = displayArea : target = bodyArea
-            console.log(target)
+            // console.log(target)
             switch (attr) {
                 case 'font-weight':
-                    console.log(val)
+                    // console.log(val)
                     target.css('font-weight', val)
                     break;
                 case 'font-feature-settings':
