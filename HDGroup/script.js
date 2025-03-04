@@ -74,9 +74,7 @@ function buildTab2Templates(){
 
     comp1Weight = [14, 17, 4, 8, 14]
     comp2Weight = [14, 18, 3, 6, 10]
-    console.log($("#preview2Comp1").find(".sampleText"))
     $("#preview2Comp1").find(".sampleText").each(function(index, item){
-        console.log(item)
         $(item).css("font-weight",Math.round(100+900/18*comp1Weight[index]))
     })
     $("#preview2Comp2").find(".sampleText").each(function(index, item){
