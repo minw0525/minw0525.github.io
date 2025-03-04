@@ -267,6 +267,11 @@ function setTabs(){
         controls.eq(index).show()
         tab.eq(index).addClass("active")
         tab.eq(index).siblings().removeClass("active")  
+
+        if (index == 1 && window.innerWidth<768){
+            height = controls.eq(index).find(".toolBox").eq(2).outerHeight() + 20
+            $("#controls1").css("height", height-4)
+        }
     })
 
 }

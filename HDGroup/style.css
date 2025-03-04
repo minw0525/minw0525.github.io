@@ -253,12 +253,16 @@ body{
 .tab{
     height: calc(100% + 9px);
     border: var(--border-2px) solid var(--color-bk);
-    border-top-right-radius: 15px;
-    border-bottom-right-radius: 15px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
     padding: 15px 5px;
     cursor: pointer;
     background: var(--shade-0);
     z-index: 0;
+    position: relative;
+    left:0;
+    width: calc(100% - 10px);
+    transition: width 0.2s ease-in-out;
 }
 .tab.active{
     /* overflow: visible; */
@@ -266,6 +270,7 @@ body{
     border-left:none;
     z-index: 1;
     background-color: var(--color-w);
+    width:100%;
 }
 .tabtext{
     white-space : pre;
@@ -543,6 +548,7 @@ color-block *:nth-child(3){
         width: calc(100% - 20px);
         height:fit-content;
         margin: 10px 10px 0 10px;
+        left:unset;
     }
     .tab{
         width: calc(100% + 3px);
@@ -551,12 +557,18 @@ color-block *:nth-child(3){
         border-top-right-radius: 10px;
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
-        height: 100%;
+        height: calc(100% - 5px);
         padding: 5px;
+        left:unset;
+        top: 5px;
+        transition: top 0.2s ease-in-out, height 0.2s ease-in-out
     }
     .tab.active{
         border-bottom:none;
         border-left:var(--border-2px) solid var(--color-bk);
+        width: calc(100% + 3px);
+        height:100%;
+        top:0;
     }
     .tabtext{
         transform: rotate(0deg);
@@ -598,6 +610,8 @@ color-block *:nth-child(3){
         margin: 0 10px;
         min-height: 50px;
         max-height: 60vh;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: y proximity;      
     }
     .controls::before{
         all : unset;
@@ -619,9 +633,10 @@ color-block *:nth-child(3){
         width: calc(100% - 24px);
         height: fit-content;
         max-height: 140px;
-        margin: 7px 0;
         position: sticky;
-        top:0;
+        position: -webkit-sticky;
+        top: 0;
+        scroll-snap-align: center;
         background-color: var(--color-w);
         box-sizing:content-box;
     }
