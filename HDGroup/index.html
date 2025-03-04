@@ -20,388 +20,121 @@
             src: url("./HD_files/HD4Txt-VF.woff2") format('woff2');
             font-style: normal;
         }
-        #preview .displayText{
+        .displayText *{
             font-family: HD4Ttl;
         }
-        #preview .bodyText{
+        .bodyText *{
             font-family: HD4Txt;
         }
     </style>
 
 </head>
 <body>
-    <div class="main flex">
-        <div id="controls">
-            <div class="toolBox">
-                <h1>현대그룹 굵기비교4</h1>
+    <div id="main" class="flex">
+        <div id="previews" class="flex">
+            <div class="preview flex" id="preview0">
+                <div id="preview0Title" class="displayText"></div>
+                <div id="preview0Body" class="bodyText"></div>
             </div>
-            <div class="toolBox">
-                <label class="toolBoxName">제목용</label>
-                <div class="weightSelect flex">
-                    <select name="displayWeightSelect" id="displayWeightSelect">
-                    </select>
-                    <button class="lighter"></button>
-                    <button class="heavier"></button>
-                </div>
-                <div class="input-range">
-                    <div class="rangeHeader flex">
-                        <label>크기</label>
-                        <input class="sliderLabel" type="text" inputmode="decimal" number="true" autocomplete="off" min="10" max="100" step="1" id="displaySizeText">
-                    </div>
-                    <input class="sliderRange" type="range" list="displaySizeSnaps" min="10" max="100" step="1" id="displaySizeRange">
-                    <datalist id="displaySizeSnaps">
-                        <option>60</option>
-                        <option>100</option>
-                    </datalist>
-                </div>
-                <div class="input-range">
-                    <div class="rangeHeader flex">
-                        <label>행간</label>
-                        <input class="sliderLabel" type="text" inputmode="decimal" number="true" autocomplete="off" min="10" max="300" step="1" id="displayLineHeightText">
-                    </div>
-                    <input class="sliderRange" type="range" list="displayLineHeightSnaps" min="0" max="2" step="0.01" id="displayLineHeightRange">
-                    <datalist id="displayLineHeightSnaps">
-                        <option>0</option>
-                        <option>1.2</option>
-                        <option>2</option>
-                    </datalist>
-                </div>
-                <div class="input-range">
-                    <div class="rangeHeader flex">
-                        <label>자간</label>
-                        <input class="sliderLabel" type="text" inputmode="decimal" number="true" autocomplete="off" min="10" max="300" step="1" id="displayLetterSpacingText">
-                    </div>
-                    <input class="sliderRange" type="range" list="displayLetterSpacingSnaps" min="-1" max="1" step="0.01" id="displayLetterSpacingRange">
-                    <datalist id="displayLetterSpacingSnaps">
-                        <option>0</option>
-                    </datalist>
-                </div>
+            <div class="preview flex" id="preview1">
+                <pre class="textArea displayText">
+                </pre>
+                <pre class="textArea displayText">
+                </pre>
+                <pre class="textArea bodyText">
+                </pre>
+                <pre class="textArea bodyText">
+                </pre>
+                <pre class="textArea bodyText">
+                </pre>
             </div>
-            <div class="toolBox">
-                <label class="toolBoxName">본문용</label>
-                <div class="weightSelect flex">
-                    <select name="bodyWeightSelect" id="bodyWeightSelect">
-                    </select>
-                    <button class="lighter"></button>
-                    <button class="heavier"></button>
-                </div>
-                <div class="input-range">
-                    <div class="rangeHeader flex">
-                        <label>크기</label>
-                        <input class="sliderLabel" type="text" inputmode="decimal" number="true" autocomplete="off" min="10" max="100" step="1" id="bodySizeText">
+            <div class="preview flex" id="preview2">
+                <div id="preview2Comp1" class="previewComp flex">
+                    <span>추천 조합 1</span>
+                    <div class="displayText compSamples flex">
+                        <h3>제목용 시안</h3>
+                        <div>
+                            <h4>제목용 굵기 15 (일반적인 ExtraBold 굵기)</h4>
+                            <span class="sampleText"></span>
+                        </div>
+                        <div>
+                            <h4>제목용 굵기 18</h4>
+                            <span class="sampleText"></span>
+                        </div>
                     </div>
-                    <input class="sliderRange" type="range" list="bodySizeSnaps" min="10" max="100" step="1" id="bodySizeRange">
-                    <datalist id="bodySizeSnaps">
-                        <option>10</option>
-                        <option>15</option>
-                        <option>24</option>
-                    </datalist>
-                </div>
-                <div class="input-range">
-                    <div class="rangeHeader flex">
-                        <label>행간</label>
-                        <input class="sliderLabel" type="text" inputmode="decimal" number="true" autocomplete="off" min="10" max="300" step="1" id="bodyLineHeightText">
+                    <div class="bodyText compSamples flex">
+                        <h3>본문용 시안</h3>
+                        <div>
+                            <h4>본문용 굵기 05 (일반적인 Light 굵기)</h4>
+                            <span class="sampleText"></span>
+                        </div>
+                        <div>
+                            <h4>본문용 굵기 09 (일반적인 Medium 굵기)</h4>
+                            <span class="sampleText"></span>
+                        </div>
+                        <div>
+                            <h4>본문용 굵기 15 (일반적인 ExtraBold 굵기)</h4>
+                            <span class="sampleText"></span>
+                        </div>
                     </div>
-                    <input class="sliderRange" type="range" list="bodyLineHeightSnaps" min="0" max="2" step="0.01" id="bodyLineHeightRange">
-                    <datalist id="bodyLineHeightSnaps">
-                        <option>1</option>
-                        <option>1.2</option>
-                        <option>2</option>
-                    </datalist>
                 </div>
-                <div class="input-range">
-                    <div class="rangeHeader flex">
-                        <label>자간</label>
-                        <input class="sliderLabel" type="text" inputmode="decimal" number="true" autocomplete="off" min="10" max="300" step="1" id="bodyLetterSpacingText">
+                <div id="preview2Comp2" class="previewComp flex">
+                    <span>추천 조합 2</span>
+                    <div class="compSamples flex displayText">
+                        <h3>제목용 시안</h3>
+                        <div>
+                            <h4>제목용 굵기 15 (일반적인 ExtraBold 굵기)</h4>
+                            <span class="sampleText"></span>
+                        </div>
+                        <div>
+                            <h4>제목용 굵기 19 (일반적인 Black 굵기)</h4>
+                            <span class="sampleText"></span>
+                        </div>
                     </div>
-                    <input class="sliderRange" type="range" list="bodyLetterSpacingSnaps" min="-1" max="1" step="0.01" id="bodyLetterSpacingRange">
-                    <datalist id="bodyLetterSpacingSnaps">
-                        <option>0</option>
-                    </datalist>
+                    <div class="compSamples flex bodyText">
+                        <h3>본문용 시안</h3>
+                        <div>
+                            <h4>본문용 굵기 04</h4>
+                            <span class="sampleText"></span>
+                        </div>
+                        <div>
+                            <h4>본문용 굵기 07 (일반적인 Regular 굵기)</h4>
+                            <span class="sampleText"></span>
+                        </div>
+                        <div>
+                            <h4>본문용 굵기 11</h4>
+                            <span class="sampleText"></span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div id="preview" class="flex">
-            <pre class="textArea displayText">
-            </pre>
-            <pre class="textArea bodyText">
-            </pre>
+        <div id="sidebar" class="flex">
+            <ul id="tabs">
+                <li class="tab"><a href="#controls0"><div class="tabtext">탭 1</div></a></li>
+                <li class="tab"><a href="#controls1"><div class="tabtext">탭 2</div></a</li>
+                <li class="tab"><a href="#controls2"><div class="tabtext">탭 3</div></a></li>
+            </ul>
+            <div id="controls0" class="controls">
+                <div class="toolBox">
+                    <h1>현대그룹 전용서체 굵기비교</h1>
+                    <h2>탭1입니다</h2>
+                </div>
+            </div>
+            <div id="controls1" class="controls">
+                <div class="toolBox">
+                    <h1>현대그룹 전용서체 굵기비교</h1>
+                    <h2>탭2입니다</h2>
+                </div>
+            </div>
+            <div id="controls2" class="controls">
+                <div class="toolBox">
+                    <h1>현대그룹 전용서체 굵기비교</h1>
+                    <h2>탭3입니다</h2>
+                </div>
+            </div>
         </div>
+
     </div>
-
-    <script type="text/javascript">
-        let sampleText = `꿈과 희망 세상을 움직이는 현대 그룹`
-        let currentDisplayWeight = 100
-        let currentBodyWeight = 100
-
-
-        const titleToolBox = $('.toolBox').eq(1)
-        const bodyToolBox = $('.toolBox').eq(2)
-
-
-        const previewWrapper = $('#preview')
-        const displayArea = $(".displayText")
-        const bodyArea = $(".bodyText")
-
-
-        const displayRange = $("#displaySizeRange")
-        const displayText = $("#displaySizeText")
-        const displayLineHeightRange = $("#displayLineHeightRange")
-        const displayLineHeightText = $("#displayLineHeightText")
-        const displayLetterSpacingRange = $("#displayLetterSpacingRange")
-        const displayLetterSpacingText = $("#displayLetterSpacingText")
-        const bodyRange = $("#bodySizeRange")
-        const bodyText = $("#bodySizeText")
-        const bodyLineHeightRange = $("#bodyLineHeightRange")
-        const bodyLineHeightText = $("#bodyLineHeightText")
-        const bodyLetterSpacingRange = $("#bodyLetterSpacingRange")
-        const bodyLetterSpacingText = $("#bodyLetterSpacingText")
-
-        const displayWeightSelect = titleToolBox.find("select")
-        const displayLighterBtn = titleToolBox.find(".lighter")
-        const displayHeavierBtn = titleToolBox.find(".heavier")
-
-        const bodyWeightSelect = bodyToolBox.find("select")
-        const bodyLighterBtn = bodyToolBox.find(".lighter")
-        const bodyHeavierBtn = bodyToolBox.find(".heavier")
-
-
-        $(document).ready(function () { 
-            SetFrameRatio();
-            $("#preview").multilingual([
-                "jp", "cn"
-            ]);
-
-            init()
-
-            // console.log(previewWrapper)
-
-        })
-        function init(){
-            let isMultilingual = false;
-            let initialLineHeight = 1.2;
-            let initialLetterSpacing = 0
-            let initialDisplaySize = parseInt($(".displayText").css('font-size').slice(0, -2)) //calc(0.8vh + 10px) * 4
-            let initialBodySize = parseInt($(".bodyText").css('font-size').slice(0, -2))//$(".bodyText").css('font-size') //calc(0.8vh + 10px) * 1.5
-            displayLighterBtn.prop("disabled", true)
-            bodyLighterBtn.prop("disabled", true)
-
-            for (let i = 0; i < 19; i++) {
-                displayWeightSelect.append(`<option value="${Math.round(100+900/18*i)}">제목용 굵기 ${i+1}</option>`)
-            }
-            displayWeightSelect.on("change", function(){
-                currentDisplayWeight = $(this).val()
-                changeCSS('font-weight', currentDisplayWeight, "display")
-                if(parseInt(currentDisplayWeight) == 100){
-                    displayLighterBtn.prop("disabled", true)
-                    displayHeavierBtn.prop("disabled", false)
-                }
-                else if(parseInt(currentDisplayWeight) == 1000){
-                    displayLighterBtn.prop("disabled", false)
-                    displayHeavierBtn.prop("disabled", true)
-                }
-                else{
-                    displayLighterBtn.prop("disabled", false)
-                    displayHeavierBtn.prop("disabled", false)
-                }
-            })
-
-            displayLighterBtn.on("click", function(){
-                displayHeavierBtn.prop("disabled", false)
-                if(parseInt(displayWeightSelect.val()) == 150){
-                    newVal = parseInt(displayWeightSelect.val()) - 50
-                    displayWeightSelect.val(newVal)
-                    changeCSS('font-weight', newVal, "display")
-                    this.disabled = true
-                    return
-                }
-                newVal = parseInt(displayWeightSelect.val()) - 50
-                displayWeightSelect.val(newVal)
-                changeCSS('font-weight', newVal, "display")
-            })
-            displayHeavierBtn.on("click", function(){
-                displayLighterBtn.prop("disabled", false)
-                if(parseInt(displayWeightSelect.val()) == 950){
-                    newVal = parseInt(displayWeightSelect.val()) + 50
-                    displayWeightSelect.val(newVal)
-                    changeCSS('font-weight', newVal, "display")
-                    this.disabled = true
-                    return
-                } 
-                newVal = parseInt(displayWeightSelect.val()) + 50
-                displayWeightSelect.val(newVal)
-                changeCSS('font-weight', newVal, "display")
-            })
-            displayRange.on("input", function(){
-                $(".displayText").css("font-size", `${$(this).val()}px`)
-                displayText.val($(this).val())
-            })
-            displayText.on("change", function(){
-                $(".displayText").css("font-size", `${$(this).val()}px`)
-                displayRange.val($(this).val())
-            })
-            displayLineHeightRange.on("input", function(){
-                changeCSS("line-height", $(this).val(), "display")
-                displayLineHeightText.val($(this).val())
-            })
-            displayLineHeightText.on("change", function(){
-                changeCSS("line-height", $(this).val(), "display")
-                displayLineHeightRange.val($(this).val())
-            })
-            displayLetterSpacingRange.on("input", function(){
-                changeCSS("letter-spacing", `${$(this).val()}rem`, "display")
-                displayLetterSpacingText.val($(this).val())
-            })
-            displayLetterSpacingText.on("change", function(){
-                changeCSS("letter-spacing", `${$(this).val()}rem`, "display")
-                displayLetterSpacingRange.val($(this).val())
-            })
-
-            for (let i = 0; i < 19; i++) {
-                bodyWeightSelect.append(`<option value="${Math.round(100+900/18*i)}">본문용 굵기 ${i+1}</option>`)
-            }
-            bodyWeightSelect.on("change", function(){
-                currentBodyWeight = $(this).val()
-                changeCSS('font-weight', currentBodyWeight, "body")
-                if(parseInt(currentBodyWeight) == 100){
-                    bodyLighterBtn.prop("disabled", true)
-                    bodyHeavierBtn.prop("disabled", false)
-                }
-                else if(parseInt(currentBodyWeight) == 1000){
-                    bodyLighterBtn.prop("disabled", false)
-                    bodyHeavierBtn.prop("disabled", true)
-                }
-                else{
-                    bodyLighterBtn.prop("disabled", false)
-                    bodyHeavierBtn.prop("disabled", false)
-                }
-            })
-
-            bodyLighterBtn.on("click", function(){
-                bodyHeavierBtn.prop("disabled", false)
-                if(parseInt(bodyWeightSelect.val()) == 150){
-                    newVal = parseInt(bodyWeightSelect.val()) - 50
-                    bodyWeightSelect.val(newVal)
-                    changeCSS('font-weight', newVal, "body")
-                    this.disabled = true
-                    return
-                }
-                newVal = parseInt(bodyWeightSelect.val()) - 50
-                bodyWeightSelect.val(newVal)
-                changeCSS('font-weight', newVal, "body")
-            })
-            bodyHeavierBtn.on("click", function(){
-                bodyLighterBtn.prop("disabled", false)
-                if(parseInt(bodyWeightSelect.val()) == 950){
-                    newVal = parseInt(bodyWeightSelect.val()) + 50
-                    bodyWeightSelect.val(newVal)
-                    changeCSS('font-weight', newVal, "body")
-                    this.disabled = true
-                    return
-                } 
-                newVal = parseInt(bodyWeightSelect.val()) + 50
-                bodyWeightSelect.val(newVal)
-                changeCSS('font-weight', newVal, "body")
-            })
-            bodyRange.on("input", function(){
-                $(".bodyText").css("font-size", `${$(this).val()}px`, "body")
-                bodyText.val($(this).val())
-            })
-            bodyText.on("change", function(){
-                $(".bodyText").css("font-size", `${$(this).val()}px`, "body")
-                bodyRange.val($(this).val())
-            })
-            bodyLineHeightRange.on("input", function(){
-                changeCSS("line-height", $(this).val(), "body")
-                bodyLineHeightText.val($(this).val())
-            })
-            bodyLineHeightText.on("change", function(){
-                changeCSS("line-height", $(this).val(), "body")
-                bodyLineHeightRange.val($(this).val())
-            })
-            bodyLetterSpacingRange.on("input", function(){
-                changeCSS("letter-spacing", `${$(this).val()}rem`, "body")
-                bodyLetterSpacingText.val($(this).val())
-            })
-            bodyLetterSpacingText.on("change", function(){
-                changeCSS("letter-spacing", `${$(this).val()}rem`, "body")
-                bodyLetterSpacingRange.val($(this).val())
-            })
-
-            displayWeightSelect.val(currentDisplayWeight)
-            bodyWeightSelect.val(currentBodyWeight)
-            displayRange.val(initialDisplaySize)
-            displayText.val(initialDisplaySize)
-            displayLineHeightRange.val(initialLineHeight)
-            displayLineHeightText.val(initialLineHeight)
-            displayLetterSpacingRange.val(initialLetterSpacing)
-            displayLetterSpacingText.val(initialLetterSpacing)
-            bodyRange.val(initialBodySize)
-            bodyText.val(initialBodySize)
-            bodyLineHeightRange.val(initialLineHeight)
-            bodyLineHeightText.val(initialLineHeight)
-            bodyLetterSpacingRange.val(initialLetterSpacing)
-            bodyLetterSpacingText.val(initialLetterSpacing)
-            setPreviewText()
-
-        }
-        function changeCSS(attr, val, target){
-            target == "display" ? target = displayArea : target = bodyArea
-            // console.log(target)
-            switch (attr) {
-                case 'font-weight':
-                    // console.log(val)
-                    target.css('font-weight', val)
-                    break;
-                case 'font-feature-settings':
-                    feature = val[0]
-                    value = val[1]
-                    featureCSS = computeFeatureText(feature, value)
-                    target.css('font-feature-settings', featureCSS)
-                    break;
-            
-                default:
-                    // console.log(attr, val)
-                    target.css(attr, val)
-                    break;
-            }
-        }
-        function computeFeatureText(feature, value){
-            if(feature==='ss01'){
-                OTList[feature] = value
-                console.log(OTList)
-            }else if(feature==='ss02'){
-                OTList['ss03'] = 0
-                OTList['ss02'] = 1
-                console.log(OTList)
-            }else if(feature==='ss03' && value){
-                OTList['ss02'] = 0
-                OTList['ss03'] = 1
-                console.log(OTList)
-            }else{
-                OTList['ss02'] = 0
-                OTList['ss03'] = 0
-                console.log(OTList) 
-            }
-            str = Object.keys(OTList).map(key => `"${key}" ${OTList[key]}`).join(",")
-            console.log(str)
-            return str
-        }
-        function setPreviewText(){
-            previewWrapper.children().text(sampleText)
-            previewWrapper.children().css('font-weight', '100')
-        }
-        function SetFrameRatio(){
-            let viewWidth = window.innerWidth;
-            if(viewWidth < 430){
-                let ratio = viewWidth / 430;
-                console.log(ratio)
-                $(".vfcontrol").css("transform", "scale(" + ratio + ")");
-                $(".vfcontrol").css("transform-origin", "left");
-
-                let revRatio = 1 / ratio * 100;
-                $(".vfcontrol").css("width", revRatio + "%")
-            }
-        }
-    </script>
+    <script src="./script.js"></script>
 </html>
