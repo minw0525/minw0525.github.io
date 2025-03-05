@@ -34,7 +34,7 @@
     box-sizing:border-box;
     font-family: var(--font-family);
     font-size: var(--font-size);
-
+    text-rendering: geometricPrecision;
     scrollbar-width: thin;
     scrollbar-color: var(--color-bk) var(--color-w)
 }
