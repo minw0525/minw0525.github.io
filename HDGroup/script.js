@@ -1,7 +1,6 @@
 let sampleText = `꿈과 희망 세상을 움직이는 현대 그룹`
 let currentTab = 0
-let initialDisplaySize = parseInt($(".displayText").css('font-size').slice(0, -2)) //calc(0.8vh + 10px) * 4
-let initialBodySize = parseInt($(".bodyText").css('font-size').slice(0, -2))//$(".bodyText").css('font-size') //calc(0.8vh + 10px) * 1.5
+let initialSize = parseInt($(".displayText").css('font-size').slice(0, -2)) //calc(0.8vh + 10px) * 4
 
 const controls = $(".controls")
 const tabs = $("#tabs")
@@ -15,28 +14,6 @@ const previewWrapper = $('#previews')
 const preview = $('.preview')
 const displayArea = $(".displayText")
 const bodyArea = $(".bodyText")
-
-
-const displayRange = $("#displaySizeRange")
-const displayText = $("#displaySizeText")
-const displayLineHeightRange = $("#displayLineHeightRange")
-const displayLineHeightText = $("#displayLineHeightText")
-const displayLetterSpacingRange = $("#displayLetterSpacingRange")
-const displayLetterSpacingText = $("#displayLetterSpacingText")
-const bodyRange = $("#bodySizeRange")
-const bodyText = $("#bodySizeText")
-const bodyLineHeightRange = $("#bodyLineHeightRange")
-const bodyLineHeightText = $("#bodyLineHeightText")
-const bodyLetterSpacingRange = $("#bodyLetterSpacingRange")
-const bodyLetterSpacingText = $("#bodyLetterSpacingText")
-
-const displayWeightSelect = titleToolBox.find("select")
-const displayLighterBtn = titleToolBox.find(".lighter")
-const displayHeavierBtn = titleToolBox.find(".heavier")
-
-const bodyWeightSelect = bodyToolBox.find("select")
-const bodyLighterBtn = bodyToolBox.find(".lighter")
-const bodyHeavierBtn = bodyToolBox.find(".heavier")
 
 
 $(document).ready(function () { 
@@ -237,13 +214,8 @@ function setTab1Values(){
     const ranges = $(".sliderRange")
     const texts = $(".sliderLabel")
     ranges.each(function(index, range){
-        if(index < 2){
-            ranges.eq(index).val(initialDisplaySize)
-            texts.eq(index).val(initialDisplaySize)
-        }else{
-            ranges.eq(index).val(initialBodySize)
-            texts.eq(index).val(initialBodySize)
-        }
+        ranges.eq(index).val(initialSize)
+        texts.eq(index).val(initialSize)
     })
 }
 function setTabs(){

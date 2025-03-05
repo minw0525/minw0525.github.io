@@ -163,7 +163,12 @@ body{
     gap: 30px;
     min-width: 500px;
     align-items: center;
+    width: 100%;
 }
+.previewComp + .previewComp{
+    border-left: var(--border-1px) solid var(--color-bk);
+}
+
 .previewComp span{
     font-weight: 400;
     font-size: calc(var(--font-size)*1.6);
@@ -210,11 +215,8 @@ body{
 .textArea + .textArea {
     border-top: var(--border-1px) solid var(--color-bk);
 }
-.displayText{
+.displayText, .bodyText{
     font-size: calc(var(--font-size)*3);
-}
-.bodyText{
-    font-size: calc(var(--font-size)*1.4);
 }
 @font-palette-values --custom {
     font-family: preview;
@@ -246,6 +248,7 @@ body{
 #tabs{
     display: grid;
     grid-template-rows: repeat(auto-fit, minmax(10px, calc(100% / 3 - 3px)));
+    grid-template-columns: 50px;
     margin: 10px 10px 10px 0;
     background: var(--color-w);
     position: relative;
@@ -265,13 +268,13 @@ body{
     transition: width 0.2s ease-in-out;
 }
 .tab.active{
-    /* overflow: visible; */
     box-sizing: border-box;
     border-left:none;
     z-index: 1;
     background-color: var(--color-w);
     width:100%;
 }
+
 .tabtext{
     white-space : pre;
     transform: rotate(90deg);
@@ -293,7 +296,7 @@ body{
     min-width:fit-content;
     max-width: 50vw;
     user-select: none;
-    transition: all 0.5s;
+    /* transition: all 0.5s; */
 }
 .controls::before{
     content: '';
@@ -656,12 +659,8 @@ color-block *:nth-child(3){
     .previewComp span{
         font-size: calc(var(--font-size)*1.2);
     }
-    .displayText{
+    .displayText, .bodyText{
         font-size: 35px;
-    }
-
-    .bodyText{
-        font-size: 16px;
     }
 }
 
