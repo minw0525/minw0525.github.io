@@ -36,6 +36,7 @@
     font-size: var(--font-size);
     text-rendering: geometricPrecision;
     -webkit-font-smoothing: antialiased;
+    font-synthesis: none !important;
     scrollbar-width: thin;
     scrollbar-color: var(--color-bk) var(--color-w)
 }
