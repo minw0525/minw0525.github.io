@@ -670,6 +670,9 @@ color-block *:nth-child(3){
     #preview0Title, #preview0Body{
         white-space: normal;
     }
+    #preview0Body{
+        padding-bottom: 50px;
+    }
     #preview0 span span{
         font-size: var(--font-size);
     }
@@ -679,6 +682,7 @@ color-block *:nth-child(3){
     .displayText, .bodyText{
         font-size: 35px;
     }
+
 }
 
 input[type=range] {

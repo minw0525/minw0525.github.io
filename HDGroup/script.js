@@ -258,7 +258,6 @@ function setTabs(){
         $("#controls1").css("height", height)
 
         const element = $(`.toolBox`)[0]
-        console.log(element.offsetTop)
         $("#controls1")[0].scrollTo({
             top: element.offsetTop+8,
         })
@@ -270,7 +269,6 @@ function setTabs(){
             const height = controls.eq(index).find(".toolBox").eq(0).outerHeight() + 15
             $("#controls1").css("height", height)
             const element = $(`.toolBox`)[0]
-            console.log(element.offsetTop)
             $("#controls1")[0].scrollTo({
                 top: element.offsetTop+8,
             })
