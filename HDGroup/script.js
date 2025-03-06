@@ -167,14 +167,14 @@ function attachTab1EventListners(){
     textAreas.each(function(index, textArea){
         textAreas.eq(index).on("click", function(){
             const element = $(`#toolBox${index}`)[0]
-            console.log(element.offsetTop)
             $("#controls1")[0].scrollTo({
                 top: element.offsetTop+4,
                 behavior: 'smooth'
             })
-            const height = element.offsetHeight + 7.5
-            $("#controls1").css("height", height)
-
+            if (index !== 1 && window.innerWidth<768){
+                const height = element.offsetHeight + 7.5
+                $("#controls1").css("height", height)
+            }
         })
     })
     const lighterBtns = $(".lighter")
@@ -254,9 +254,10 @@ function setTabs(){
     
         controls.css("display", "none")
         controls.eq(index).show()
-        const height = controls.eq(1).find(".toolBox").eq(0).outerHeight() + 16
-        $("#controls1").css("height", height)
-
+        if (index !== 1 && window.innerWidth<768){
+            const height = controls.eq(index).find(".toolBox").eq(0).outerHeight() + 15
+            $("#controls1").css("height", height)
+        }
         const element = $(`.toolBox`)[0]
         $("#controls1")[0].scrollTo({
             top: element.offsetTop+8,
