@@ -3,7 +3,7 @@
 :root{
     --font-family: "Pretendard", "Noto Sans KR", "Apple SD Gothic" ,"Arial", sans-serif;
     --btn-font: "covik-sans","Segoe UI Symbol", monospace;
-    --font-size: calc(0.8vh + 10px);
+    --font-size: calc(0.8svh + 10px);
     --h1-size: 1.4rem;
     --h2-size: 1.2rem;
     --h3-size: 1.0rem;
@@ -58,7 +58,7 @@
 }
 body{
     width: 100vw;
-    height: 100vh;
+    height: 100svh;
     container-type: inline-size;
     container-name: body;
 }
@@ -69,6 +69,7 @@ body{
 }
 #sidebar{
     width: fit-content;
+    scroll-behavior: smooth;
 }
 #landing{
     position: absolute;
@@ -278,6 +279,9 @@ body{
 }
 
 .tabtext{
+    font-size: calc(var(--font-size)*0.9);
+    font-weight: bold;
+    height: var(--font-size);
     white-space : pre;
     transform: rotate(90deg);
 }
@@ -586,7 +590,7 @@ color-block *:nth-child(3){
         width: calc(100% - 20px);
     }
     #previews{
-        flex: 80vh;
+        flex: 80svh;
         justify-content: center;
     }
     #preview0{
@@ -596,12 +600,21 @@ color-block *:nth-child(3){
         flex-direction:column;
         gap: 40px;
     }
+    :target{
+        scroll-margin-top: 100px;
+    }
     .previewComp{
         padding: 20px 0;
         width: calc(100% - 40px);
         align-items: center;
+        min-width: unset;
+    }
+    .previewComp span{
+        white-space: initial;
     }
     .previewComp + .previewComp{
+        padding-bottom: 50px;
+        border-left: none;
         border-top: var(--border-1px) solid var(--color-bk);
     }
     .controls{
@@ -613,10 +626,11 @@ color-block *:nth-child(3){
         border-bottom-left-radius:0;
         border-bottom-right-radius:0;
         margin: 0 10px;
+        padding-bottom:0;
         min-height: 50px;
-        max-height: 60vh;
+        max-height: 60svh;
         -webkit-overflow-scrolling: touch;
-        scroll-snap-type: y proximity;      
+        scroll-snap-type: y mandatory;      
     }
     .controls::before{
         all : unset;
@@ -625,23 +639,24 @@ color-block *:nth-child(3){
         content: '';
         display: flex;
         width: calc(100% - 40px);
-        height : 8px;
+        /* height : 8px; */
         left:0;
         bottom: -3px;
         position: absolute;
         cursor: row-resize;
     }
     #controls1{
-        height:160px;
+        padding-top:10px;
+        transition: height 0.1s;
     }
     .toolBox{
         width: calc(100% - 24px);
         height: fit-content;
         max-height: 140px;
-        position: sticky;
-        position: -webkit-sticky;
+        /* position: sticky;
+        position: -webkit-sticky; */
         top: 0;
-        scroll-snap-align: center;
+        scroll-snap-align: end;
         background-color: var(--color-w);
         box-sizing:content-box;
     }

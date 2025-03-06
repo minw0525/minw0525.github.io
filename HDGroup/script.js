@@ -44,8 +44,8 @@ function init(){
 
     setTabs()
     setPreviewText()
-
 }
+
 function buildTab2Templates(){
     $("#preview2").find(".sampleText").text(sampleText)
 
@@ -87,11 +87,11 @@ function setTab0Weights(){
     }
 }
 function buildTab1Selects(){
-    const item = ({idx, family, label}) => `
-        <div class="toolBox tab2">
-            <label class="toolBoxName">${label} ${idx}</label>
+    const item = ({idx, familyIdx, family, label}) => `
+        <div class="toolBox tab2" id="toolBox${idx}">
+            <label class="toolBoxName">${label} ${familyIdx}</label>
             <div class="weightSelectBlock flex">
-                <select class= weightSelect name="${family}WeightSelect${idx}" id="${family}WeightSelect${idx}">
+                <select class= weightSelect name="${family}WeightSelect${familyIdx}" id="${family}WeightSelect${familyIdx}">
                 </select>
                 <button class="lighter"></button>
                 <button class="heavier"></button>
@@ -101,21 +101,21 @@ function buildTab1Selects(){
                     <label>크기</label>
                     <input class="sliderLabel" type="text" inputmode="decimal" number="true" autocomplete="off" min="10" max="100" step="1" id="${family}SizeText${idx}">
                 </div>
-                <input class="sliderRange" type="range" min="10" max="100" step="1" id="${family}SizeRange${idx}">
+                <input class="sliderRange" type="range" min="10" max="100" step="1" id="${family}SizeRange${familyIdx}">
             </div>
         </div>
     `
     $('#controls1').append([
-        {idx:1, family: "title",label: "제목용"},
-        {idx:2, family: "title",label: "제목용"},
-        {idx:1, family: "body",label: "본문용"},
-        {idx:2, family: "body",label: "본문용"},
-        {idx:3, family: "body",label: "본문용"}
+        {idx:0, familyIdx:1, family: "title",label: "제목용"},
+        {idx:1, familyIdx:2 , family: "title",label: "제목용"},
+        {idx:2, familyIdx:1 , family: "body",label: "본문용"},
+        {idx:3, familyIdx:2 , family: "body",label: "본문용"},
+        {idx:4, familyIdx:3 , family: "body",label: "본문용"}
     ].map(item).join(''));
 
 
     const weightSelects = $(".weightSelect")
-    const previews = $(".textArea")
+    const textAreas = $(".textArea")
     const tab2Recommendations = [5, 5, 0, 0, 0]
 
     weightSelects.each(function(index){
@@ -130,7 +130,7 @@ function buildTab1Selects(){
         }
         weight = Math.round(100+900/18*tab2Recommendations[index])
         weightSelects.eq(index).val(weight)
-        previews.eq(index).css('font-weight', weight)
+        textAreas.eq(index).css('font-weight', weight)
         if (weight == 100){
             weightSelects.eq(index).siblings(".lighter").prop("disabled", true)
             weightSelects.eq(index).siblings(".heavier").prop("disabled", false)
@@ -161,6 +161,20 @@ function attachTab1EventListners(){
                 $(this).siblings(".lighter").prop("disabled", false)
                 $(this).siblings(".heavier").prop("disabled", false)
             }
+        })
+    })
+    const textAreas = $(".textArea")
+    textAreas.each(function(index, textArea){
+        textAreas.eq(index).on("click", function(){
+            const element = $(`#toolBox${index}`)[0]
+            console.log(element.offsetTop)
+            $("#controls1")[0].scrollTo({
+                top: element.offsetTop+4,
+                behavior: 'smooth'
+            })
+            const height = element.offsetHeight + 7.5
+            $("#controls1").css("height", height)
+
         })
     })
     const lighterBtns = $(".lighter")
@@ -221,6 +235,7 @@ function setTab1Values(){
 function setTabs(){
     preview.eq(currentTab).show()
     preview.eq(currentTab).siblings().hide()
+    preview.eq(currentTab).children()[0].scrollIntoView({block: "start"})
 
     controls.css("display", "none")
     controls.eq(currentTab).show()
@@ -234,15 +249,31 @@ function setTabs(){
 
         preview.eq(index).show()
         preview.eq(index).siblings().hide()
-
+        preview.eq(currentTab).children()[0].scrollIntoView({block: "start"})
+        // [0].scrollIntoView({block: "top", behavior: "smooth"})
+    
         controls.css("display", "none")
         controls.eq(index).show()
+        const height = controls.eq(1).find(".toolBox").eq(0).outerHeight() + 16
+        $("#controls1").css("height", height)
+
+        const element = $(`.toolBox`)[0]
+        console.log(element.offsetTop)
+        $("#controls1")[0].scrollTo({
+            top: element.offsetTop+8,
+        })
+
         tab.eq(index).addClass("active")
         tab.eq(index).siblings().removeClass("active")  
 
-        if (index == 1 && window.innerWidth<768){
-            height = controls.eq(index).find(".toolBox").eq(2).outerHeight() + 20
-            $("#controls1").css("height", height-4)
+        if (index !== 1 && window.innerWidth<768){
+            const height = controls.eq(index).find(".toolBox").eq(0).outerHeight() + 15
+            $("#controls1").css("height", height)
+            const element = $(`.toolBox`)[0]
+            console.log(element.offsetTop)
+            $("#controls1")[0].scrollTo({
+                top: element.offsetTop+8,
+            })
         }
     })
 
@@ -272,7 +303,7 @@ function computeFeatureText(feature, value){
     return str
 }
 function setPreviewText(){
-    preview.eq(1).children().text(sampleText)
+    preview.eq(1).find("pre").text(sampleText)
 
     previewWrapper.children().css('font-weight', '100')
 }
