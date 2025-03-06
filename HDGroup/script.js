@@ -254,7 +254,7 @@ function setTabs(){
     
         controls.css("display", "none")
         controls.eq(index).show()
-        if (index !== 1 && window.innerWidth<768){
+        if (window.innerWidth<768){
             const height = controls.eq(index).find(".toolBox").eq(0).outerHeight() + 15
             $("#controls1").css("height", height)
         }

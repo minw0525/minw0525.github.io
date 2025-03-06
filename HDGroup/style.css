@@ -270,6 +270,7 @@ body{
     left:0;
     width: calc(100% - 10px);
     transition: width 0.2s ease-in-out;
+    color: var(--shade-4)
 }
 .tab.active{
     box-sizing: border-box;
@@ -277,6 +278,7 @@ body{
     z-index: 1;
     background-color: var(--color-w);
     width:100%;
+    color: var(--color-bk);
 }
 
 .tabtext{
