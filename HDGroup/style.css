@@ -458,7 +458,6 @@ button:disabled, button:disabled:hover{
 }
 .sliderLabel{
     font-size: var(--normal-size);
-    font-family: "covik-sans-mono";
     width: 4rem;
     height: 1.4rem;
     text-align:right;
@@ -685,9 +684,14 @@ color-block *:nth-child(3){
     .displayText, .bodyText{
         font-size: 35px;
     }
+    .textArea{
+        font-size: var(--preview-size);
+    }
 
 }
-
+input{
+    font-family: var(--font-family);
+}
 input[type=range] {
     height: var(--h2-size);
     -webkit-appearance: none;

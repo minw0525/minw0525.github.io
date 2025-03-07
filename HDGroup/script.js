@@ -15,11 +15,11 @@ const preview = $('.preview')
 const displayArea = $(".displayText")
 const bodyArea = $(".bodyText")
 
+document.documentElement.style.setProperty('--preview-size', 25);
 
 $(document).ready(function () { 
     SetFrameRatio();
     init()
-    // console.log(previewWrapper)
 })
 
 function init(){
@@ -167,13 +167,18 @@ function attachTab1EventListners(){
     textAreas.each(function(index, textArea){
         textAreas.eq(index).on("click", function(){
             const element = $(`#toolBox${index}`)[0]
-            $("#controls1")[0].scrollTo({
-                top: element.offsetTop+4,
-                behavior: 'smooth'
-            })
-            if (index !== 1 && window.innerWidth<768){
+
+            if (window.innerWidth<768){
                 const height = element.offsetHeight + 7.5
                 $("#controls1").css("height", height)
+
+                const previewHeight =  Math.round(($("body").height() - height -$('#controls1').offset().top)/5)
+                document.documentElement.style.setProperty('--preview-size', `${((previewHeight-30)/3)}px`);
+                
+                $("#controls1")[0].scrollTo({
+                    top: element.offsetTop+4,
+                    behavior: 'smooth'
+                })
             }
         })
     })
@@ -215,6 +220,7 @@ function attachTab1EventListners(){
         ranges.eq(index).on("input", function(){
             $("pre").eq(index).css("font-size", `${$(this).val()}px`)
             texts.eq(index).val($(this).val())
+            $("pre").eq(index).scrollIntoView({block: "start"}) 
         })
     })
     texts.each(function(index, text){
@@ -257,6 +263,9 @@ function setTabs(){
         if (window.innerWidth<768){
             const height = controls.eq(index).find(".toolBox").eq(0).outerHeight() + 15
             $("#controls1").css("height", height)
+            const previewHeight =  Math.round(($("body").height() - height -$('#controls1').offset().top)/5)
+            document.documentElement.style.setProperty('--preview-size', `${((previewHeight-30)/3)}px`);
+
         }
         const element = $(`.toolBox`)[0]
         $("#controls1")[0].scrollTo({
@@ -273,6 +282,9 @@ function setTabs(){
             $("#controls1")[0].scrollTo({
                 top: element.offsetTop+8,
             })
+            const previewHeight =  Math.round(($("body").height() - height -$('#controls1').offset().top)/5)
+            document.documentElement.style.setProperty('--preview-size', `${((previewHeight-30)/3)}px`);
+
         }
     })
 
