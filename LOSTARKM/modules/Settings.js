@@ -29,13 +29,18 @@ export default class Settings {
     }
     updateInstance() {
         const coordinates = this.currentState.instance[0].coordinates;
-        this.currentState.variations = coordinates
+        this.currentState.variations = { ...coordinates };
         for (const [axis, value] of Object.entries(coordinates)) {
             const inputs = this.parent.querySelectorAll(`.${axis}input`)
             for (const input of inputs) {
                 input.value = Math.round(value * 100) / 100;
-                this.currentState.variations[axis] ??= value;
             }
+            // Explicitly sync the custom elements' internal states
+            this.parent.querySelectorAll('variableinput-range').forEach(el => {
+                if (el.prop === axis) {
+                    el.currentState[el.prop] = value;
+                }
+            });
             this.updateVariationCSS()
         }
     }
