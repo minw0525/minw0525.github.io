@@ -53,7 +53,7 @@ export default class Settings {
             toolBoxes: ['로스트아크 모바일 전용서체 개발 제안', 'Basic Controls', 'Variable Settings', 'Colors'],
             toolBoxCheckers: [true, true, this.variationAxes[0] ? true : false, true],
             basicControls: {
-                "Size": { min: 10, max: 300, default: 100, step: 1, prop: "fontSize", unit: "px" },
+                "Size": { min: 10, max: 300, default: window.matchMedia('(max-width: 768px)').matches ? 30 : 100, step: 1, prop: "fontSize", unit: "px" },
                 "Line Height": { min: 0, max: 2, default: 1.2, step: 0.01, prop: "lineHeight" },
                 "Letter Spacing": { min: -1, max: 1, default: 0, step: 0.01, prop: "letterSpacing", unit: "rem" }
             },

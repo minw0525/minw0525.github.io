@@ -293,13 +293,13 @@ button:hover {
 }
 
 .rangeContent button.paused::before {
-    content: url('data:image/svg+xml;utf8,<svg fill="blue" width="25" height="25" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 5v14l11-7z"/></svg>');
+    content: url('data:image/svg+xml;utf8,<svg fill="blue" width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 5v14l11-7z"/></svg>');
     position: relative;
     top: 2px;
 }
 
 .rangeContent button.playing::before {
-    content: url('data:image/svg+xml;utf8,<svg fill="blue" width="25" height="25" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 6h12v12H6z"/></svg>');
+    content: url('data:image/svg+xml;utf8,<svg fill="blue" width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 6h12v12H6z"/></svg>');
     position: relative;
     top: 2px;
 }
@@ -334,13 +334,13 @@ button:hover {
 }
 
 .animationPlayer button.paused:first-child::before {
-    content: url('data:image/svg+xml;utf8,<svg fill="blue" width="25" height="25" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 5v14l11-7z"/></svg>');
+    content: url('data:image/svg+xml;utf8,<svg fill="blue" width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 5v14l11-7z"/></svg>');
     position: relative;
     top: 2px;
 }
 
 .animationPlayer button.playing:first-child::before {
-    content: url('data:image/svg+xml;utf8,<svg fill="blue" width="25" height="25" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 6h12v12H6z"/></svg>');
+    content: url('data:image/svg+xml;utf8,<svg fill="blue" width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 6h12v12H6z"/></svg>');
     position: relative;
     top: 2px;
 }
