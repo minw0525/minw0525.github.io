@@ -357,7 +357,7 @@ feature-block,
 color-block {
     height: 1.2rem;
     display: flex;
-    margin-bottom: 5px;
+    margin-bottom: 7px;
     gap: 10px;
 
 }

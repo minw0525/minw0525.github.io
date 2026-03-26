@@ -656,7 +656,9 @@ class ToolBox extends HTMLElement {
             featureBlock.controls = this.controls
             this.appendChild(featureBlock)
         }
-        
+        // Apply layout enhancements (hiding items, inserting dividers)
+        FeatureInteractionManager.initializeUI(this);
+
         // Force the initial status update for feature dependencies (e.g. ss14)
         setTimeout(() => {
             FeatureInteractionManager.updateUI(this, this.controls.currentState.features);
