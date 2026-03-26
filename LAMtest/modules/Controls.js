@@ -1,5 +1,6 @@
 import featureDefaults from "./opentypeFeatureDefaults.js";
 import Settings from "./Settings.js";
+import FeatureInteractionManager from "./FeatureInteractionManager.js";
 
 const userText = document.getElementById('userText')
 
@@ -426,8 +427,18 @@ class FeatureBlock extends HTMLElement {
     }
     changeHandler(ev) {
         this.currentState[this.prop] = ev.target.checked;
-        this.updateState(this.prop, this.currentState[this.prop])
-        this.updateUI()
+        this.updateState(this.prop, this.currentState[this.prop]);
+
+        // Apply custom interaction rules (mutual exclusivity & dependencies)
+        FeatureInteractionManager.applyRules(this.controls.currentState.features, this.prop, ev.target.checked);
+
+        const container = this.closest('tool-box');
+        if (container) {
+            FeatureInteractionManager.updateUI(container, this.controls.currentState.features);
+        }
+
+        // Finalize CSS update with the enforced rules
+        this.controls.updateFeatureCSS();
     }
     updateState(prop, value) {
         // this.controls.currentState[prop] = value;
@@ -645,6 +656,11 @@ class ToolBox extends HTMLElement {
             featureBlock.controls = this.controls
             this.appendChild(featureBlock)
         }
+        
+        // Force the initial status update for feature dependencies (e.g. ss14)
+        setTimeout(() => {
+            FeatureInteractionManager.updateUI(this, this.controls.currentState.features);
+        }, 0);
     }
     buildColorControls() {
         for (const [key, value] of Object.entries(this.settings.colorData)) {
