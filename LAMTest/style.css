@@ -119,32 +119,144 @@ main {
     flex: 1 1 calc(90vw - 200px);
     font-family: preview, sans-serif;
     flex-direction: column;
-    text-align: center;
-    justify-content: center;
+    padding: 40px 20px;
+    gap: 40px;
+    background: #fdfdfd;
 }
 
-@font-palette-values --custom {
-    font-family: preview;
-    base-palette: 1;
-    override-colors:
-        0 #c1cbed,
-        1 #ff3a92,
-        7 #000000;
+.font-pair-card {
+    background: white;
+    border-radius: 12px;
+    outline: var(--border-2px) solid var(--color-b);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 80%;
+    max-width: 1200px;
+    flex-shrink: 0;
+    overflow: hidden;
 }
 
-#userText {
-    padding: 30px;
-    width: 100%;
+.font-pair-header {
+    font-weight: bold;
+    font-size: 1.2em;
+    color: var(--color-b);
+    border-bottom: 2px solid var(--color-b);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.font-pair-header>div:first-child {
+    font-size: 1.2rem;
+}
+
+.body-controls {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 2px solid var(--color-b);
+}
+
+.body-control-item {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 20%;
+    min-width: 150px;
+    gap: 8px;
+}
+
+.body-controls select {
+    border: var(--border-2px) solid var(--color-b);
+    border-radius: 3px;
+    font-size: var(--small-size);
+    padding: 5px;
+    color: var(--color-b);
+    background-color: transparent;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,<svg width='20' height='20' xmlns='http://www.w3.org/2000/svg'><path fill='blue' d='m0,8l8,8L16,8H8Z'/></svg>");
+    background-position: right 5px center;
+    background-repeat: no-repeat;
+    height: 1.8rem;
     outline: none;
-    word-break: break-word;
-    overflow-y: auto;
+}
+
+.input-val {
+    width: 3.5rem;
+    height: 1.4rem;
+    font-size: var(--small-size);
+    font-family: "covik-sans-mono";
+    text-align: right;
+    border: none;
+    border-radius: 0.7rem;
+    outline: none;
+    padding: 0 5px;
+    color: var(--color-b);
+    background-color: transparent;
+}
+
+.input-val:focus {
+    background-color: var(--shade-1);
+}
+
+.input-val::-webkit-inner-spin-button,
+.input-val::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.input-val {
+    -moz-appearance: textfield;
+}
+
+.text-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.text-group .label {
+    font-size: 0.8rem;
+    color: var(--color-b);
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: var(--border-2px) solid var(--color-b);
+    width: max-content;
+}
+
+.display-text {
+    font-family: preview, sans-serif;
+    font-size: var(--display-fontSize, 2.5rem);
+    line-height: var(--display-lineHeight, 1.2);
+    letter-spacing: var(--display-letterSpacing, 0rem);
+    transform: scaleX(var(--display-scaleX, 1));
+    transform-origin: left top;
+    font-variation-settings: var(--display-font-variation-settings, normal);
+    font-feature-settings: var(--display-font-feature-settings, normal);
+    -webkit-locale: var(--display-webkit-locale, "auto");
+    font-language-override: var(--display-font-language-override, normal);
+    margin: 0;
+    white-space: pre-wrap;
+    outline: none;
     font-palette: --custom;
     font-palette: normal;
+    width: 100%;
+    word-break: keep-all;
 }
 
-#userText>div {
-    font-size: inherit;
-    font-family: inherit;
+.body-text {
+    /* Individual inline styling applies font properties here */
+    line-height: 1.5;
+    margin: 0;
+    white-space: pre-wrap;
+    width: 100%;
+    word-break: keep-all;
+    outline: none;
+    transform-origin: left top;
 }
 
 [contentEditable] {
@@ -421,6 +533,10 @@ color-block *:nth-child(3) {
 
     #font-preview {
         flex: 60vh;
+    }
+
+    .font-pair-card {
+        width: 100%;
     }
 
     control-bar {

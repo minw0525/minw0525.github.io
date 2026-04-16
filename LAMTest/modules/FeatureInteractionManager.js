@@ -4,8 +4,8 @@ export default class FeatureInteractionManager {
      * @param {HTMLElement} container - The toolbox container
      */
     static initializeUI(container) {
-        // Hide 'aalt', 'salt', and 'ss04'
-        ['aaltBox', 'saltBox', 'ss04Box'].forEach(id => {
+        // Hide aalt, salt, and raw ss01-ss04
+        ['aaltBox', 'saltBox', 'ss01Box', 'ss02Box', 'ss03Box', 'ss04Box'].forEach(id => {
             const box = container.querySelector(`#${id}`);
             if (box) {
                 const block = box.closest('feature-block');
@@ -41,14 +41,45 @@ export default class FeatureInteractionManager {
      * @param {boolean} newValue - The new boolean value of the toggled feature
      */
     static applyRules(features, changedProp, newValue) {
-        // Group 1: dft1, ss01-ss08 (excluding ss04) are mutually exclusive
-        const group1 = ['dft1', 'ss01', 'ss02', 'ss03', 'ss05', 'ss06', 'ss07', 'ss08'];
-        if (group1.includes(changedProp) && newValue) {
-            group1.forEach(prop => {
-                if (prop !== changedProp && features[prop] !== undefined) {
-                    features[prop] = false;
-                }
+        const typeGroup = ['tpA0','tpA1','tpA2','tpA3','tpB0','tpB1','tpB2','tpB3', 'rcA2', 'rcB1', 'rcB3'];
+        
+        if (typeGroup.includes(changedProp)) {
+            // Entorce radio behavior for this group: if one is checked, others are unchecked.
+            if (newValue) {
+                typeGroup.forEach(prop => {
+                    if (prop !== changedProp) features[prop] = false;
+                });
+            }
+            
+            // Map the active typeGroup item to actual ss01-ss04 features
+            const activeType = typeGroup.find(p => features[p]);
+            features['ss01'] = ['tpA1', 'tpB1', 'rcB1'].includes(activeType);
+            features['ss02'] = ['tpA2', 'tpB2', 'rcA2'].includes(activeType);
+            features['ss03'] = ['tpA3', 'tpB3', 'rcB3'].includes(activeType);
+            features['ss04'] = ['tpB0', 'tpB1', 'tpB2', 'tpB3', 'rcB1', 'rcB3'].includes(activeType);
+
+            // If a stylistic variant (1, 2, 3) is active, ensure general groups (ss05-08) are off
+            if ((features['ss01'] || features['ss02'] || features['ss03']) && newValue) {
+                 ['ss05','ss06','ss07','ss08'].forEach(p => { features[p] = false; });
+            }
+        }
+
+        // Group 1: ss05-ss08 are mutually exclusive
+        const group1Old = ['ss05', 'ss06', 'ss07', 'ss08'];
+        if (group1Old.includes(changedProp) && newValue) {
+            group1Old.forEach(prop => {
+                if (prop !== changedProp && features[prop] !== undefined) features[prop] = false;
             });
+            // If selecting ss05-08 manually, visually strip the ss01-ss03 mapping leaving only tpA0 or tpB0
+            if (features['ss04']) {
+                 typeGroup.forEach(p => { if(features[p] !== undefined) features[p] = false; });
+                 features['tpB0'] = true;
+                 features['ss01'] = features['ss02'] = features['ss03'] = false;
+            } else {
+                 typeGroup.forEach(p => { if(features[p] !== undefined) features[p] = false; });
+                 features['tpA0'] = true;
+                 features['ss01'] = features['ss02'] = features['ss03'] = false;
+            }
         }
 
         // Group 2: ss09-ss13 are mutually exclusive
@@ -79,10 +110,13 @@ export default class FeatureInteractionManager {
      * @param {Object} features - The current global features state
      */
     static updateUI(container, features) {
-        // Enforce dft1 logic: if no other group1 element is active, dft1 should be active
-        const group1 = ['ss01', 'ss02', 'ss03', 'ss05', 'ss06', 'ss07', 'ss08'];
-        const group1Active = group1.some(prop => features[prop]);
-        features['dft1'] = !group1Active;
+        // Enforce typeGroup Default
+        const typeGroup = ['tpA0','tpA1','tpA2','tpA3','tpB0','tpB1','tpB2','tpB3', 'rcA2', 'rcB1', 'rcB3'];
+        const tpActive = typeGroup.some(prop => features[prop]);
+        if (!tpActive) {
+            features['tpA0'] = true;
+            features['ss01'] = features['ss02'] = features['ss03'] = features['ss04'] = false;
+        }
 
         const dependants = ['ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08'];
         const isDepActive = dependants.some(prop => features[prop]);

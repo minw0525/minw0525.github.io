@@ -2,8 +2,6 @@ import featureDefaults from "./opentypeFeatureDefaults.js";
 import Settings from "./Settings.js";
 import FeatureInteractionManager from "./FeatureInteractionManager.js";
 
-const userText = document.getElementById('userText')
-
 const requestAnimationFrame =
     window.requestAnimationFrame ||
     window.mozRequestAnimationFrame ||
@@ -18,7 +16,6 @@ class ToolboxHeader extends HTMLElement {
     constructor() {
         super()
         this.familyEl = document.createElement('h1')
-        this.typeSelect = document.createElement('select')
         this.instancesSelect = document.createElement('select')
 
         this.prop = 'instance'
@@ -34,19 +31,7 @@ class ToolboxHeader extends HTMLElement {
         this.presets = this.controls.font.presets;
     }
     initializeUI() {
-        this.appendChildren(this.familyEl, this.typeSelect)
-        
-        // Setup Type A / Type B select
-        this.typeSelect.innerHTML = `
-            <option value="A">Type A</option>
-            <option value="B">Type B</option>
-        `;
-        if (this.controls.currentState.features && this.controls.currentState.features['ss04']) {
-            this.typeSelect.value = 'B';
-        } else {
-            this.typeSelect.value = 'A';
-        }
-        this.typeSelect.addEventListener('change', this.typeChangeHandler.bind(this));
+        this.appendChildren(this.familyEl)
 
         this.instancesSelect.addEventListener('change', this.changeHandler.bind(this))
 
@@ -79,21 +64,6 @@ class ToolboxHeader extends HTMLElement {
         this.currentState[this.prop] = [this.presets[ev.target.value], ev.target.value]
         this.updateState(this.prop, this.currentState[this.prop])
         this.updateUI()
-    }
-
-    typeChangeHandler(ev) {
-        const isTypeB = ev.target.value === 'B';
-        
-        this.controls.currentState.features ??= {};
-        this.controls.currentState.features['ss04'] = isTypeB;
-        
-        FeatureInteractionManager.applyRules(this.controls.currentState.features, 'ss04', isTypeB);
-        
-        if (this.controls.parent) {
-            FeatureInteractionManager.updateUI(this.controls.parent, this.controls.currentState.features);
-        }
-        
-        this.controls.updateFeatureCSS();
     }
 
     updateState(prop, value) {
@@ -442,7 +412,7 @@ class FeatureBlock extends HTMLElement {
         this.labelName.textContent = this.uiName || this.name;
         this.labelName.setAttributes({ "for": `${this.prop}Box` })
 
-        this.labelTag.textContent = this.prop === 'dft1' ? '' : this.prop;
+        this.labelTag.textContent = this.prop.startsWith('tp') || this.prop.startsWith('rc') ? '' : this.prop;
 
         this.checkbox.addEventListener('change', this.changeHandler.bind(this))
 
@@ -460,9 +430,28 @@ class FeatureBlock extends HTMLElement {
         // Apply custom interaction rules (mutual exclusivity & dependencies)
         FeatureInteractionManager.applyRules(this.controls.currentState.features, this.prop, ev.target.checked);
 
-        const container = this.closest('tool-box');
-        if (container) {
-            FeatureInteractionManager.updateUI(container, this.controls.currentState.features);
+        if (this.controls.parent) {
+            FeatureInteractionManager.updateUI(this.controls.parent, this.controls.currentState.features);
+        }
+
+        // Set IDNT variation to configured value on selection
+        if (ev.target.checked) {
+            let targetIDNT = 100;
+            if (this.prop === 'rcA2') targetIDNT = 20;
+            else if (this.prop === 'rcB1') targetIDNT = 60;
+            else if (this.prop === 'rcB3') targetIDNT = 100;
+
+            this.controls.currentState.variations['IDNT'] = targetIDNT;
+            if (this.controls.parent) {
+                const ranges = this.controls.parent.querySelectorAll('variableinput-range');
+                ranges.forEach(el => {
+                    if (el.prop === 'IDNT') {
+                        el.currentState['IDNT'] = targetIDNT;
+                        el.updateUI();
+                    }
+                });
+            }
+            this.controls.updateVariationCSS();
         }
 
         // Finalize CSS update with the enforced rules
@@ -566,25 +555,29 @@ class ToolBox extends HTMLElement {
     }
     initializeUI() {
         switch (this.label.textContent) {
-            case this.settings.toolBoxes[0]:
-                this.setState('instance')
-                this.buildInstanceSelector()
+            case '로스트아크 모바일 전용서체 개발 제안':
+                this.setState('instance');
+                this.buildInstanceSelector();
                 break;
-            case this.settings.toolBoxes[1]:
-                this.setState('basics')
-                this.buildBasicControls()
+            case 'Basic Controls':
+                this.setState('basics');
+                this.buildBasicControls();
                 break;
-            case this.settings.toolBoxes[2]: 
-                this.setState('variations')
-                this.buildVariableControls()
+            case 'Variable Settings':
+                this.setState('variations');
+                this.buildVariableControls();
                 break;
-            case this.settings.toolBoxes[3]: 
-                this.setState('features')
-                this.buildFeatureControls()
+            case 'Opentype Features':
+                this.setState('features');
+                this.buildFeatureControls();
                 break;
-            case this.settings.toolBoxes[4]: 
-                this.setState('colors')
-                this.buildColorControls()
+            case '추천 시안':
+                this.setState('features');
+                this.buildRecommendationControls();
+                break;
+            case 'Colors':
+                this.setState('colors');
+                this.buildColorControls();
                 break;
             default:
                 break;
@@ -671,13 +664,22 @@ class ToolBox extends HTMLElement {
         this.appendChild(animationPlayer)
     }
 
+    buildRecommendationControls() {
+        for (const feature of this.settings.recommendationLists) {
+            const featureBlock = document.createElement('feature-block')
+            featureBlock.feature = feature
+            featureBlock.controls = this.controls
+            this.appendChild(featureBlock)
+        }
+    }
+
     buildFeatureControls() {
         for (const feature of this.settings.featureLists) {
             if (feature.tag === "locl") {
                 this.controls.currentState.features ??= {}
                 this.controls.currentState.features.locl = "";
-                userText.style.webkitLocale = `"${feature.selectedLanguage.htmlTag}"` || "auto"
-                userText.style.fontLanguageOverride = `"${feature.selectedLanguage.tag}"` || "auto"
+                document.documentElement.style.setProperty('--display-webkit-locale', `'${feature.selectedLanguage.htmlTag}'`);
+                document.documentElement.style.setProperty('--display-font-language-override', `'${feature.selectedLanguage.tag}'`);
             }
             const featureBlock = document.createElement('feature-block')
             featureBlock.feature = feature
