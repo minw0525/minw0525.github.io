@@ -296,15 +296,16 @@ for(var i = tableHeaders.length; i--; ) {
 
 enableHighDPICanvas('preview');
 
-opentype.load(fontFileName, function(err, font) {
+fetch(fontFileName)
+    .then(function(res) { return res.arrayBuffer(); })
+    .then(function(buffer) {
+    var font = opentype.parse(buffer, {lowMemory:true});
     var amount, glyph, ctx, x, y, fontSize;
-    if (err) {
-        showErrorMessage(err.toString());
-        return;
-    }
     onFontLoaded(font);
     console.log(font)
-}, {lowMemory:true});
+}).catch(function(err) {
+    showErrorMessage(err.toString());
+});
 </script>
 </body>
 </html>

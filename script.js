@@ -1,5 +1,6 @@
 async function make(){
-    const font = await opentype.load('https://parkminwoo.com/font/Hesiod-Regular.otf');
+    const fontBuffer = await fetch('https://parkminwoo.com/font/Hesiod-Regular.otf').then((res) => res.arrayBuffer());
+    const font = opentype.parse(fontBuffer);
     const glyphsData = font.glyphs.glyphs
     console.log(glyphsData);
     let glyphList = Object.entries(glyphsData).sort((a,b)=>{b[0].localeCompare(a[0])})
