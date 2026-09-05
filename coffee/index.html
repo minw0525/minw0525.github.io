@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#171411" />
+    <meta name="description" content="단계별 핸드드립 레시피 타이머" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./assets/icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon.png" />
+    <link rel="preload" href="./assets/fonts/PretendardVariable.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="./styles.css" />
+    <title>브루 타이머</title>
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">PERSONAL BREW GUIDE</p>
+          <h1>브루 타이머</h1>
+        </div>
+      </header>
+      <button class="library-trigger" id="library-button" type="button"><span>내 레시피 <strong id="library-count">1</strong></span><span>선택 · 관리 →</span></button>
+      <p id="app-message" role="status" class="help-text"></p>
+
+      <section class="recipe-card" aria-labelledby="recipe-name">
+        <div class="recipe-heading">
+          <div>
+            <span class="status-dot" aria-hidden="true"></span>
+            <span class="status-label" id="status-label">준비됨</span>
+          </div>
+          <span class="method-label" id="recipe-method">V60</span>
+        </div>
+        <div class="recipe-title-row">
+          <h2 id="recipe-name">모닝 V60</h2>
+          <button class="recipe-edit" id="edit-button" type="button" aria-label="현재 레시피 편집">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11-4-4L4 16v4Zm12.5-16.5 4 4 1-1a1.4 1.4 0 0 0 0-2l-2-2a1.4 1.4 0 0 0-2 0l-1 1Z"/></svg>
+            편집
+          </button>
+        </div>
+        <div class="ratio-row" aria-label="레시피 용량">
+          <div><strong id="coffee-amount">20g</strong><span>원두량</span></div>
+          <span class="ratio-line"></span>
+          <div><strong id="water-amount">300g</strong><span>물 양</span></div>
+          <span class="ratio-line"></span>
+          <div><strong id="total-duration">3:00</strong><span>총 시간</span></div>
+        </div>
+        <dl id="recipe-meta" class="recipe-facts" aria-label="추출 설정"></dl>
+        <p id="recipe-notes" class="recipe-notes"></p>
+      </section>
+
+      <section class="timer-panel">
+        <div class="timer-ring" id="timer-ring">
+          <div class="timer-content">
+            <span class="timer-kicker" id="timer-kicker">경과 시간</span>
+            <strong id="timer-display">0:00</strong>
+            <span class="timer-target" id="timer-target">시작 준비</span>
+          </div>
+        </div>
+        <div class="pour-metrics"><div><span>이번에 붓기</span><strong id="pour-amount">60g</strong></div><div><span>저울 누적 목표</span><strong id="pour-target">60g</strong></div></div>
+        <div class="current-step" aria-live="polite">
+          <p id="step-time">0:00</p>
+          <div>
+            <h3 id="step-title">뜸 들이기</h3>
+            <p id="step-detail">60g까지 천천히 부어주세요</p>
+          </div>
+        </div>
+        <p class="next-step" id="next-step"></p>
+      </section>
+
+      <section class="steps-section" aria-labelledby="steps-title">
+        <div class="section-title-row">
+          <h2 id="steps-title">추출 순서</h2>
+          <span id="step-count">4단계</span>
+        </div>
+        <ol class="steps-list" id="steps-list"></ol>
+      </section>
+
+      <div class="action-dock">
+        <button class="secondary-action hidden" id="reset-button" type="button">처음으로</button>
+        <button class="primary-action" id="start-button" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7V5Z"/></svg>
+          <span>추출 시작</span>
+        </button>
+      </div>
+    </main>
+
+    <dialog id="library-dialog" aria-labelledby="library-title">
+      <div class="dialog-body">
+        <div class="dialog-heading"><div><p class="eyebrow">MY RECIPES</p><h2 id="library-title">내 레시피</h2></div><button type="button" class="icon-button" id="library-close" aria-label="레시피 목록 닫기">×</button></div>
+        <button class="primary-action full-width" id="new-recipe" type="button">+ 새 레시피</button>
+        <label class="search-label">레시피 찾기<input id="recipe-search" type="search" placeholder="이름, 드리퍼, 원두 검색" /></label>
+        <div id="recipe-list" class="recipe-list"></div>
+        <p class="help-text">레시피는 이 브라우저에 저장돼요.</p>
+      </div>
+    </dialog>
+
+    <dialog id="recipe-dialog" aria-labelledby="editor-title">
+      <form method="dialog" id="recipe-form">
+        <div class="dialog-heading">
+          <div><p class="eyebrow">MY RECIPE</p><h2 id="editor-title">레시피 편집</h2></div>
+          <button class="icon-button" id="editor-close" aria-label="닫기" type="button">×</button>
+        </div>
+        <label>레시피 이름<input id="form-name" name="name" maxlength="30" required /></label>
+        <div class="field-grid">
+          <label>원두 (g)<input id="form-coffee" name="coffee" type="number" min="1" max="100" required /></label>
+          <label>드리퍼<input id="form-method" maxlength="40" placeholder="예: 하리오 V60" /></label>
+        </div>
+        <div class="field-grid">
+          <label>물 온도 (°C, 선택)<input id="form-temperature" type="number" min="1" max="100" /></label>
+          <label>원두 (선택)<input id="form-bean" maxlength="80" placeholder="예: 에티오피아 내추럴" /></label>
+        </div>
+        <label class="search-label">분쇄도 (선택)<input id="form-grind" maxlength="80" placeholder="예: 코만단테 24클릭" /></label>
+        <label class="search-label">메모 (선택)<textarea id="form-notes" rows="2" maxlength="500" placeholder="준비물, 맛의 특징, 추출 팁"></textarea></label>
+        <fieldset>
+          <legend>추출 단계</legend>
+          <p class="help-text">각 단계의 소요 시간을 입력하세요. 대기는 물을 0g으로 설정합니다.</p>
+          <div id="step-fields"></div>
+          <button class="text-button" id="add-step-button" type="button">+ 단계 추가</button>
+        </fieldset>
+        <p id="editor-summary" class="recipe-meta" aria-live="polite"></p>
+        <p id="form-error" role="alert" class="form-error"></p>
+        <button class="primary-action full-width" value="default" type="submit">레시피 저장</button>
+      </form>
+    </dialog>
+
+    <template id="step-field-template">
+      <div class="step-field">
+        <label class="step-name-field">단계 이름<input class="step-label" maxlength="50" placeholder="예: 뜸 들이기" required /></label>
+        <button class="remove-step" type="button" aria-label="단계 삭제">×</button>
+        <label>소요 시간 (초)<input class="step-duration" type="number" min="1" max="3600" step="1" required /></label>
+        <label><span class="water-input-label">붓는 물 (g)</span><input class="step-water" type="number" min="0" max="2000" step="1" required /></label>
+        <label class="step-note-field">안내 (선택)<input class="step-note" maxlength="150" placeholder="예: 중심에서 바깥으로 천천히" /></label>
+        <p class="step-preview help-text"></p>
+      </div>
+    </template>
+    <script src="./app.js" defer></script>
+  </body>
+</html>
