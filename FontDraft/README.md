@@ -31,15 +31,3 @@ npm test        # 설치된 Chrome으로 테스트
 작업은 현재 브라우저에 자동 저장됩니다. 백업·기기 이동에는 파일 → 저장의 **UFOZ**를 사용하세요. 문자열 전체를 **SVG·PNG**로 내보낼 수도 있습니다.
 
 외부 UFO의 모든 기능을 지원하지는 않습니다. 컴포넌트·커닝 등 지원하지 않는 데이터가 있으면 열기를 중단합니다. TTF/OTF 생성·가져오기는 지원하지 않습니다.
-
-## GitHub Pages
-
-배포 대상은 `minw0525/minw0525.github.io`의 `/FontDraft/`입니다.
-
-1. 앱 소스를 해당 저장소의 `FontDraft/`에 복사합니다. `.git`, `node_modules`, `dist`, 테스트 출력은 제외합니다.
-2. 이 프로젝트의 `.github/workflows/deploy-pages.yml`을 **대상 저장소 루트**의 같은 경로에 복사합니다.
-3. 저장소 Settings → Pages → Source를 **GitHub Actions**로 설정하고 `main`에 push합니다.
-
-Actions가 기존 사이트와 CNAME을 유지하면서 앱을 빌드해 게시합니다. 현재 연결 도메인 기준 주소는 `https://parkminwoo.com/FontDraft/`입니다. localhost의 저장 데이터는 호스팅 주소로 자동 이전되지 않으므로 UFOZ로 옮기세요.
-
-세부 동작은 [SPEC.md](./SPEC.md), 진행 상태·검증 한계는 [TODO.md](./TODO.md), 외부 라이선스는 [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)를 참고하세요.

@@ -23,7 +23,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <aside class="glyphs"><span class="section-label">글리프</span><button id="add-glyph" aria-label="글리프 추가">+</button><div id="glyph-list"></div></aside>
     <div class="editor-column"><section class="workspace" aria-label="글리프 편집기">
       <label class="text-run-bar"><span>문자열</span><input id="text-run" aria-label="편집 문자열" placeholder="편집할 문자열" maxlength="200" /></label><button id="mobile-add-glyph" aria-label="글리프 추가">+</button><div id="annotation-notes"></div><svg id="canvas" role="application" aria-label="글리프 캔버스" tabindex="0"><g id="guides"></g><g id="drawing"></g><g id="preview"></g><g id="controls"></g><g id="annotations"></g><g id="brush-cursor"></g><rect id="marquee" hidden /></svg>
-      <div class="toolbar"><button id="select-tool" class="active" title="노드 선택" aria-label="노드 선택" aria-pressed="true">↖</button><button id="pen-tool" title="펜" aria-label="펜" aria-pressed="false">♢</button><button id="brush-tool" title="브러시" aria-label="브러시" aria-pressed="false">●</button><button id="eraser-tool" title="지우개" aria-label="지우개" aria-pressed="false">▱</button><button id="rectangle-tool" title="사각형" aria-label="사각형" aria-pressed="false">□</button><button id="ellipse-tool" title="타원" aria-label="타원" aria-pressed="false">○</button><button id="knife-tool" title="나이프" aria-label="나이프" aria-pressed="false">╱</button><button id="overlap-tool" title="겹침 만들기 · 모서리 루프" aria-label="겹침" aria-pressed="false">⋈</button><button id="annotation-tool" title="주석" aria-label="주석" aria-pressed="false">✎</button><button id="pan-tool" title="화면 이동" aria-label="화면 이동" aria-pressed="false">✥</button><span></span><button id="undo" aria-label="실행 취소">↶</button><button id="redo" aria-label="다시 실행">↷</button></div>
+      <div class="toolbar"><button id="select-tool" class="active" title="선택" aria-label="선택" aria-pressed="true">↖</button><button id="pen-tool" title="펜" aria-label="펜" aria-pressed="false">♢</button><button id="brush-tool" title="브러시" aria-label="브러시" aria-pressed="false">●</button><button id="eraser-tool" title="지우개" aria-label="지우개" aria-pressed="false">▱</button><button id="rectangle-tool" title="사각형" aria-label="사각형" aria-pressed="false">□</button><button id="ellipse-tool" title="타원" aria-label="타원" aria-pressed="false">○</button><button id="knife-tool" title="나이프" aria-label="나이프" aria-pressed="false">╱</button><button id="overlap-tool" title="오버랩" aria-label="오버랩" aria-pressed="false">⋈</button><button id="annotation-tool" title="주석" aria-label="주석" aria-pressed="false">✎</button><button id="pan-tool" title="화면 이동" aria-label="화면 이동" aria-pressed="false">✥</button><span></span><button id="undo" title="실행 취소" aria-label="실행 취소">↶</button><button id="redo" title="다시 실행" aria-label="다시 실행">↷</button></div>
       <button id="finish-pen" hidden>열린 경로 완료</button>
       <button id="modifier" aria-label="Shift modifier" aria-pressed="false"><span>⇧</span><small>Shift</small></button><button id="option-modifier" aria-label="Opt modifier" aria-pressed="false"><span>⌥</span><small>Opt</small></button>
     </section>
@@ -33,15 +33,16 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
       <div id="proof-viewport"><svg id="proof-canvas" role="img" aria-label="현재 글리프 실시간 미리보기"><path id="proof-fill" fill="#000" fill-rule="nonzero"/></svg></div>
     </section></div>
     <aside class="inspector" aria-label="편집 팔레트"><section class="inspector-panel" aria-labelledby="glyph-panel-title"><h2 id="glyph-panel-title">글리프</h2><form id="glyph-properties"><label>이름<input name="name" aria-label="글리프 이름" required maxlength="120" /></label><label>U+<input name="unicodes" aria-label="글리프 Unicode" placeholder="0041" /></label><div class="glyph-width-row" id="glyph-metrics"><label>LSB<input name="lsb" aria-label="LSB" type="number" step="any" /></label><label>ADV<input name="width" aria-label="글리프 폭" type="number" step="any" required /></label><label>RSB<input name="rsb" aria-label="RSB" type="number" step="any" /></label></div><p id="glyph-properties-error" role="alert"></p></form></section><section id="node-panel" class="inspector-panel" aria-labelledby="node-panel-title"><h2 id="node-panel-title">노드</h2><p id="selection-title">선택 없음</p><form id="coordinates" hidden><label>X<input id="node-x" type="number" step="any" required aria-label="노드 X" /></label><label>Y<input id="node-y" type="number" step="any" required aria-label="노드 Y" /></label></form><div class="nudge" aria-label="미세 이동"><button data-nudge="0,1" aria-label="위로 1 이동">↑</button><button data-nudge="-1,0" aria-label="왼쪽으로 1 이동">←</button><button data-nudge="0,-1" aria-label="아래로 1 이동">↓</button><button data-nudge="1,0" aria-label="오른쪽으로 1 이동">→</button></div><button id="delete-selection" type="button">Delete</button></section>
-      <section class="inspector-panel" id="tip-controls" hidden aria-labelledby="tip-title"><h2 id="tip-title">BRUSH</h2><svg id="tip-preview" viewBox="-60 -60 120 120" aria-label="펜촉 모양"><ellipse id="tip-ellipse" cx="0" cy="0" /><g id="tip-size-handle" data-tip-drag="size"><circle r="14" fill="transparent"/><circle r="4" class="tip-grip"/></g><g id="tip-ratio-handle" data-tip-drag="ratio"><circle r="14" fill="transparent"/><circle r="4" class="tip-grip"/></g><g id="tip-angle-handle" data-tip-drag="angle"><circle r="14" fill="transparent"/><circle r="4" class="tip-grip"/></g></svg><div class="tip-numbers"><label>크기 <output id="size-value"></output><input id="tip-size" type="number" min="2" max="160" step="1" aria-label="펜촉 크기" /></label><label>납작함 <output id="ratio-value"></output><input id="tip-ratio" type="number" min="5" max="100" step="1" aria-label="펜촉 납작함" /></label><label>각도 <output id="angle-value"></output><input id="tip-angle" type="number" min="-180" max="180" step="1" aria-label="펜촉 각도" /></label></div><label class="pressure-option"><input id="tip-pressure" type="checkbox" />필압</label><label>단순화 <output id="simplify-value"></output><input id="tip-simplify" type="range" min="0" max="12" step="0.5" value="3" aria-label="윤곽선 단순화" /></label></section>
+      <section class="inspector-panel" id="tip-controls" hidden aria-labelledby="tip-title"><h2 id="tip-title">브러시</h2><svg id="tip-preview" viewBox="-60 -60 120 120" aria-label="펜촉 모양"><ellipse id="tip-ellipse" cx="0" cy="0"/><g id="tip-ratio-handle" data-tip-drag="ratio" role="slider" tabindex="0" aria-label="펜촉 납작함" aria-valuemin="5" aria-valuemax="100"><circle r="14" fill="transparent"/><circle r="4" class="tip-grip"/></g><g id="tip-angle-handle" data-tip-drag="angle" role="slider" tabindex="0" aria-label="펜촉 각도" aria-valuemin="-180" aria-valuemax="180"><circle r="14" fill="transparent"/><path d="M-5-4 5 0-5 4Z" class="tip-grip"/></g><g id="tip-axes"><path id="tip-axis-lines"/><text id="angle-value"/><text id="ratio-value"/></g></svg><label class="tip-size-row">크기<input id="tip-size" type="number" min="2" max="1000" step="1" aria-label="펜촉 크기" /><input id="tip-size-slider" type="range" min="2" max="1000" step="1" aria-label="펜촉 크기 슬라이더" /></label><label class="pressure-option"><input id="tip-pressure" type="checkbox" />필압</label><label>단순화 <output id="simplify-value"></output><input id="tip-simplify" type="range" min="0" max="12" step="0.5" value="3" aria-label="윤곽선 단순화" /></label></section>
       <section id="transform-panel" class="inspector-panel" aria-labelledby="transform-panel-title"><h2 id="transform-panel-title">변형</h2><fieldset id="transform-controls" hidden><legend class="sr-only">선택 변형</legend>
         <div class="transform-top"><div id="transform-origin" role="group" aria-label="변형 기준점">${['왼쪽 위','위 중앙','오른쪽 위','왼쪽 중앙','중앙','오른쪽 중앙','왼쪽 아래','아래 중앙','오른쪽 아래'].map((name, i) => `<button type="button" data-pivot="${i}" aria-label="기준점 ${name}" aria-pressed="${i === 4}" title="${name}"><span></span></button>`).join('')}</div><div class="flip-controls"><button id="flip-horizontal" aria-label="가로 반전" title="가로 반전"></button><button id="flip-vertical" aria-label="세로 반전" title="세로 반전"></button></div></div>
-        <div class="direction-transform"><span>회전 °</span><button id="rotate-left" aria-label="왼쪽 회전" title="왼쪽 회전"></button><input id="rotate-angle" type="number" value="15" min="0" max="360" step="any" required aria-label="회전 각도" /><button id="rotate-right" aria-label="오른쪽 회전" title="오른쪽 회전"></button></div>
-        <label>가로 %<input id="scale-x" type="number" value="100" min="1" max="1000" step="any" required aria-label="가로 배율" /></label>
-        <label>세로 %<input id="scale-y" type="number" value="100" min="1" max="1000" step="any" required aria-label="세로 배율" /></label>
+        <div class="transform-input-wrapper" title="가로 배율"><span class="transform-input-axis" aria-hidden="true">↔</span><input id="scale-x" type="number" value="100" min="1" max="1000" step="any" required aria-label="가로 배율" /><span class="transform-input-unit" aria-hidden="true">%</span></div>
+        <div class="transform-input-wrapper" title="세로 배율"><span class="transform-input-axis" aria-hidden="true">↕</span><input id="scale-y" type="number" value="100" min="1" max="1000" step="any" required aria-label="세로 배율" /><span class="transform-input-unit" aria-hidden="true">%</span></div>
         <label class="ratio-lock"><input id="scale-lock" type="checkbox" checked />비율 잠금</label><button id="apply-scale">크기 적용</button>
-        <div class="direction-transform"><span>가로 기울기 °</span><button id="slant-left" aria-label="왼쪽 기울이기" title="왼쪽 기울이기">←</button><input id="slant-angle" type="number" value="10" min="0" max="80" step="any" required aria-label="가로 기울기 각도" /><button id="slant-right" aria-label="오른쪽 기울이기" title="오른쪽 기울이기">→</button></div>
-        <div class="direction-transform"><span>세로 기울기 °</span><button id="slant-down" aria-label="아래로 기울이기" title="아래로 기울이기">↓</button><input id="slant-y-angle" type="number" value="10" min="0" max="80" step="any" required aria-label="세로 기울기 각도" /><button id="slant-up" aria-label="위로 기울이기" title="위로 기울이기">↑</button></div>
+        <div class="direction-transform"><button id="rotate-left" aria-label="왼쪽 회전" title="왼쪽 회전"></button><div class="transform-input-wrapper"><input id="rotate-angle" type="number" value="15" min="0" max="360" step="any" required aria-label="회전 각도" /><span class="transform-input-unit" aria-hidden="true">°</span></div><button id="rotate-right" aria-label="오른쪽 회전" title="오른쪽 회전"></button></div>
+        <div class="direction-transform"><button id="slant-left" aria-label="왼쪽 기울이기" title="왼쪽 기울이기">←</button><div class="transform-input-wrapper"><input id="slant-angle" type="number" value="10" min="0" max="80" step="any" required aria-label="가로 기울기 각도" /><span class="transform-input-unit" aria-hidden="true">°</span></div><button id="slant-right" aria-label="오른쪽 기울이기" title="오른쪽 기울이기">→</button></div>
+        <div class="direction-transform"><button id="slant-down" aria-label="아래로 기울이기" title="아래로 기울이기">↓</button><div class="transform-input-wrapper"><input id="slant-y-angle" type="number" value="10" min="0" max="80" step="any" required aria-label="세로 기울기 각도" /><span class="transform-input-unit" aria-hidden="true">°</span></div><button id="slant-up" aria-label="위로 기울이기" title="위로 기울이기">↑</button></div>
+        <div id="align-controls" role="group" aria-label="정렬">${['왼쪽 정렬', '가로 중앙 정렬', '오른쪽 정렬', '위로 정렬', '세로 중앙 정렬', '아래로 정렬'].map((label, i) => `<button type="button" data-align="${i}" aria-label="${label}" title="${label}"><svg viewBox="0 0 24 24" aria-hidden="true"><g transform="${i >= 3 ? 'rotate(90 12 12)' : ''}"><path d="M${[4,12,20][i % 3]} 2v20"/><rect x="${[5,8,11][i % 3]}" y="5" width="8" height="5"/><rect x="${[5,6,7][i % 3]}" y="14" width="12" height="5"/></g></svg></button>`).join('')}</div>
         <div id="boolean-controls" role="group" aria-label="면 연산"><button id="unite-selection" aria-label="면 합치기" title="면 합치기"></button><button id="subtract-selection" aria-label="면 빼기" title="면 빼기"></button></div>
       </fieldset></section>
       <section id="masters-panel" class="inspector-panel" aria-labelledby="masters-title"><h2 id="masters-title">마스터</h2>
@@ -83,7 +84,7 @@ let tool: Tool = 'select';
 let previewMode = false, freeTransform = false;
 let editText = '', activeSlot = 0;
 let slotTap: { index: number; time: number } | null = null;
-const tips: Record<'brush' | 'eraser', Tip> = { brush: { size: 36, ratio: 0.45, angle: 35, simplify: 3, pressure: true }, eraser: { size: 48, ratio: 1, angle: 0, simplify: 3 } };
+const tips: Record<'brush' | 'eraser', Tip> = { brush: { size: 50, ratio: 0.45, angle: 35, simplify: 3, pressure: true }, eraser: { size: 50, ratio: 1, angle: 0, simplify: 3 } };
 let penDraft: Contour | null = null;
 let message = '';
 let masterPanelMarkup = '';
@@ -97,6 +98,7 @@ let undo: Snapshot[] = [], redo: Snapshot[] = [];
 const histories = new Map<string, { undo: Snapshot[]; redo: Snapshot[] }>();
 const annotations = () => currentLayer().annotations ?? [];
 const snapshot = (): Snapshot => structuredClone({ contours, annotations: annotations(), width: currentDrawing().width });
+let cancelAnnotationDrag: (() => void) | null = null;
 const touches = new Map<number, Point>();
 let touchTap: { time: number; starts: Map<number, Point>; count: number; valid: boolean; view: View } | null = null;
 let penId: number | null = null;
@@ -161,6 +163,7 @@ function render() {
   const busy = strokes.length > 0;
   $<HTMLElement>('app-menus').inert = busy;
   for (const id of ['flip-horizontal', 'flip-vertical']) $<HTMLButtonElement>(id).disabled = !hasSelection() || !!gesture || !!penDraft || tool !== 'select';
+  for (const button of $('align-controls').querySelectorAll<HTMLButtonElement>('button')) button.disabled = !hasSelection() || !!gesture || !!penDraft || tool !== 'select';
   canvas.dataset.geometryPending = String(strokes.length);
   document.querySelector<HTMLElement>('.glyphs')!.inert = busy;
   chrome.inert = busy;
@@ -272,18 +275,31 @@ function render() {
   if (showTip) {
     const tip = tips[tool as 'brush' | 'eraser'];
     $<HTMLInputElement>('tip-pressure').checked = !!tip.pressure;
-    $('tip-title').textContent = tool.toUpperCase();
-    for (const [key, value, text] of [['size', tip.size, `${tip.size}`], ['ratio', tip.ratio * 100, `${Math.round(tip.ratio * 100)}%`], ['angle', tip.angle, `${tip.angle}°`], ['simplify', tip.simplify ?? 3, `${tip.simplify ?? 3} u`]] as const) {
+    $('tip-title').querySelector('span')!.textContent = "브러시";
+    for (const [key, value] of [['size', tip.size], ['simplify', tip.simplify ?? 3]] as const) {
       if (document.activeElement !== $(`tip-${key}`)) $<HTMLInputElement>(`tip-${key}`).value = String(value);
       $<HTMLInputElement>(`tip-${key}`).disabled = !!gesture;
-      $(`${key}-value`).textContent = text;
+
     }
-    const rx = 20 + tip.size * .2, angle = -tip.angle * Math.PI / 180;
+    $('simplify-value').textContent = `${tip.simplify ?? 3} u`;
+    $<HTMLInputElement>('tip-size-slider').value = String(tip.size);
+    $<HTMLInputElement>('tip-size-slider').disabled = !!gesture;
+    const rx = 48, angle = -tip.angle * Math.PI / 180;
     $('tip-ellipse').setAttribute('rx', String(rx)); $('tip-ellipse').setAttribute('ry', String(rx * tip.ratio));
-    for (const [key, x, y] of [['size', -rx, 0], ['ratio', 0, rx * tip.ratio], ['angle', 55, 0]] as const) {
-      $(`tip-${key}-handle`).setAttribute('transform', `translate(${x * Math.cos(angle) - y * Math.sin(angle)} ${x * Math.sin(angle) + y * Math.cos(angle)})`);
+    for (const [key, x, y] of [['ratio', 0, -rx * tip.ratio], ['angle', rx, 0]] as const) {
+      $(`tip-${key}-handle`).setAttribute('transform', `translate(${x * Math.cos(angle) - y * Math.sin(angle)} ${x * Math.sin(angle) + y * Math.cos(angle)}) rotate(${key === 'angle' ? -tip.angle : 0})`);
     }
     $('tip-ellipse').setAttribute('transform', `rotate(${-tip.angle})`);
+    $('tip-axis-lines').setAttribute('d', `M-48 0H48 M0 ${-48 * tip.ratio}V${48 * tip.ratio}`);
+    $('tip-axes').setAttribute('transform', `rotate(${-tip.angle})`);
+    for (const [key, rotation, label, value, x, y] of [['angle', -tip.angle, `${tip.angle}°`, tip.angle, rx, 0], ['ratio', -tip.angle - 90, `${Math.round(tip.ratio * 100)}%`, Math.round(tip.ratio * 100),  0, -rx * tip.ratio]] as const) {
+      const normalized = ((rotation + 180) % 360 + 360) % 360 - 180;
+      const flip = normalized > 90 || normalized < -90;
+      const text = $(`${key}-value`);
+      text.textContent = label; text.setAttribute('x', `${key==='ratio' ? 0 : 0}`); text.setAttribute('y', '2.5');
+      text.setAttribute('transform', key==='angle' ? `translate(${(x * Math.cos(0) - y * Math.sin(0)) / 2} ${(x * Math.sin(0) + y * Math.cos(0)) / 2}) rotate(${flip ? 180: 0})` :  `rotate(${ 90 + (flip ? 0 : 180)})`);
+      $(`tip-${key}-handle`).setAttribute('aria-valuenow', String(value));
+    }
   }
 }
 function fit() {
@@ -302,6 +318,7 @@ function commit(before: Contour[], beforeAnnotations = structuredClone(annotatio
   persist();
 }
 function cancel() {
+  cancelAnnotationDrag?.();
   if (gesture) {
     contours = gesture.before; selected = gesture.selection; selectedSegments = gesture.segments ?? new Set(); selectedHandles = gesture.handles ?? new Set();
     if (gesture.drawTool === 'pen') penDraft = gesture.penBefore ?? null;
@@ -440,11 +457,11 @@ canvas.addEventListener('pointerdown', e => {
     if (index >= 0) { const h = handles[index]; gesture = { id: e.pointerId, start: point, before: structuredClone(contours), selection: new Set(selected), segments: new Set(selectedSegments), handles: new Set(selectedHandles), view: { ...view }, hit: null, additive: false, moved: false, kind: 'free', free: { index, pivot: h.pivot, start: glyphPoint(point, view) } }; return; }
   }
   const hit = pan || tool !== 'select' ? null : (visibleHit(point, selected) ?? segmentHit(contours, glyphPoint(point, view), 10 / view.scale));
-  const slot = !pan && tool === 'select' ? slotAt(point) : -1;
-  if (slot >= 0 && (slot !== activeSlot || !runLayout()[slot]?.glyph)) {
-    gesture = { id: e.pointerId, start: point, before: structuredClone(contours), selection: new Set(selected), view: { ...view }, hit: null, additive: false, moved: false, kind: 'glyph', slot }; return;
-  }
   const beforeSelection = new Set(selected), beforeSegments = new Set(selectedSegments), beforeHandles = new Set(selectedHandles), additive = modifier() || e.shiftKey;
+  const slot = !pan && tool === 'select' ? slotAt(point) : -1;
+  if (!hit && slot >= 0 && (slot !== activeSlot || !runLayout()[slot]?.glyph)) {
+    gesture = { id: e.pointerId, start: point, before: structuredClone(contours), selection: beforeSelection, segments: beforeSegments, handles: beforeHandles, view: { ...view }, hit: null, additive, moved: false, kind: 'glyph', slot }; return;
+  }
   message = '';
   if (!pan && tool !== 'select') {
     const g: Gesture = { id: e.pointerId, start: point, before: structuredClone(contours), selection: operationSelection(), segments: beforeSegments, handles: beforeHandles, view: { ...view }, hit: null, additive, moved: false, kind: 'draw', drawTool: tool };
@@ -481,6 +498,21 @@ canvas.addEventListener('pointerdown', e => {
   render();
 });
 
+function updateMarquee(g: Gesture, point: Point) {
+  g.kind = 'box'; g.moved = true; slotTap = null;
+    const dx = point.x - g.start.x, dy = point.y - g.start.y;
+    const x = Math.min(point.x, g.start.x), y = Math.min(point.y, g.start.y);
+    const box = $('marquee'); box.removeAttribute('hidden');
+    for (const [key, value] of Object.entries({ x, y, width: Math.abs(dx), height: Math.abs(dy) })) box.setAttribute(key, String(value));
+    selected = g.additive ? new Set(g.selection) : new Set();
+    selectedSegments = g.additive ? new Set(g.segments) : new Set(); selectedHandles = g.additive ? new Set(g.handles) : new Set();
+    for (const c of contours) for (const n of c.nodes) {
+      const p = screenPoint(n, view);
+      if (!hiddenViews.has('nodes') && p.x >= x && p.x <= x + Math.abs(dx) && p.y >= y && p.y <= y + Math.abs(dy)) selected.add(n.id);
+      for (const part of ['incoming', 'outgoing'] as const) if (n[part] && !hiddenViews.has('handles')) { const h = screenPoint(n[part]!, view); if (h.x >= x && h.x <= x + Math.abs(dx) && h.y >= y && h.y <= y + Math.abs(dy)) selectedHandles.add(handleKey(n.id, part)); }
+    }
+}
+
 canvas.addEventListener('pointermove', e => {
   const point = local(e);
   if (e.pointerType !== 'touch') { cursor = point; renderCursor(); }
@@ -502,7 +534,7 @@ canvas.addEventListener('pointermove', e => {
   g.moved = true; lastTap = null;
   const dx = point.x - g.start.x, dy = point.y - g.start.y;
   if (g.kind === 'free') { updateFreeTransform(g, glyphPoint(point, g.view)); render(); return; }
-  if (g.kind === 'glyph') return;
+  if (g.kind === 'glyph') { g.kind = 'box'; slotTap = null; }
   if (g.kind === 'pan') { view.x = g.view.x + dx; view.y = g.view.y + dy; }
   else if (g.kind === 'draw') {
     const p = glyphPoint(point, g.view);
@@ -523,16 +555,7 @@ canvas.addEventListener('pointermove', e => {
     contours = structuredClone(g.before);
     moveSelection(dx / g.view.scale, -dy / g.view.scale, g.constrained || e.altKey); roundNodes(contours);
   } else {
-    const x = Math.min(point.x, g.start.x), y = Math.min(point.y, g.start.y);
-    const box = $('marquee'); box.removeAttribute('hidden');
-    for (const [key, value] of Object.entries({ x, y, width: Math.abs(dx), height: Math.abs(dy) })) box.setAttribute(key, String(value));
-    selected = g.additive ? new Set(g.selection) : new Set();
-    selectedSegments = g.additive ? new Set(g.segments) : new Set(); selectedHandles = g.additive ? new Set(g.handles) : new Set();
-    for (const c of contours) for (const n of c.nodes) {
-      const p = screenPoint(n, view);
-      if (!hiddenViews.has('nodes') && p.x >= x && p.x <= x + Math.abs(dx) && p.y >= y && p.y <= y + Math.abs(dy)) selected.add(n.id);
-      for (const part of ['incoming', 'outgoing'] as const) if (n[part] && !hiddenViews.has('handles')) { const h = screenPoint(n[part]!, view); if (h.x >= x && h.x <= x + Math.abs(dx) && h.y >= y && h.y <= y + Math.abs(dy)) selectedHandles.add(handleKey(n.id, part)); }
-    }
+    updateMarquee(g, point);
   }
   if (g.points) { if (!frame) frame = requestAnimationFrame(() => { frame = 0; render(); }); } else render();
 });
@@ -553,6 +576,7 @@ canvas.addEventListener('pointerup', e => {
   if (pinch) { if (!touches.size) pinch = null; return; }
   const g = gesture;
   if (!g || g.id !== e.pointerId) return;
+  if ((g.kind === 'box' || g.kind === 'glyph') && distance(g.start, local(e)) >= 4) updateMarquee(g, local(e));
   gesture = null; $('marquee').setAttribute('hidden', '');
   if (g.kind === 'glyph') {
     if (!g.moved && slotTap && slotTap.index === g.slot && performance.now() - slotTap.time < 340) { activateSlot(g.slot!); slotTap = null; }
@@ -642,7 +666,7 @@ window.addEventListener('keydown', e => {
   }
   if (document.querySelector('dialog[open]')) return;
   if (e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement || e.target instanceof HTMLTextAreaElement) return;
-  if (e.code === 'KeyP' && !e.metaKey && !e.ctrlKey && !e.altKey && !e.repeat) { e.preventDefault(); togglePreview(); return; }
+  if (e.code === 'Space' && !e.metaKey && !e.ctrlKey && !e.altKey && !e.repeat) { e.preventDefault(); togglePreview(); return; }
   if ((e.metaKey || e.ctrlKey) && ['c','x','v','d'].includes(e.key.toLowerCase())) {
     e.preventDefault(); if (!editable()) return;
     const key = e.key.toLowerCase(); if (key === 'c' || key === 'x') copySelection(key === 'x'); else pasteSelection(key === 'd' ? copyContours(contours, nodeSelection()) : clipboard); return;
@@ -691,6 +715,32 @@ function applyTransform(kind: Transform['kind'], override?: Transform, direction
   }
   for (const h of standalone) { const n = { ...h.point, id: 'handle' }; transformSelection([{ id: 'handle', closed: false, nodes: [n] }], new Set(['handle']), t, pivot); moveHandle(h.node, h.part, n.x - h.point.x, n.y - h.point.y, !standalone.some(other => other.node === h.node && other.part !== h.part)); } commit(before); message = ''; render();
 }
+$('align-controls').addEventListener('click', e => {
+  const button = (e.target as Element).closest<HTMLButtonElement>('[data-align]');
+  if (!button || !hasSelection() || gesture || penDraft || tool !== 'select') return;
+  const index = Number(button.dataset.align), axis = index < 3 ? 'x' : 'y', mode = index % 3;
+  const ids = nodeSelection(), before = structuredClone(contours);
+  const groups: { min: number; max: number; move: (delta: number) => void }[] = [];
+  for (const c of contours) {
+    if (c.nodes.length && c.nodes.every(n => ids.has(n.id))) {
+      const bounds = outlineBounds([c])!;
+      groups.push({ min: axis === 'x' ? bounds.left : bounds.bottom, max: axis === 'x' ? bounds.right : bounds.top,
+        move: delta => translate([c], ids, axis === 'x' ? delta : 0, axis === 'y' ? delta : 0) });
+    } else for (const n of c.nodes) {
+      if (ids.has(n.id)) groups.push({ min: n[axis], max: n[axis], move: delta => translate([c], new Set([n.id]), axis === 'x' ? delta : 0, axis === 'y' ? delta : 0) });
+      else for (const part of ['incoming', 'outgoing'] as const) if (n[part] && selectedHandles.has(handleKey(n.id, part))) {
+        const point = n[part]!;
+        groups.push({ min: point[axis], max: point[axis], move: delta => { point[axis] += delta; n.smooth = false; } });
+      }
+    }
+  }
+  if (groups.length < 2) return;
+  const low = Math.min(...groups.map(g => g.min)), high = Math.max(...groups.map(g => g.max));
+  const edge = axis === 'y' ? 2 - mode : mode;
+  const target = edge === 0 ? low : edge === 2 ? high : (low + high) / 2;
+  for (const g of groups) g.move(Math.round(target - (edge === 0 ? g.min : edge === 2 ? g.max : (g.min + g.max) / 2)));
+  commit(before); render();
+});
 $('apply-scale').addEventListener('click', () => applyTransform('scale'));
 for (const [id, kind, direction, axis] of [['rotate-left','rotate',1,'x'],['rotate-right','rotate',-1,'x'],['slant-left','slant',-1,'x'],['slant-right','slant',1,'x'],['slant-down','slant',-1,'y'],['slant-up','slant',1,'y']] as const) $(id).addEventListener('click', () => applyTransform(kind, undefined, direction, axis));
 $('flip-horizontal').addEventListener('click', () => applyTransform('scale', { kind: 'scale', x: -1, y: 1 }));
@@ -706,11 +756,11 @@ for (const axis of ['x', 'y']) $(`scale-${axis}`).addEventListener('input', () =
 $('scale-lock').addEventListener('change', () => {
   if ($<HTMLInputElement>('scale-lock').checked) $<HTMLInputElement>('scale-y').value = $<HTMLInputElement>('scale-x').value;
 });
-for (const key of ['size', 'ratio', 'angle', 'simplify'] as const) $(`tip-${key}`).addEventListener('input', () => {
+for (const key of ['size', 'simplify'] as const) $(`tip-${key}`).addEventListener('input', () => {
   if (tool !== 'brush' && tool !== 'eraser') return;
   const input = $<HTMLInputElement>(`tip-${key}`);
   if (!input.value || !input.validity.valid) return;
-  tips[tool][key] = Number(input.value) / (key === 'ratio' ? 100 : 1);
+  tips[tool][key] = Number(input.value);
   render();
 });
 $('undo').addEventListener('click', () => history(true));
@@ -722,6 +772,7 @@ document.querySelectorAll<HTMLButtonElement>('[data-nudge]').forEach(b => {
 });
 
 
+$('tip-size-slider').addEventListener('input', () => { if ((tool === 'brush' || tool === 'eraser') && !gesture) { tips[tool].size = Number($<HTMLInputElement>('tip-size-slider').value); render(); } });
 $('tip-pressure').addEventListener('change', () => { if (tool === 'brush' || tool === 'eraser') tips[tool].pressure = $<HTMLInputElement>('tip-pressure').checked; });
 const tipPreview = $<SVGSVGElement>('tip-preview');
 let tipDrag: { id: number; key: string; tool: 'brush' | 'eraser'; before: Tip } | null = null;
@@ -739,11 +790,20 @@ tipPreview.addEventListener('pointermove', e => {
   if (!tipDrag || tipDrag.id !== e.pointerId) return;
   const p = tipPosition(e), tip = tips[tipDrag.tool], a = tip.angle * Math.PI / 180;
   if (tipDrag.key === 'angle') tip.angle = Math.round(-Math.atan2(p.y, p.x) * 180 / Math.PI);
-  else if (tipDrag.key === 'size') tip.size = Math.max(2, Math.min(160, Math.round((Math.abs(p.x * Math.cos(a) - p.y * Math.sin(a)) - 20) / .2)));
-  else tip.ratio = Math.max(.05, Math.min(1, Math.round(Math.abs(p.x * Math.sin(a) + p.y * Math.cos(a)) / (20 + tip.size * .2) * 100) / 100));
+  else tip.ratio = Math.max(.05, Math.min(1, Math.round(Math.abs(p.x * Math.sin(a) + p.y * Math.cos(a)) / 48 * 100) / 100));
   render();
 });
 tipPreview.addEventListener('pointerup', () => { tipDrag = null; });
+tipPreview.addEventListener('keydown', e => {
+  if ((tool !== 'brush' && tool !== 'eraser') || gesture || !['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) return;
+  const key = (e.target as Element).closest<SVGElement>('[data-tip-drag]')?.dataset.tipDrag;
+  if (!key) return;
+  e.preventDefault(); e.stopPropagation();
+  const delta = e.key === 'ArrowRight' || e.key === 'ArrowUp' ? 1 : -1;
+  if (key === 'angle') tips[tool].angle = Math.max(-180, Math.min(180, tips[tool].angle + delta));
+  else tips[tool].ratio = Math.max(.05, Math.min(1, Math.round(tips[tool].ratio * 100 + delta) / 100));
+  render();
+});
 for (const event of ['pointercancel', 'lostpointercapture']) tipPreview.addEventListener(event, () => {
   if (tipDrag) { tips[tipDrag.tool] = tipDrag.before; tipDrag = null; render(); }
 });
@@ -857,6 +917,7 @@ function editMasterName(id = project.activeMaster ?? defaultMaster) {
   const entry = [...$('master-list').querySelectorAll<HTMLElement>('[data-master]')].find(e => e.dataset.master === id);
   const row = entry?.querySelector<HTMLElement>('.master-row'), master = masterList(project).find(m => m.id === id);
   if (!row || !master) return;
+  if ($('masters-panel').classList.contains('panel-collapsed')) $('masters-title').querySelector<HTMLButtonElement>('button')!.click();
   const editor = document.createElement('div'); editor.className = row.className;
   const input = document.createElement('input'); input.id = 'master-name'; input.maxLength = 120;
   input.setAttribute('aria-label', '마스터 이름'); input.value = master.name;
@@ -1145,6 +1206,10 @@ const toolIcons: Record<string, string> = {
   'flip-vertical': '<path d="M2 12h20" stroke-dasharray="2 2"/><path d="m6 3 6 6 6-6Z M6 21l6-6 6 6Z"/>',
   'unite-selection': '<path d="M3 3h11v7h7v11H10v-7H3Z" fill="currentColor" fill-opacity=".2"/>',
   'subtract-selection': '<path d="M3 3h11v7h-4v4H3Z" fill="currentColor" fill-opacity=".35"/><path d="M10 10h11v11H10Z" stroke-dasharray="2 2"/>',
+  'slant-left': '<path d="M4 4h10l6 16H10Z"/>',
+  'slant-right': '<path d="M10 4h10l-6 16H4Z"/>',
+  'slant-down': '<path d="m4 4 16 6v10L4 14Z"/>',
+  'slant-up': '<path d="m4 10 16-6v10L4 20Z"/>',
   'rotate-left': '<path d="M5 9a8 8 0 1 1 0 7 M5 3v6h6"/>',
   'rotate-right': '<path d="M19 9a8 8 0 1 0 0 7 M19 3v6h-6"/>',
   undo: '<path d="m8 4-5 5 5 5 M3 9h11a6 6 0 0 1 0 12"/>',
@@ -1266,14 +1331,31 @@ function penHit(point: Point): Hit | null {
 function renderCursor() {
   canvas.style.cursor = cursor ? 'none' : tool === 'pan' ? 'grab' : tool === 'select' ? 'default' : 'crosshair';
   if (!cursor) { $('brush-cursor').innerHTML = ''; return; }
+  const icon = (x: number, y: number, size = 20) => `<svg class="cursor-icon" x="${x}" y="${y}" width="${size}" height="${size}" viewBox="0 0 24 24">${toolIcons[`${tool}-tool`]}</svg>`;
+  const cross = '<path d="M-10 0h7 M3 0h7 M0-10v7 M0 3v7"/><circle r="1"/>';
+  let content: string;
   if (tool === 'brush' || tool === 'eraser') {
-    const tip = gesture?.tip ?? tips[tool];
-    $('brush-cursor').innerHTML = `<ellipse cx="${cursor.x}" cy="${cursor.y}" rx="${tip.size * view.scale / 2}" ry="${tip.size * tip.ratio * view.scale / 2}" transform="rotate(${-tip.angle} ${cursor.x} ${cursor.y})"/><path d="M${cursor.x-3},${cursor.y}h6 M${cursor.x},${cursor.y-3}v6"/>`;
-    return;
-  }
+    const tip = gesture?.tip ?? tips[tool], rx = tip.size * view.scale / 2, ry = rx * tip.ratio, a = tip.angle * Math.PI / 180, hintAngle=30, offset = 5;
+    // 1. 각도를 라디안으로 변환
+    const thetaH = (hintAngle * Math.PI) / 180;
+    // 2. 타원 관점에서의 상대적인 각도 계산 (절대각 b - 타원회전각 a)
+    const relativeTheta = thetaH + a;
+    // 3. 상대 각도를 이용해 타원 중심에서 표면까지의 거리 R 계산
+    const cosRel = Math.cos(relativeTheta), sinRel = Math.sin(relativeTheta);
+    const denominator = Math.sqrt(Math.pow(ry * cosRel, 2) + Math.pow(rx * sinRel, 2));
+    const R = (rx * ry) / denominator;
+    // 4. hintAngle 방향으로 (R + offset)만큼 나아간 최종 좌표 산출
+    const right = (R + offset) * Math.cos(thetaH);
+    const bottom = (R + offset) * Math.sin(thetaH);
+    content = `<ellipse rx="${rx}" ry="${ry}" transform="rotate(${-tip.angle})"/><path d="M-3 0h6 M0-3v6"/>${icon(right, bottom, 18)}`;
+  } else if (['rectangle', 'ellipse', 'overlap'].includes(tool)) content = cross + icon(5, 5, tool === 'ellipse' ? 18 : 16);
+  else if (tool === 'knife') content = '<circle r="2.5" fill="white"/>' + icon(-2.5, -15);
+  else if (tool === 'select') content = icon(-4, 0);
+  else if (tool === 'pen') content = icon(-12, -2.5);
+  else content = icon(-12, -12);
   const hit = tool === 'pen' && !penDraft ? penHit(cursor) : null;
   const hint = hit?.part === 'node' ? '−' : hit?.part === 'segment' ? '+' : '';
-  $('brush-cursor').innerHTML = `<g class="tool-cursor" data-tool="${tool}" transform="translate(${cursor.x} ${cursor.y})"><path d="M-10 0h7 M3 0h7 M0-10v7 M0 3v7"/><circle r="1"/>${hint ? `<text class="cursor-hint" x="13" y="-10">${hint}</text>` : ''}</g>`;
+  $('brush-cursor').innerHTML = `<g class="tool-cursor" data-tool="${tool}" transform="translate(${cursor.x} ${cursor.y})">${content}${hint ? `<text class="cursor-hint" x="15" y="-8">${hint}</text>` : ''}</g>`;
 }
 canvas.addEventListener('pointerenter', e => { if (e.pointerType !== 'touch') { cursor = local(e); renderCursor(); } });
 canvas.addEventListener('pointercancel', () => { cursor = null; renderCursor(); });
@@ -1286,6 +1368,20 @@ inspector.before(sidebar); sidebar.append(inspector);
 const editingKeys = document.createElement('section'); editingKeys.id = 'editing-keys'; editingKeys.setAttribute('aria-label', '편집 키');
 editingKeys.append($('modifier'), $('option-modifier'), $('delete-selection'), inspector.querySelector('.nudge')!);
 sidebar.append(editingKeys);
+for (const panel of inspector.querySelectorAll<HTMLElement>('.inspector-panel')) {
+  const heading = panel.querySelector<HTMLElement>('h2')!;
+  const button = document.createElement('button'); button.type = 'button'; button.className = 'panel-toggle';
+  const label = document.createElement('span'); label.textContent = heading.textContent;
+  button.append(label); heading.replaceChildren(button);
+  const key = `fontdraft.panelCollapsed.${heading.id}`;
+  const setCollapsed = (collapsed: boolean) => { panel.classList.toggle('panel-collapsed', collapsed); button.setAttribute('aria-expanded', String(!collapsed)); };
+  try { setCollapsed(localStorage.getItem(key) === 'true'); } catch { setCollapsed(false); }
+  button.addEventListener('click', () => {
+    const collapsed = !panel.classList.contains('panel-collapsed'); setCollapsed(collapsed);
+    try { localStorage.setItem(key, String(collapsed)); } catch { /* Session preference only. */ }
+  });
+}
+
 // Resize from the edge facing the canvas; keep the preferred width across viewport changes.
 for (const [panel, key, minimum, fraction] of [
   [sidebar, 'sidebar', 208, .4],
@@ -1361,6 +1457,35 @@ function renderAnnotations() {
       input.addEventListener('blur', commitAnnotation);
       const remove = document.createElement('button'); remove.textContent = '×'; remove.setAttribute('aria-label', '주석 삭제');
       remove.addEventListener('click', () => { const before = snapshot(); if (pendingAnnotation?.id === a.id) pendingAnnotation = null; currentLayer().annotations = annotations().filter(n => n.id !== a.id); commit(before.contours, before.annotations); render(); });
+      let drag: { id: number; x: number; y: number; start: Point; scale: number; before: Snapshot } | null = null;
+      box.addEventListener('pointerdown', e => {
+        if (tool !== 'select' || e.button !== 0 || (e.target as Element).closest('button') || gesture || strokes.length || cancelAnnotationDrag) return;
+        if (e.pointerType === 'touch' && !fingerTools.checked) return;
+        e.preventDefault(); e.stopPropagation();
+        input.blur();
+        const note = annotations().find(n => n.id === a.id); if (!note) return;
+        drag = { id: e.pointerId, x: e.clientX, y: e.clientY, start: { x: note.x, y: note.y }, scale: view.scale, before: snapshot() };
+        cancelAnnotationDrag = () => {
+          const note = annotations().find(n => n.id === a.id); if (note && drag) Object.assign(note, drag.start);
+          drag = null; cancelAnnotationDrag = null; renderAnnotations();
+        };
+        box!.setPointerCapture(e.pointerId);
+      });
+      box.addEventListener('pointermove', e => {
+        if (drag?.id !== e.pointerId) return;
+        const note = annotations().find(n => n.id === a.id); if (!note) return;
+        note.x = Math.round(drag.start.x + (e.clientX - drag.x) / drag.scale);
+        note.y = Math.round(drag.start.y - (e.clientY - drag.y) / drag.scale);
+        renderAnnotations();
+      });
+      box.addEventListener('pointerup', e => {
+        if (drag?.id !== e.pointerId) return;
+        const before = drag.before; drag = null; cancelAnnotationDrag = null; commit(before.contours, before.annotations); render();
+      });
+      for (const event of ['pointercancel', 'lostpointercapture']) box.addEventListener(event, () => {
+        if (!drag) return;
+        cancelAnnotationDrag?.();
+      });
       box.append(input, remove); container.append(box);
     }
     const input = box.querySelector('textarea')!;
@@ -1536,7 +1661,7 @@ const menus: [string, MenuItem[]][] = [
     { label: '배경', children: [{ label: '배경 편집', action: () => changeLayer(() => { project.editMask = !project.editMask; }), checked: () => !!project.editMask }, { label: '전경을 배경으로 복사', action: clickCommand('copy-to-mask') }, { label: '전경으로 붙여넣기', action: clickCommand('copy-to-foreground') }, { label: '전경과 배경 전환', action: () => maskCommand(true) }, { label: '배경 비우기', action: () => maskCommand(false) }] }]],
   ['컨투어', [{ label: '극점 추가', action: () => contourCommand('extrema'), enabled: editable }, null, { label: '노드 복제', action: duplicateSelectedNodes, enabled: () => editable() && !!selected.size }, null, { label: '시작점 설정', action: () => contourCommand('start'), enabled: () => editable() && selected.size === 1 }, { label: '방향 반전', action: clickCommand('reverse-contours'), enabled: selectionAvailable }, null,
     { label: '끊기', action: () => contourCommand('break'), enabled: () => editable() && !!selected.size }, { label: '잇기', action: () => contourCommand('join'), enabled: () => editable() && selected.size === 2 }, null,
-    { label: '겹침 제거', action: () => { if (editable()) { if (!hasSelection()) contours.forEach(c => selectContour(c)); applyBoolean(); } }, enabled: editable }, { label: '겹침 만들기', action: () => contourCommand('overlap'), enabled: () => editable() && selected.size === 2 }, { label: '모서리 루프', action: () => contourCommand('loop'), enabled: () => editable() && !!selected.size }]],
+    { label: '오버랩 제거', action: () => { if (editable()) { if (!hasSelection()) contours.forEach(c => selectContour(c)); applyBoolean(); } }, enabled: editable }, { label: '오버랩 만들기', action: () => contourCommand('overlap'), enabled: () => editable() && selected.size === 2 }, { label: '모서리 루프', action: () => contourCommand('loop'), enabled: () => editable() && !!selected.size }]],
   ['보기', [{ label: 'UI 좌우 반전', checked: () => $('app').classList.contains('sidebar-left'), action: () => { const left = $('app').classList.toggle('sidebar-left'); try { localStorage.setItem('fontdraft.sidebarLeft', String(left)); } catch { /* Session preference only. */ } } }, null, ...viewItems.map(([key, label]) => ({ label, checked: () => !hiddenViews.has(key), action: () => { const hidden = !hiddenViews.has(key); if (hidden) hiddenViews.add(key); else hiddenViews.delete(key); $('app').classList.toggle(`hide-${key}`, hidden); if (key === 'nodes' && hidden) selected.clear(); if (key === 'handles' && hidden) selectedHandles.clear(); render(); } })),
     { label: '배경', checked: () => project.maskVisible !== false, action: () => { project.maskVisible = project.maskVisible === false; persist(); render(); } }, { label: '미리보기 패널', checked: () => !$('proof-panel').classList.contains('collapsed'), action: clickCommand('proof-toggle') }]],
 ];

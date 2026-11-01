@@ -25,7 +25,7 @@ test('pen hover displays all tool cursors without drawing; brush tips stay uncha
   await page.locator(`#${tool}-tool`).click();await canvas.dispatchEvent('pointermove',{pointerId:77,pointerType:'pen',buttons:0,pressure:0,clientX:q.x,clientY:q.y+60});
   await expect(page.locator('.tool-cursor')).toHaveAttribute('data-tool',tool);await expect(page.locator('.node')).toHaveCount(2);
  }
- for(const tool of ['brush','eraser']) {await page.locator(`#${tool}-tool`).click();await canvas.dispatchEvent('pointermove',{pointerId:77,pointerType:'pen',buttons:0,pressure:0,clientX:q.x,clientY:q.y+60});await expect(page.locator('#brush-cursor ellipse')).toHaveCount(1);await expect(page.locator('.tool-cursor')).toHaveCount(0);}
+ for(const tool of ['brush','eraser']) {await page.locator(`#${tool}-tool`).click();await canvas.dispatchEvent('pointermove',{pointerId:77,pointerType:'pen',buttons:0,pressure:0,clientX:q.x,clientY:q.y+60});await expect(page.locator('#brush-cursor ellipse')).toHaveCount(1);await expect(page.locator('.tool-cursor')).toHaveAttribute('data-tool',tool);await expect(page.locator('.cursor-icon')).toHaveCount(1);}
  await canvas.dispatchEvent('pointerleave',{pointerId:77,pointerType:'pen'});await expect(page.locator('#brush-cursor')).toBeEmpty();await expect(page.locator('.node')).toHaveCount(2);
 });
 test('extended overlaps preserve winding and silhouette under rotation and reversal',async({page})=>{

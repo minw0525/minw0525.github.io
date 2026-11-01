@@ -23,19 +23,26 @@ test('pen inserts on a segment and removes the node with a fitted curve and undo
   expect(error).toBeLessThan(.05);
 });
 
-test('tip handles directly control size flattening and angle; proof inversion is independent', async ({ page }, info) => {
+test('tip handles control flattening and angle and size input stays separate; proof inversion is independent', async ({ page }, info) => {
   await page.locator('#brush-tool').click();
   const svg = page.locator('#tip-preview');
   const center = await svg.evaluate((e: SVGSVGElement) => { const p=new DOMPoint(0,0).matrixTransform(e.getScreenCTM()!);return {x:p.x,y:p.y}; });
   const grip = await page.locator('#tip-angle-handle').evaluate((e: SVGGraphicsElement)=>{const p=new DOMPoint(0,0).matrixTransform(e.getScreenCTM()!);return {x:p.x,y:p.y};});
   await page.mouse.move(grip.x,grip.y);await page.mouse.down();await page.mouse.move(center.x,center.y-60);await page.mouse.up();
-  await expect(page.locator('#tip-angle')).toHaveValue('90');
+  await expect(page.locator('#tip-angle-handle')).toHaveAttribute('aria-valuenow', '90');
   const ratio = await page.locator('#tip-ratio-handle').evaluate((e: SVGGraphicsElement)=>{const p=new DOMPoint(0,0).matrixTransform(e.getScreenCTM()!);return {x:p.x,y:p.y};});
-  await page.mouse.move(ratio.x,ratio.y);await page.mouse.down();await page.mouse.move(center.x+30,center.y);await page.mouse.up();
-  expect(Number(await page.locator('#tip-ratio').inputValue())).toBeGreaterThan(45);
-  const size = await page.locator('#tip-size-handle').evaluate((e: SVGGraphicsElement)=>{const p=new DOMPoint(0,0).matrixTransform(e.getScreenCTM()!);return {x:p.x,y:p.y};});
-  await page.mouse.move(size.x,size.y);await page.mouse.down();await page.mouse.move(size.x,size.y+12);await page.mouse.up();
-  expect(Number(await page.locator('#tip-size').inputValue())).toBeGreaterThan(36);
+  await page.mouse.move(ratio.x,ratio.y);await page.mouse.down();await page.mouse.move(center.x+40,center.y);await page.mouse.up();
+  expect(Number(await page.locator('#tip-ratio-handle').getAttribute('aria-valuenow'))).toBeGreaterThan(45);
+  await page.locator('#tip-size').fill('1000');
+  await expect(page.locator('#tip-size-slider')).toHaveValue('1000');
+  await expect(page.locator('#tip-ellipse')).toHaveAttribute('rx', '48');
+  await page.locator('#tip-angle-handle').evaluate(el => { for (let i = 0; i < 56; i++) el.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true })); });
+  await expect(page.locator('#angle-value')).toHaveText('146°');
+  for (const id of ['angle-value', 'ratio-value']) {
+    const rotation = await page.locator(`#${id}`).evaluate((el: SVGGraphicsElement) => { const m = el.getCTM()!; return Math.atan2(m.b, m.a) * 180 / Math.PI; });
+    expect(Math.abs(rotation)).toBeLessThanOrEqual(90);
+  }
+
   await page.locator('#proof-invert').click();await expect(page.locator('#proof-fill')).toHaveCSS('fill','rgb(255, 255, 255)');
   await expect(page.locator('#proof-panel')).toHaveCSS('background-color','rgb(17, 17, 17)');
   await expect(page.locator('#preview-mode')).toHaveAttribute('aria-pressed','false');

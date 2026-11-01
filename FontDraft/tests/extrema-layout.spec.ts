@@ -27,7 +27,7 @@ test('extrema menu targets selection and supports undo; sidebar toggle and side 
  await page.locator('#app-menus > details > summary').filter({hasText:'보기'}).click();
  await expect(page.getByRole('button',{name:'사이드 패널',exact:true})).toHaveAttribute('aria-pressed','false');
  await page.getByRole('button',{name:'사이드 패널',exact:true}).click();await expect(page.locator('#sidebar-toggle')).toHaveAttribute('aria-pressed','true');
- await page.locator('#app-menus > details > summary').filter({hasText:'보기'}).click();await page.getByRole('button',{name:'사이드패널 왼쪽 배치',exact:true}).click();
+ await page.locator('#app-menus > details > summary').filter({hasText:'보기'}).click();await page.getByRole('button',{name:'UI 좌우 반전',exact:true}).click();
  await expect(page.locator('#app')).toHaveClass(/sidebar-left/);
  const side=(await page.locator('.sidebar').boundingBox())!,canvas=(await page.locator('#canvas').boundingBox())!;
  expect(side.x+side.width).toBeLessThanOrEqual(canvas.x);
