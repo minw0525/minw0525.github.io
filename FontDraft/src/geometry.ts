@@ -374,6 +374,36 @@ function simplifyItem(item: paper.PathItem, tolerance: number): paper.PathItem {
   return new scope.CompoundPath({ children: reduced, insert: false, fillRule: 'nonzero' });
 }
 
+// Split cubic curves at interior x/y derivative roots; keep existing node IDs.
+export function addExtrema(contour: Contour): Contour {
+  const path = toPath(contour), ids = new Map(path.segments.map((s, i) => [s, contour.nodes[i].id]));
+  let changed = false;
+  for (let i = path.curves.length - 1; i >= 0; i--) {
+    const curve = path.curves[i], values = curve.values, roots: number[] = [];
+    for (const axis of [0, 1]) {
+      const [p0, p1, p2, p3] = [values[axis], values[axis + 2], values[axis + 4], values[axis + 6]];
+      const a = -p0 + 3*p1 - 3*p2 + p3, b = 2*(p0 - 2*p1 + p2), c = p1 - p0;
+      if (Math.abs(a) < 1e-10) { if (Math.abs(b) > 1e-10) roots.push(-c/b); }
+      else {
+        const d = b*b - 4*a*c;
+        if (d > 1e-10) { const q = -.5*(b + (b >= 0 ? 1 : -1)*Math.sqrt(d)); roots.push(q/a, c/q); }
+      }
+    }
+    const times = roots.filter(t => t > 1e-6 && t < 1-1e-6).sort((a,b) => b-a)
+      .filter((t,j,all) => !j || Math.abs(t-all[j-1]) > 1e-6)
+      .filter(t => { const p = curve.getPointAtTime(t); return p.getDistance(curve.point1) > 1 && p.getDistance(curve.point2) > 1; });
+    let end = 1;
+    for (const t of times) { path.curves[i].divideAtTime(t/end); end = t; changed = true; }
+  }
+  if (!changed) return contour;
+  const result = readPath(path, contour.id, ids);
+  for (const n of result.nodes) {
+    const original = contour.nodes.find(p => p.id === n.id);
+    n.smooth = original ? original.smooth : true;
+  }
+  return result;
+}
+
 // Delete explicit anchors, handles, or edges without changing unrelated contours.
 export function deleteSelection(contours: Contour[], nodes: Set<string>, handles: Set<string>, edges: Set<string>): Contour[] {
   return contours.flatMap(original => {

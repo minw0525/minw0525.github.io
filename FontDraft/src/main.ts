@@ -5,7 +5,7 @@ import type { GeometryResult } from './geometry-worker';
 import { textImage, pngImage } from './image-export';
 import { lineToCurve, reverseContour, contourStartDirection, distance, glyphPoint, hitTest, pathData, screenPoint, translate, transformSelection, toggleSmooth, moveHandle, roundNodes, moveOnAxis } from './model';
 import type { Contour, Hit, Point, View, Transform } from './model';
-import { makeOverlap, strokePreviewPath, newId, shape, tipTransform, knife, knifeIntersections, breakAtNode, combine, segmentHit, outlineBounds, deleteSelection, insertNode, removeNodePreservingCurve } from './geometry';
+import { addExtrema, makeOverlap, strokePreviewPath, newId, shape, tipTransform, knife, knifeIntersections, breakAtNode, combine, segmentHit, outlineBounds, deleteSelection, insertNode, removeNodePreservingCurve } from './geometry';
 import type { Tip, StrokePoint } from './geometry';
 import { createProject, createGlyph, loadWorkspace, saveDraft, roundProject, drawing, editLayer, masterMetrics, masterList, addMaster, deleteMaster, defaultMaster } from './project';
 import type { Project, Annotation, Glyph, Layer } from './project';
@@ -169,11 +169,13 @@ function render() {
   renderMasterPanel();
   renderProof();
   $('app').classList.toggle('preview-mode', previewMode);
+  $<HTMLElement>('app').dataset.tool = tool;
+  $('sidebar-toggle').setAttribute('aria-pressed', String(!hiddenViews.has('sidebar')));
   $('app').classList.toggle('mask-edit', !!project.editMask);
   $('preview-mode').setAttribute('aria-pressed', String(previewMode));
-  $('preview-mode').textContent = previewMode ? '편집으로' : '미리보기';
-  document.querySelector<HTMLElement>('.inspector')!.inert = previewMode || busy;
-  $<HTMLElement>('editing-keys').inert = previewMode || busy;
+  $('preview-mode').textContent = '미리보기';
+  document.querySelector<HTMLElement>('.inspector')!.inert = busy;
+  $<HTMLElement>('editing-keys').inert = busy;
   selected = new Set([...selected].filter(id => contours.some(c => c.nodes.some(n => n.id === id))));
   selectedSegments = new Set([...selectedSegments].filter(id => contours.some(c => c.nodes.some((n, i) => n.id === id && (c.closed || i < c.nodes.length - 1)))));
   selectedHandles = new Set([...selectedHandles].filter(key => contours.some(c => c.nodes.some(n => ['incoming', 'outgoing'].some(part => key === handleKey(n.id, part) && n[part as 'incoming' | 'outgoing'])))));
@@ -193,7 +195,7 @@ function render() {
     const input = field(metricForm, name); input.disabled = !!project.editMask; if (document.activeElement !== input) input.value = String(Number(value.toFixed(3)));
     input.disabled = !!gesture || (name !== 'width' && !bounds);
   }
-  $('drawing').innerHTML = renderNeighbors() + (activeVisible && !previewMode ? masterList(project).filter(m => m.id !== (project.activeMaster ?? defaultMaster) && project.visibleMasters?.includes(m.id)).map(m => `<path class="master-reference" data-reference-master="${escapeXML(m.id)}" fill="none" d="${drawing(project, activeGlyph(), m.id).contours.map(c => pathData(c, view)).join(' ')}"/>`).join('') : '') + (activeVisible && !previewMode ? `<path class="mask-reference" fill="none" d="${(project.editMask ? currentDrawing().contours : project.maskVisible !== false ? currentDrawing().mask?.contours ?? [] : []).map(c => pathData(c, view)).join(' ')}"/>` : '') + `<path class="glyph-fill" fill-rule="nonzero" d="${(activeVisible ? previewMode ? foreground(activeGlyph()) : contours : []).filter(c => c.closed).map(c => pathData(c, view)).join(' ')}"/>`;
+  $('drawing').innerHTML = renderNeighbors() + (activeVisible && !previewMode ? masterList(project).filter(m => m.id !== (project.activeMaster ?? defaultMaster) && project.visibleMasters?.includes(m.id)).map(m => `<path class="master-reference" data-reference-master="${escapeXML(m.id)}" fill="none" d="${drawing(project, activeGlyph(), m.id).contours.map(c => pathData(c, view)).join(' ')}"/>`).join('') : '') + (activeVisible && !previewMode ? `<path class="mask-reference" fill="none" d="${(project.editMask ? currentDrawing().contours : project.maskVisible !== false ? currentDrawing().mask?.contours ?? [] : []).map(c => pathData(c, view)).join(' ')}"/>` : '') + `<path class="glyph-fill" fill-rule="nonzero" d="${(activeVisible ? contours : []).filter(c => c.closed).map(c => pathData(c, view)).join(' ')}"/>`;
   const controls: string[] = [], highlighted: string[] = [];
   const selectedNodes = nodeSelection();
   for (const contour of [...contours, ...(penDraft ? [penDraft] : [])]) {
@@ -221,7 +223,6 @@ function render() {
   $('controls').innerHTML = activeVisible ? controls.join('') + highlighted.join('') : '';
   // Selected handles are raised above coincident unselected controls too.
   for (const el of [...$('controls').querySelectorAll('.handle.selected')]) $('controls').append(el);
-  if (freeTransform && !previewMode) $('controls').insertAdjacentHTML('beforeend', freeTransformMarkup());
   renderCursor();
   renderAnnotations();
   let preview = '';
@@ -241,13 +242,13 @@ function render() {
       preview = drawPreview(g);
     } else if (g.preview) preview = `<path d="${g.preview.map(c => pathData(c, view)).join(' ')}" fill="none" stroke="#555" stroke-width="1"/>`;
   }
-  $('preview').innerHTML = strokes.map(job => drawPreview({ ...job, drawTool: job.tool })).join('') + preview;
+  $('preview').innerHTML = strokes.map(job => drawPreview({ ...job, drawTool: job.tool })).join('') + preview + (freeTransform ? freeTransformMarkup() : '') + (previewMode && penDraft ? `<path d="${pathData(penDraft, view)}" fill="none" stroke="#555"/>` : '');
   $('selection-title').textContent = [selected.size ? `${selected.size} 노드` : '', selectedSegments.size ? `${selectedSegments.size} 세그먼트` : '', selectedHandles.size ? `${selectedHandles.size} 핸들` : ''].filter(Boolean).join(' · ') || '선택 없음';
   const coordinate = coordinateSelection();
   $('coordinates').toggleAttribute('hidden', !coordinate);
   if (coordinate) for (const axis of ['x', 'y'] as const) { const input = $<HTMLInputElement>(`node-${axis}`); input.setAttribute('aria-label', `${coordinate.part ? '핸들' : '노드'} ${axis.toUpperCase()}`); if (document.activeElement !== input) input.value = String(Number(coordinate.point[axis].toFixed(3))); }
   document.querySelectorAll<HTMLButtonElement>('[data-nudge]').forEach(b => b.disabled = !hasSelection() || !!gesture);
-  $<HTMLButtonElement>('delete-selection').disabled = !hasSelection() || !!gesture || !!penDraft || previewMode;
+  $<HTMLButtonElement>('delete-selection').disabled = !hasSelection() || !!gesture || !!penDraft;
   $<HTMLButtonElement>('undo').disabled = (!undo.length && !busy) || !!gesture;
   $<HTMLButtonElement>('redo').disabled = !redo.length || !!gesture || busy;
   $('modifier').setAttribute('aria-pressed', String(modifier()));
@@ -263,7 +264,7 @@ function render() {
   const closedSelection = contours.filter(c => c.closed && c.nodes.some(n => operationSelection().has(n.id)));
   $<HTMLButtonElement>('unite-selection').disabled = tool !== 'select' || closedSelection.length < 2 || !!gesture;
   $<HTMLButtonElement>('subtract-selection').disabled = tool !== 'select' || !closedSelection.length || !contours.some(c => c.closed && !closedSelection.includes(c)) || !!gesture;
-  canvas.style.cursor = cursor && !previewMode ? 'none' : previewMode || tool === 'pan' ? 'grab' : tool === 'select' ? 'default' : 'crosshair';
+  canvas.style.cursor = cursor ? 'none' : tool === 'pan' ? 'grab' : tool === 'select' ? 'default' : 'crosshair';
   $<HTMLButtonElement>('finish-pen').hidden = tool !== 'pen' || !penDraft;
   $<HTMLButtonElement>('finish-pen').disabled = !!gesture || (penDraft?.nodes.length ?? 0) < 2;
   const showTip = tool === 'brush' || tool === 'eraser';
@@ -323,7 +324,7 @@ function history(back: boolean) {
   render();
 }
 function removeSelection() {
-  if (!hasSelection() || gesture || penDraft || previewMode) return;
+  if (!hasSelection() || gesture || penDraft) return;
   const before = structuredClone(contours);
   contours = deleteSelection(contours, selected, selectedHandles, selectedSegments);
   clearSelection(); commit(before); render();
@@ -432,7 +433,7 @@ canvas.addEventListener('pointerdown', e => {
   if (e.pointerType === 'pen') { if (gesture) cancel(); touches.clear(); touchTap = null; pinch = null; penId = e.pointerId; }
   if (gesture || pinch) return;
   canvas.setPointerCapture(e.pointerId);
-  const pan = previewMode || tool === 'pan' || e.button === 1;
+  const pan = tool === 'pan' || e.button === 1;
   if (strokes.length && !pan && tool !== 'brush' && tool !== 'eraser') return;
   if (!pan && freeTransform && hasSelection()) {
     const handles = transformHandles(), index = handles.findIndex(h => distance(screenPoint(h.point, view), point) < 16);
@@ -642,7 +643,6 @@ window.addEventListener('keydown', e => {
   if (document.querySelector('dialog[open]')) return;
   if (e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement || e.target instanceof HTMLTextAreaElement) return;
   if (e.code === 'KeyP' && !e.metaKey && !e.ctrlKey && !e.altKey && !e.repeat) { e.preventDefault(); togglePreview(); return; }
-  if (previewMode) { if (e.key === 'Escape') { e.preventDefault(); togglePreview(); } return; }
   if ((e.metaKey || e.ctrlKey) && ['c','x','v','d'].includes(e.key.toLowerCase())) {
     e.preventDefault(); if (!editable()) return;
     const key = e.key.toLowerCase(); if (key === 'c' || key === 'x') copySelection(key === 'x'); else pasteSelection(key === 'd' ? copyContours(contours, nodeSelection()) : clipboard); return;
@@ -836,7 +836,7 @@ function changeLayer(change: () => void) {
 }
 $('master-list').addEventListener('click', e => {
   const target = (e.target as Element).closest<HTMLElement>('button');
-  if (!target || strokes.length || previewMode) return;
+  if (!target || strokes.length) return;
   if (target.dataset.masterVisible) {
     const id = target.dataset.masterVisible, visible = new Set(project.visibleMasters ?? []);
     if (visible.has(id)) visible.delete(id); else visible.add(id);
@@ -847,13 +847,13 @@ $('master-list').addEventListener('click', e => {
   if (id) changeLayer(() => { project.activeMaster = id; project.editMask = mask; });
 });
 $('reverse-contours').addEventListener('click', () => {
-  if (!hasSelection() || gesture || penDraft || strokes.length || previewMode) return;
+  if (!hasSelection() || gesture || penDraft || strokes.length) return;
   const ids = operationSelection(), targets = contours.filter(c => c.nodes.some(n => ids.has(n.id))), before = structuredClone(contours);
   for (const c of targets) reverseContour(c);
   clearSelection(); targets.forEach(c => selectContour(c)); commit(before); render();
 });
 function editMasterName(id = project.activeMaster ?? defaultMaster) {
-  if (strokes.length || previewMode || $('master-list').querySelector('input')) return;
+  if (strokes.length || $('master-list').querySelector('input')) return;
   const entry = [...$('master-list').querySelectorAll<HTMLElement>('[data-master]')].find(e => e.dataset.master === id);
   const row = entry?.querySelector<HTMLElement>('.master-row'), master = masterList(project).find(m => m.id === id);
   if (!row || !master) return;
@@ -1103,7 +1103,6 @@ $('unite-selection').addEventListener('click', () => { cancel(); applyBoolean();
 $('subtract-selection').addEventListener('click', () => { cancel(); applyBoolean('subtract'); });
 
 function togglePreview() {
-  cancel(); keyModifier = false; modifierLocked = false; modifierPointers.clear(); keyOption = false; optionLocked = false; optionPointers.clear(); touches.clear(); touchTap = null; pinch = null; penId = null;
   previewMode = !previewMode; message = ''; render();
 }
 let previewPen: number | null = null, previewPenClickUntil = 0;
@@ -1125,6 +1124,8 @@ $('proof-invert').addEventListener('click', () => {
 
 // Consistent, platform-independent tool symbols.
 const toolIcons: Record<string, string> = {
+  'add-glyph': '<path d="M12 4v16 M4 12h16"/>',
+  'mobile-add-glyph': '<path d="M12 4v16 M4 12h16"/>',
   'master-add': '<path d="M12 4v16 M4 12h16"/>',
   'master-duplicate': '<rect x="3" y="3" width="12" height="12"/><path d="M9 15v6h12V9h-6 6"/>',
   'master-delete': '<path d="M4 12h16"/>',
@@ -1263,8 +1264,8 @@ function penHit(point: Point): Hit | null {
   return node ?? segmentHit(contours, glyphPoint(point, view), 16 / view.scale);
 }
 function renderCursor() {
-  canvas.style.cursor = cursor && !previewMode ? 'none' : previewMode || tool === 'pan' ? 'grab' : tool === 'select' ? 'default' : 'crosshair';
-  if (!cursor || previewMode) { $('brush-cursor').innerHTML = ''; return; }
+  canvas.style.cursor = cursor ? 'none' : tool === 'pan' ? 'grab' : tool === 'select' ? 'default' : 'crosshair';
+  if (!cursor) { $('brush-cursor').innerHTML = ''; return; }
   if (tool === 'brush' || tool === 'eraser') {
     const tip = gesture?.tip ?? tips[tool];
     $('brush-cursor').innerHTML = `<ellipse cx="${cursor.x}" cy="${cursor.y}" rx="${tip.size * view.scale / 2}" ry="${tip.size * tip.ratio * view.scale / 2}" transform="rotate(${-tip.angle} ${cursor.x} ${cursor.y})"/><path d="M${cursor.x-3},${cursor.y}h6 M${cursor.x},${cursor.y-3}v6"/>`;
@@ -1285,6 +1286,52 @@ inspector.before(sidebar); sidebar.append(inspector);
 const editingKeys = document.createElement('section'); editingKeys.id = 'editing-keys'; editingKeys.setAttribute('aria-label', '편집 키');
 editingKeys.append($('modifier'), $('option-modifier'), $('delete-selection'), inspector.querySelector('.nudge')!);
 sidebar.append(editingKeys);
+// Resize from the edge facing the canvas; keep the preferred width across viewport changes.
+for (const [panel, key, minimum, fraction] of [
+  [sidebar, 'sidebar', 208, .4],
+  [document.querySelector<HTMLElement>('.glyphs')!, 'glyphs', 96, .25],
+] as const) {
+  const grip = document.createElement('div');
+  grip.className = 'panel-resize'; grip.tabIndex = 0;
+  grip.setAttribute('role', 'separator'); grip.setAttribute('aria-orientation', 'vertical');
+  grip.setAttribute('aria-label', key === 'sidebar' ? '사이드패널 폭' : '글리프 목록 폭');
+  panel.append(grip);
+  let preferred: number = minimum;
+  try { const saved = Number(localStorage.getItem(`fontdraft.${key}Width`)); if (saved >= minimum) preferred = saved; } catch { /* Session preference only. */ }
+  const applyWidth = () => {
+    const maximum = Math.max(minimum, Math.floor(document.documentElement.clientWidth * fraction));
+    const width = Math.round(Math.max(minimum, Math.min(maximum, preferred)));
+    panel.style.setProperty('--panel-width', `${width}px`);
+    grip.setAttribute('aria-valuemin', String(minimum)); grip.setAttribute('aria-valuemax', String(maximum)); grip.setAttribute('aria-valuenow', String(width));
+    return width;
+  };
+  const saveWidth = () => { try { localStorage.setItem(`fontdraft.${key}Width`, String(preferred)); } catch { /* Session preference only. */ } };
+  const direction = () => (key === 'sidebar') !== $('app').classList.contains('sidebar-left') ? -1 : 1;
+  let drag: { id: number; x: number; width: number; preferred: number; direction: number } | null = null;
+  grip.addEventListener('pointerdown', e => {
+    if (e.button !== 0 || drag) return;
+    e.preventDefault(); cancel();
+    drag = { id: e.pointerId, x: e.clientX, width: panel.getBoundingClientRect().width, preferred, direction: direction() };
+    grip.setPointerCapture(e.pointerId);
+  });
+  grip.addEventListener('pointermove', e => {
+    if (drag?.id !== e.pointerId) return;
+    preferred = drag.width + (e.clientX - drag.x) * drag.direction;
+    preferred = applyWidth();
+  });
+  grip.addEventListener('pointerup', e => { if (drag?.id === e.pointerId) { drag = null; saveWidth(); } });
+  for (const type of ['pointercancel', 'lostpointercapture']) grip.addEventListener(type, () => {
+    if (drag) { preferred = drag.preferred; drag = null; applyWidth(); }
+  });
+  grip.addEventListener('keydown', e => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(e.key)) return;
+    e.preventDefault(); e.stopPropagation();
+    preferred = applyWidth() + (e.key === 'ArrowRight' ? 16 : -16) * direction();
+    preferred = applyWidth(); saveWidth();
+  });
+  window.addEventListener('resize', applyWidth); applyWidth();
+}
+
 const keyIcon = (path: string) => `<svg viewBox="0 0 24 24" aria-hidden="true">${path}</svg>`;
 $('modifier').querySelector('span')!.innerHTML = keyIcon('<path d="m12 3 9 9h-5v9H8v-9H3Z"/>');
 $('option-modifier').querySelector('span')!.innerHTML = keyIcon('<path d="M3 5h6l7 14h5 M15 5h6"/>');
@@ -1452,11 +1499,14 @@ function removeGlyph() {
   if (project.glyphs.length < 2 || !confirm(`“${activeGlyph().name}” 글리프를 모든 마스터에서 삭제할까요? 이 삭제는 되돌릴 수 없습니다.`)) return;
   changeLayer(() => { const id = project.activeGlyph; project.glyphs = project.glyphs.filter(g => g.id !== id); for (const m of project.masters ?? []) delete m.glyphs[id]; project.activeGlyph = project.glyphs[0].id; editText = glyphCharacter(activeGlyph()); activeSlot = 0; for (const key of histories.keys()) if (key.includes(`:${id}:`)) histories.delete(key); }); fit();
 }
-function contourCommand(command: 'start' | 'break' | 'join' | 'loop' | 'overlap') {
-  if (gesture || penDraft || previewMode || strokes.length) return;
+function contourCommand(command: 'start' | 'break' | 'join' | 'loop' | 'overlap' | 'extrema') {
+  if (gesture || penDraft || strokes.length) return;
   const before = structuredClone(contours);
   try {
-    if (command === 'start') {
+    if (command === 'extrema') {
+      const ids = operationSelection();
+      contours = contours.map(c => !ids.size || c.nodes.some(n => ids.has(n.id)) ? addExtrema(c) : c);
+    } else if (command === 'start') {
       if (selected.size !== 1) throw new Error('시작점으로 쓸 노드 하나를 선택하세요.');
       const c = contours.find(c => c.nodes.some(n => selected.has(n.id)))!;
       if (!c.closed) throw new Error('닫힌 컨투어에서 시작점을 설정하세요.');
@@ -1473,7 +1523,7 @@ function contourCommand(command: 'start' | 'break' | 'join' | 'loop' | 'overlap'
 const hiddenViews = new Set<string>();
 type MenuItem = { label: string; action?: () => void; enabled?: () => boolean; checked?: () => boolean; children?: MenuItem[] } | null;
 const clickCommand = (id: string) => () => $<HTMLButtonElement>(id).click();
-const editable = () => !previewMode && !gesture && !penDraft && !strokes.length;
+const editable = () => !gesture && !penDraft && !strokes.length;
 const selectionAvailable = () => editable() && hasSelection();
 const viewItems: [string, string][] = [['nodes','노드'],['handles','핸들'],['baselines','기준선'],['metrics','메트릭'],['annotations','주석'],['glyphs','글리프 목록'],['sidebar','사이드 패널']];
 const menus: [string, MenuItem[]][] = [
@@ -1484,10 +1534,10 @@ const menus: [string, MenuItem[]][] = [
   ['폰트', [{ label: '새 글리프…', action: showGlyph }, { label: '글리프 복제', action: duplicateGlyph }, { label: '글리프 삭제', action: removeGlyph, enabled: () => project.glyphs.length > 1 }, null,
     { label: '마스터', children: [{ label: '새 마스터', action: clickCommand('master-add') }, { label: '마스터 복제', action: clickCommand('master-duplicate') }, { label: '이름 변경', action: () => { hiddenViews.delete('sidebar'); $('app').classList.remove('hide-sidebar'); $('master-list').scrollIntoView(); editMasterName(); } }, { label: '마스터 삭제', action: clickCommand('master-delete'), enabled: () => !!project.masters?.length }, { label: '기준선…', action: clickCommand('master-metrics') }] },
     { label: '배경', children: [{ label: '배경 편집', action: () => changeLayer(() => { project.editMask = !project.editMask; }), checked: () => !!project.editMask }, { label: '전경을 배경으로 복사', action: clickCommand('copy-to-mask') }, { label: '전경으로 붙여넣기', action: clickCommand('copy-to-foreground') }, { label: '전경과 배경 전환', action: () => maskCommand(true) }, { label: '배경 비우기', action: () => maskCommand(false) }] }]],
-  ['컨투어', [{ label: '노드 복제', action: duplicateSelectedNodes, enabled: () => editable() && !!selected.size }, null, { label: '시작점 설정', action: () => contourCommand('start'), enabled: () => editable() && selected.size === 1 }, { label: '방향 반전', action: clickCommand('reverse-contours'), enabled: selectionAvailable }, null,
+  ['컨투어', [{ label: '극점 추가', action: () => contourCommand('extrema'), enabled: editable }, null, { label: '노드 복제', action: duplicateSelectedNodes, enabled: () => editable() && !!selected.size }, null, { label: '시작점 설정', action: () => contourCommand('start'), enabled: () => editable() && selected.size === 1 }, { label: '방향 반전', action: clickCommand('reverse-contours'), enabled: selectionAvailable }, null,
     { label: '끊기', action: () => contourCommand('break'), enabled: () => editable() && !!selected.size }, { label: '잇기', action: () => contourCommand('join'), enabled: () => editable() && selected.size === 2 }, null,
     { label: '겹침 제거', action: () => { if (editable()) { if (!hasSelection()) contours.forEach(c => selectContour(c)); applyBoolean(); } }, enabled: editable }, { label: '겹침 만들기', action: () => contourCommand('overlap'), enabled: () => editable() && selected.size === 2 }, { label: '모서리 루프', action: () => contourCommand('loop'), enabled: () => editable() && !!selected.size }]],
-  ['보기', [...viewItems.map(([key, label]) => ({ label, checked: () => !hiddenViews.has(key), action: () => { const hidden = !hiddenViews.has(key); if (hidden) hiddenViews.add(key); else hiddenViews.delete(key); $('app').classList.toggle(`hide-${key}`, hidden); if (key === 'nodes' && hidden) selected.clear(); if (key === 'handles' && hidden) selectedHandles.clear(); render(); } })),
+  ['보기', [{ label: 'UI 좌우 반전', checked: () => $('app').classList.contains('sidebar-left'), action: () => { const left = $('app').classList.toggle('sidebar-left'); try { localStorage.setItem('fontdraft.sidebarLeft', String(left)); } catch { /* Session preference only. */ } } }, null, ...viewItems.map(([key, label]) => ({ label, checked: () => !hiddenViews.has(key), action: () => { const hidden = !hiddenViews.has(key); if (hidden) hiddenViews.add(key); else hiddenViews.delete(key); $('app').classList.toggle(`hide-${key}`, hidden); if (key === 'nodes' && hidden) selected.clear(); if (key === 'handles' && hidden) selectedHandles.clear(); render(); } })),
     { label: '배경', checked: () => project.maskVisible !== false, action: () => { project.maskVisible = project.maskVisible === false; persist(); render(); } }, { label: '미리보기 패널', checked: () => !$('proof-panel').classList.contains('collapsed'), action: clickCommand('proof-toggle') }]],
 ];
 const menuRoot = $('app-menus');
@@ -1504,10 +1554,16 @@ for (const [label, items] of menus) {
   } };
   populate(popup, items);
   detail.addEventListener('toggle', () => { if (!detail.open) return; for (const other of menuRoot.children) if (other !== detail) other.removeAttribute('open');
-    for (const { button, item } of buttons) { button.disabled = item.enabled ? !item.enabled() : label !== '보기' && label !== '파일' && previewMode; if (item.checked) button.setAttribute('aria-pressed', String(item.checked())); }
+    for (const { button, item } of buttons) { button.disabled = item.enabled ? !item.enabled() : false; if (item.checked) button.setAttribute('aria-pressed', String(item.checked())); }
     popup.style.left = `${Math.max(4, Math.min(summary.getBoundingClientRect().left, innerWidth - popup.offsetWidth - 4))}px`;
   });
 }
+const sidebarToggle = document.createElement('button');
+sidebarToggle.id = 'sidebar-toggle'; sidebarToggle.setAttribute('aria-label', '사이드패널 표시'); sidebarToggle.title = '사이드패널 표시/숨김';
+sidebarToggle.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="18" height="16" rx="1"/><path d="M15 4v16"/></svg>';
+sidebarToggle.setAttribute('aria-pressed', 'true'); menuRoot.append(sidebarToggle);
+sidebarToggle.addEventListener('click', () => { const hidden = !hiddenViews.has('sidebar'); if (hidden) hiddenViews.add('sidebar'); else hiddenViews.delete('sidebar'); $('app').classList.toggle('hide-sidebar', hidden); render(); });
+try { $('app').classList.toggle('sidebar-left', localStorage.getItem('fontdraft.sidebarLeft') === 'true'); } catch { /* Session preference only. */ }
 document.addEventListener('pointerdown', e => { if (!(e.target as Element).closest('#app-menus')) closeMenus(); });
 window.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenus(); });
 

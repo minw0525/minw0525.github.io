@@ -193,14 +193,14 @@ export async function exportUFO(project: Project): Promise<Uint8Array> {
 }
 
 export async function importUFO(data: Uint8Array): Promise<Project> {
-  if (data.byteLength > 32 * 1024 * 1024) fail('시제품은 32MB 이하의 UFOZ만 불러올 수 있습니다.');
+  if (data.byteLength > 32 * 1024 * 1024) fail('현재는 32MB 이하의 UFOZ만 불러올 수 있습니다.');
   let total = 0, count = 0, oversized = false;
   const files = await new Promise<Record<string, Uint8Array>>((resolve, reject) => unzip(data, { filter: info => {
     total += info.originalSize; count++;
     if (total > 64 * 1024 * 1024 || info.originalSize > 8 * 1024 * 1024 || count > 10000) { oversized = true; return false; }
     return true;
   } }, (error, result) => error ? reject(error) : resolve(result)));
-  if (oversized) fail('압축 해제 크기가 시제품 한도를 초과했습니다.');
+  if (oversized) fail('압축 해제 크기가 현재 한도를 초과했습니다.');
   const paths = Object.keys(files).filter(p => !p.endsWith('/'));
   if (paths.some(p => p.split('/').some(part => !part || part === '.' || part === '..') || p.includes('\\'))) fail('UFOZ 경로가 올바르지 않습니다.');
   const roots = paths.filter(p => /^[^/]+\/metainfo\.plist$/.test(p));
