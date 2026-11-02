@@ -92,14 +92,44 @@ export async function loadWorkspace(): Promise<{ projects: Project[]; last?: str
     tx.onerror = () => reject(tx.error);
   });
 }
-export async function saveDraft(project: Project): Promise<void> {
-  const snapshot = roundProject(structuredClone(project));
-  const db = await database();
+type Write = { projects: Project[]; remove?: string; waiters: { resolve: () => void; reject: (error: unknown) => void }[]; merge: boolean };
+const writes: Write[] = [];
+let writing = false;
+function enqueue(projects: Project[], remove?: string, merge = false): Promise<void> {
+  const snapshots = projects.map(p => roundProject(structuredClone(p)));
   return new Promise((resolve, reject) => {
-    const tx = db.transaction(['projects', 'settings'], 'readwrite');
-    tx.objectStore('projects').put(snapshot); tx.objectStore('settings').put(snapshot.id, 'last');
-    tx.oncomplete = () => resolve();
-    tx.onerror = () => reject(tx.error);
-    tx.onabort = () => reject(tx.error ?? new Error('자동 저장 취소'));
+    const last = writes.at(-1);
+    if (merge && last?.merge && last.projects[0].id === snapshots[0].id) {
+      last.projects = snapshots; last.waiters.push({ resolve, reject });
+    } else writes.push({ projects: snapshots, remove, merge, waiters: [{ resolve, reject }] });
+    void drainWrites();
   });
 }
+async function drainWrites() {
+  if (writing) return;
+  writing = true;
+  try {
+    while (writes.length) {
+      const job = writes.shift()!;
+      try {
+        const db = await database();
+        await new Promise<void>((resolve, reject) => {
+          const tx = db.transaction(['projects', 'settings'], 'readwrite');
+          tx.oncomplete = () => resolve();
+          tx.onerror = () => reject(tx.error);
+          tx.onabort = () => reject(tx.error ?? new Error('저장 취소'));
+          try {
+            if (job.remove) tx.objectStore('projects').delete(job.remove);
+            for (const project of job.projects) tx.objectStore('projects').put(project);
+            tx.objectStore('settings').put(job.projects.at(-1)!.id, 'last');
+          } catch (error) { tx.abort(); reject(error); }
+        });
+        job.waiters.forEach(w => w.resolve());
+      } catch (error) { job.waiters.forEach(w => w.reject(error)); }
+    }
+  } finally { writing = false; }
+}
+export function saveDraft(project: Project): Promise<void> { return enqueue([project], undefined, true); }
+// Queue barriers keep deletion and backup imports atomic, after earlier saves.
+export function deleteDraft(id: string, next: Project): Promise<void> { return enqueue([next], id); }
+export function saveImportedProjects(projects: Project[]): Promise<void> { return enqueue(projects); }

@@ -1,4 +1,5 @@
 import './style.css';
+import { projectBackup, readBackup } from './backup';
 import { freshContours, copyContours, duplicateNodes, joinNodes, loopCorner } from './contour-commands';
 import { GeometryClient } from './geometry-client';
 import type { GeometryResult } from './geometry-worker';
@@ -7,7 +8,7 @@ import { lineToCurve, reverseContour, contourStartDirection, distance, glyphPoin
 import type { Contour, Hit, Point, View, Transform } from './model';
 import { addExtrema, makeOverlap, strokePreviewPath, newId, shape, tipTransform, knife, knifeIntersections, breakAtNode, combine, segmentHit, outlineBounds, deleteSelection, insertNode, removeNodePreservingCurve } from './geometry';
 import type { Tip, StrokePoint } from './geometry';
-import { createProject, createGlyph, loadWorkspace, saveDraft, roundProject, drawing, editLayer, masterMetrics, masterList, addMaster, deleteMaster, defaultMaster } from './project';
+import { createProject, createGlyph, loadWorkspace, saveDraft, deleteDraft, saveImportedProjects, roundProject, drawing, editLayer, masterMetrics, masterList, addMaster, deleteMaster, defaultMaster } from './project';
 import type { Project, Annotation, Glyph, Layer } from './project';
 import { exportUFO, importUFO, escapeXML } from './ufo';
 
@@ -820,7 +821,7 @@ function renderWorkspace() {
   }
   field(form, 'width').value = String(currentDrawing().width);
   const height = metrics().ascender - metrics().descender;
-  $('glyph-list').innerHTML = project.glyphs.map(g => `<button class="glyph-card" data-glyph="${g.id}" aria-current="${g.id === project.activeGlyph}"><svg viewBox="-30 ${-metrics().ascender - 30} ${Math.max(drawing(project, g).width, 100) + 60} ${height + 60}" aria-hidden="true"><path fill-rule="nonzero" d="${drawing(project, g).contours.filter(c => c.closed).map(c => pathData(c, { x: 0, y: 0, scale: 1 })).join(' ')}"/></svg><small>${escapeXML(g.name)}</small></button>`).join('');
+  $('glyph-list').innerHTML = project.glyphs.map(g => `<button class="glyph-card" data-glyph="${g.id}" aria-current="${g.id === project.activeGlyph}"><svg viewBox="-30 ${-metrics().ascender - 30} ${Math.max(drawing(project, g).width, 100) + 60} ${height + 60}" aria-hidden="true">${drawing(project, g).contours.some(c => c.nodes.length) ? '' : placeholderText(glyphCharacter(g), drawing(project, g).width, { x: 0, y: 0, scale: 1 })}<path fill-rule="nonzero" d="${drawing(project, g).contours.filter(c => c.closed).map(c => pathData(c, { x: 0, y: 0, scale: 1 })).join(' ')}"/></svg><small>${escapeXML(g.name)}</small></button>`).join('');
 }
 function persist() {
   roundNodes(contours); roundProject(project);
@@ -832,7 +833,7 @@ function persist() {
   void saveDraft(project).then(() => {
     if (sequence === saveSequence) $('save-status').textContent = '기기에 저장됨';
   }).catch(() => {
-    if (sequence === saveSequence) { $('save-status').textContent = '자동저장 실패 · UFOZ로 저장하세요'; $('save-status').setAttribute('data-error', 'true'); }
+    if (sequence === saveSequence) { $('save-status').textContent = '자동저장 실패 · 프로젝트 백업을 이용하세요'; $('save-status').setAttribute('data-error', 'true'); void updateStorageStatus(); }
   });
 }
 function settle() {
@@ -986,7 +987,7 @@ for (const toMask of [false, true]) $(toMask ? 'copy-to-mask' : 'copy-to-foregro
 const dialogs = document.createElement('div');
 dialogs.innerHTML = `
   <dialog id="project-dialog"><h2>프로젝트</h2>
-    <label>기기에 저장된 프로젝트<select id="project-select"></select></label>
+    <section aria-labelledby="saved-projects-title"><h3 id="saved-projects-title">기기에 저장된 프로젝트</h3><ul id="project-list"></ul><p id="storage-status" class="dialog-note" role="status"></p></section>
     <div class="dialog-actions"><button id="new-project">새 프로젝트</button><button id="open-file">UFOZ 열기</button><button id="export-image">이미지 내보내기</button></div>
     <form id="project-form"><label>이름<input name="name" required maxlength="120" /></label><label>스타일<input name="style" required maxlength="120" /></label>
       <div class="metrics-fields">${[['upm', 'UPM'], ['ascender', 'Ascender'], ['descender', 'Descender'], ['xHeight', 'x-height'], ['capHeight', 'cap-height']].map(([name, label]) => `<label>${label}<input name="${name}" type="number" step="any" required /></label>`).join('')}</div>
@@ -998,34 +999,70 @@ dialogs.innerHTML = `
     <label>추가할 문자<input name="characters" required maxlength="200" placeholder="가나다ABC" /></label><label>글자 폭<input name="width" type="number" step="any" required /></label>
     <p id="glyph-error" role="alert"></p><div class="dialog-actions"><button type="button" data-close="glyph-dialog">취소</button><button type="submit">적용</button></div>
   </form></dialog>
-  <dialog id="file-dialog"><h2>UFOZ</h2><p id="file-message" role="status"></p><button data-close="file-dialog" id="file-close">닫기</button></dialog>
+  <dialog id="file-dialog"><h2>파일</h2><p id="file-message" role="status"></p><button data-close="file-dialog" id="file-close">닫기</button></dialog>
   <dialog id="image-dialog"><h2>이미지 내보내기</h2><form id="image-form">
     <label>문자열<textarea id="image-text" aria-label="내보낼 문자열" maxlength="200" required></textarea></label>
     <label>높이 (px)<input id="image-height" aria-label="이미지 높이" type="number" value="512" min="32" max="4096" required /></label>
     <label>형식<select id="image-format" aria-label="이미지 형식"><option value="svg">SVG</option><option value="png">PNG</option></select></label>
     <p id="image-error" role="alert"></p><div class="dialog-actions"><button type="button" data-close="image-dialog">닫기</button><button type="submit" id="image-download">내보내기</button></div>
   </form></dialog>
-  <input id="file-input" type="file" accept=".ufoz" hidden />`;
+  <input id="backup-input" type="file" accept=".json,application/json" hidden /><input id="file-input" type="file" accept=".ufoz" hidden />`;
 document.body.append(dialogs);
 const projectDialog = $<HTMLDialogElement>('project-dialog'), glyphDialog = $<HTMLDialogElement>('glyph-dialog'), fileDialog = $<HTMLDialogElement>('file-dialog');
 const projectForm = $<HTMLFormElement>('project-form'), glyphForm = $<HTMLFormElement>('glyph-form');
 const field = (form: HTMLFormElement, name: string) => form.elements.namedItem(name) as HTMLInputElement;
 let newProject = false, fileBusy = false;
+let storageRequest: Promise<boolean> | undefined;
+async function updateStorageStatus(request = false) {
+  const storage = navigator.storage;
+  let label = '영구 저장 미지원';
+  try {
+    if (storage?.persisted) {
+      let persistent = await storage.persisted();
+      if (!persistent && request && storage.persist) persistent = await (storageRequest ??= storage.persist());
+      label = persistent ? '영구 저장 허용' : '영구 저장 미허용';
+    }
+    const estimate = await storage?.estimate?.();
+    const mb = (n: number) => `${(n / 1024 / 1024).toFixed(1)} MB`;
+    if (estimate?.usage !== undefined) label += ` · 사용 ${mb(estimate.usage)}`;
+    if (estimate?.quota !== undefined) label += ` / 한도 ${mb(estimate.quota)}`;
+  } catch { label = '저장공간 상태 확인 불가'; }
+  $('storage-status').textContent = label;
+}
 function projectFields(fresh: boolean) {
+  void updateStorageStatus();
   newProject = fresh;
   const values = fresh ? createProject('Unititled') : { ...project, ...metrics() };
   for (const name of ['name', 'style', 'upm', 'ascender', 'descender', 'xHeight', 'capHeight'] as const) field(projectForm, name).value = String(values[name]);
   projectDialog.querySelector('.dialog-note')!.textContent = `기준선: ${fresh ? values.style : masterList(project).find(m => m.id === (project.activeMaster ?? defaultMaster))!.name} · UPM은 프로젝트 공통입니다.`;
   $('project-error').textContent = '';
-  $('project-select').innerHTML = projects.map(p => `<option value="${p.id}">${escapeXML(p.name)}</option>`).join('');
-  $<HTMLSelectElement>('project-select').value = fresh ? '' : project.id;
+  $('project-list').innerHTML = projects.map(p => `<li data-project-id="${p.id}"><button type="button" class="project-open" data-open-project="${p.id}" aria-current="${p.id === project.id}"><strong>${escapeXML(p.name)}</strong><small>${escapeXML(p.style)} · ${p.glyphs.length} 글리프${p.id === project.id ? ' · 현재 프로젝트' : ''}</small></button><button type="button" class="project-delete" data-delete-project="${p.id}" aria-label="${escapeXML(p.name)} 삭제" title="프로젝트 삭제"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16 M9 6V3h6v3 M6 6l1 15h10l1-15 M10 10v7 M14 10v7"/></svg></button></li>`).join('');
 }
 $('project-menu').addEventListener('click', () => { settle(); projectFields(false); projectDialog.showModal(); });
 $('master-metrics').addEventListener('click', () => { settle(); projectFields(false); projectDialog.showModal(); field(projectForm, 'ascender').focus(); });
 $('new-project').addEventListener('click', () => projectFields(true));
-$('project-select').addEventListener('change', () => {
-  const next = projects.find(p => p.id === $<HTMLSelectElement>('project-select').value);
-  if (next) { activate(next); projectFields(false); }
+$('project-list').addEventListener('click', async e => {
+  const target = (e.target as Element).closest<HTMLButtonElement>('button');
+  if (!target) return;
+  const next = projects.find(p => p.id === target.dataset.openProject);
+  if (next) { activate(next); projectFields(false); return; }
+  const removed = projects.find(p => p.id === target.dataset.deleteProject);
+  if (!removed) return;
+  const last = projects.length === 1;
+  if (!confirm(`“${removed.name}” 프로젝트를 이 브라우저에서 삭제할까요? 되돌릴 수 없습니다.${last ? '\n마지막 프로젝트를 삭제하면 새 빈 프로젝트를 엽니다.' : ''}`)) return;
+  settle();
+  const remaining = projects.filter(p => p.id !== removed.id);
+  const replacement = removed.id === project.id ? remaining[0] ?? createProject() : project;
+  $<HTMLElement>('app').inert = true; projectDialog.inert = true;
+  try {
+    await deleteDraft(removed.id, replacement);
+    projects = remaining.length ? remaining : [replacement];
+    if (removed.id === project.id) activate(replacement);
+    for (const key of histories.keys()) if (key.startsWith(`${removed.id}:`)) histories.delete(key);
+    projectFields(false);
+  } catch {
+    $('project-error').textContent = '프로젝트를 삭제하지 못했습니다. 다시 시도해 주세요.';
+  } finally { $<HTMLElement>('app').inert = false; projectDialog.inert = false; }
 });
 projectForm.addEventListener('submit', e => {
   e.preventDefault();
@@ -1036,7 +1073,7 @@ projectForm.addEventListener('submit', e => {
   next.name = name; next.style = style; next.upm = values.upm;
   const { upm, ...baselines } = values; Object.assign(masterMetrics(next), baselines);
   if (newProject) projects.push(next);
-  activate(next); projectDialog.close();
+  activate(next); void updateStorageStatus(true); projectDialog.close();
 });
 function showGlyph() {
   settle(); field(glyphForm, 'characters').value = ''; field(glyphForm, 'width').value = '600';
@@ -1125,6 +1162,30 @@ $('save-file').addEventListener('click', async () => {
     endFile('UFOZ 다운로드를 요청했습니다. 다운로드 또는 파일 앱에서 확인하세요.');
   } catch (error) { endFile(`저장 실패: ${error instanceof Error ? error.message : String(error)}`); }
 });
+function downloadBackup(all: boolean) {
+  beginFile('백업을 만드는 중…');
+  try {
+    const url = URL.createObjectURL(new Blob([projectBackup(all ? projects : [project])], { type: 'application/json' }));
+    const a = document.createElement('a'); a.href = url;
+    a.download = `${(all ? 'FontDraft-projects' : project.name).replace(/[\\/:*?"<>|]/g, '_')}.fontdraft.json`;
+    document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 60_000);
+    endFile('백업 다운로드를 요청했습니다. 파일 앱 또는 다운로드에서 확인하세요.');
+  } catch (error) { endFile(`백업 실패: ${error instanceof Error ? error.message : String(error)}`); }
+}
+$('backup-input').addEventListener('change', async () => {
+  const input = $<HTMLInputElement>('backup-input'), file = input.files?.[0]; input.value = '';
+  if (!file) return;
+  projectDialog.close(); beginFile('백업을 확인하는 중…');
+  $<HTMLElement>('app').inert = true;
+  try {
+    if (file.size > 128 * 1024 * 1024) throw new Error('128MB 이하 파일만 열 수 있습니다.');
+    const imported = readBackup(await file.text());
+    await saveImportedProjects(imported);
+    projects.push(...imported); activate(imported.at(-1)!); void updateStorageStatus(true);
+    endFile('백업을 열었습니다.'); fileDialog.close();
+  } catch (error) { endFile(`백업 열기 실패: ${error instanceof Error ? error.message : String(error)}`); }
+  finally { $<HTMLElement>('app').inert = false; }
+});
 $('open-file').addEventListener('click', () => $<HTMLInputElement>('file-input').click());
 $('file-input').addEventListener('change', async () => {
   const input = $<HTMLInputElement>('file-input'), file = input.files?.[0]; input.value = '';
@@ -1133,7 +1194,7 @@ $('file-input').addEventListener('change', async () => {
   try {
     if (file.size > 32 * 1024 * 1024) throw new Error('32MB 이하 파일만 열 수 있습니다.');
     const next = await importUFO(new Uint8Array(await file.arrayBuffer()));
-    projects.push(next); activate(next); endFile('프로젝트를 열었습니다.'); fileDialog.close();
+    projects.push(next); activate(next); void updateStorageStatus(true); endFile('프로젝트를 열었습니다.'); fileDialog.close();
   } catch (error) { endFile(`열기 실패: ${error instanceof Error ? error.message : String(error)}`); }
 });
 
@@ -1143,7 +1204,7 @@ void loadWorkspace().then(saved => {
   if (saved.projects.length) {
     projects = saved.projects; project = projects.find(p => p.id === saved.last) ?? projects[0]; contours = currentLayer().contours;
   }
-  persist();
+  persist(); void updateStorageStatus(true);
 }).catch(() => { $('save-status').textContent = '자동저장 복원 실패 · 파일 저장을 이용하세요'; $('save-status').setAttribute('data-error', 'true'); }).finally(() => {
   $<HTMLElement>('app').inert = false; editText = glyphCharacter(activeGlyph()); $<HTMLInputElement>('text-run').value = editText; renderWorkspace(); fit();
 });
@@ -1518,12 +1579,31 @@ function runLayout() {
     const slot = { glyph, ch, x, width }; x += width; return slot;
   });
 }
+const placeholderContext = document.createElement('canvas').getContext('2d')!;
+const placeholderMeasurements = new Map<string, TextMetrics>();
+function placeholderText(ch: string, width: number, v: View) {
+  if (!ch.trim()) return '';
+  const measure = (text: string) => {
+    let value = placeholderMeasurements.get(text);
+    if (!value) { placeholderContext.font = '1000px sans-serif'; value = placeholderContext.measureText(text); placeholderMeasurements.set(text, value); }
+    return value;
+  };
+  const m = metrics(), reference = /^[a-z]$/.test(ch) ? 'x' : /^[A-Z]$/.test(ch) ? 'H' : ch;
+  const bounds = measure(ch), height = measure(reference).actualBoundingBoxAscent;
+  const target = reference === 'x' ? m.xHeight : m.capHeight;
+  let ratio = Math.max(1, Math.min(target, m.ascender)) / Math.max(1, height);
+  if (m.descender < 0 && bounds.actualBoundingBoxDescent > 0) ratio = Math.min(ratio, -m.descender / bounds.actualBoundingBoxDescent);
+  const inkWidth = bounds.actualBoundingBoxLeft + bounds.actualBoundingBoxRight;
+  ratio = Math.min(ratio, Math.max(1, width) / Math.max(1, inkWidth));
+  const x = v.x + (width / 2 + (bounds.actualBoundingBoxLeft - bounds.actualBoundingBoxRight) * ratio / 2) * v.scale;
+  return `<text class="glyph-placeholder" x="${x}" y="${v.y}" font-size="${1000 * ratio * v.scale}" aria-hidden="true">${escapeXML(ch)}</text>`;
+}
 function renderNeighbors() {
   const slots = runLayout(), origin = slots[activeSlot]?.x ?? 0;
   return slots.map((s, i) => {
-    if (i === activeSlot && s.glyph?.id === project.activeGlyph) return '';
     const v = { ...view, x: view.x + (s.x - origin) * view.scale };
-    if (!s.glyph) return `<text class="missing-glyph" x="${v.x + 10}" y="${v.y}" font-size="${project.upm * view.scale * .35}">${escapeXML(s.ch)}</text>`;
+    if (!s.glyph || !foreground(s.glyph).some(c => c.nodes.length)) return placeholderText(s.ch || (s.glyph ? glyphCharacter(s.glyph) : ''), s.width, v);
+    if (i === activeSlot && s.glyph.id === project.activeGlyph) return '';
     return `<path class="neighbor-fill" data-slot="${i}" fill-rule="nonzero" d="${(foreground(s.glyph)).filter(c => c.closed).map(c => pathData(c, v)).join(' ')}"/>`;
   }).join('');
 }
@@ -1543,7 +1623,7 @@ $('text-run').addEventListener('input', () => {
   const slots = runLayout(), found = slots.findIndex(s => s.glyph?.id === project.activeGlyph);
   activeSlot = found >= 0 ? found : 0;
   if (found < 0 && slots[0]?.glyph) activate(project, slots[0].glyph.id, true);
-  fit();
+  render();
 });
 
 function metricBadge(text: string, x: number, y: number, align: 'start' | 'middle' | 'end') {
@@ -1652,7 +1732,7 @@ const editable = () => !gesture && !penDraft && !strokes.length;
 const selectionAvailable = () => editable() && hasSelection();
 const viewItems: [string, string][] = [['nodes','노드'],['handles','핸들'],['baselines','기준선'],['metrics','메트릭'],['annotations','주석'],['glyphs','글리프 목록'],['sidebar','사이드 패널']];
 const menus: [string, MenuItem[]][] = [
-  ['파일', [{ label: '새 프로젝트', action: () => { settle(); projectFields(true); projectDialog.showModal(); } }, { label: '열기…', action: clickCommand('open-file') }, { label: '저장', action: clickCommand('save-file') }, null, { label: '이미지 내보내기…', action: clickCommand('export-image') }, { label: '설정…', action: clickCommand('project-menu') }]],
+  ['파일', [{ label: '프로젝트 관리…', action: clickCommand('project-menu') }, { label: '새 프로젝트', action: () => { settle(); projectFields(true); projectDialog.showModal(); } }, { label: '열기…', action: clickCommand('open-file') }, { label: '저장', action: clickCommand('save-file') }, null, { label: '프로젝트 백업…', action: () => downloadBackup(false) }, { label: '전체 프로젝트 백업…', action: () => downloadBackup(true) }, { label: '백업 열기…', action: () => $<HTMLInputElement>('backup-input').click() }, null, { label: '이미지 내보내기…', action: clickCommand('export-image') }, { label: '설정…', action: clickCommand('project-menu') }]],
   ['편집', [{ label: '실행 취소', action: () => history(true), enabled: () => !!undo.length }, { label: '다시 실행', action: () => history(false), enabled: () => !!redo.length }, null,
     { label: '잘라내기', action: () => copySelection(true), enabled: selectionAvailable }, { label: '복사', action: () => copySelection(), enabled: selectionAvailable }, { label: '붙여넣기', action: () => pasteSelection(), enabled: () => editable() && !!clipboard.length }, { label: '복제', action: () => pasteSelection(copyContours(contours, nodeSelection())), enabled: selectionAvailable }, null,
     { label: '전체 선택', action: () => { clearSelection(); contours.forEach(c => selectContour(c)); render(); }, enabled: editable }, { label: '선택 해제', action: () => { clearSelection(); render(); } }, { label: '선택 반전', action: invertSelection, enabled: editable }, null, { label: '자유변형', action: () => { $<HTMLButtonElement>('select-tool').click(); freeTransform = true; render(); }, enabled: selectionAvailable }]],

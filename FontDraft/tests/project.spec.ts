@@ -39,7 +39,7 @@ test('new project keeps previous project; metadata and duplicate glyph validatio
   await expect(page.locator('.node')).toHaveCount(0); await expect(page.locator('#glyph-properties [name=width]')).toHaveValue('600');
   await page.locator('#add-glyph').click(); await page.locator('#glyph-form [name=characters]').fill('AA');
   await page.locator('#glyph-form button[type=submit]').click(); await expect(page.locator('.glyph-card')).toHaveCount(1);
-  await page.locator('#project-menu').click(); await page.locator('#project-select').selectOption({ label: '글리프 스케치' });
+  await page.locator('#project-menu').click(); await page.locator('#project-list .project-open').filter({ hasText: '글리프 스케치' }).click();
   await page.locator('#project-dialog [data-close]').click(); await expect(page.locator('.node')).toHaveCount(8);
 });
 
